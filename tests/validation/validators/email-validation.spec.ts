@@ -49,4 +49,10 @@ describe('Email Validation', () => {
     })
     expect(() => sut.validate({ email: 'any_email@mail.com' })).toThrow()
   })
+
+  test('Should return an InvalidParamError if email is not a string', () => {
+    const { sut } = makeSut()
+    const error = sut.validate({ email: 123 })
+    expect(error).toBeInstanceOf(InvalidParamError)
+  })
 })

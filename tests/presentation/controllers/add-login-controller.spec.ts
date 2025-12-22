@@ -7,7 +7,7 @@ import { MissingParamError } from '@/presentation/errors'
 
 const makeValidation = (): Validation => {
   class ValidationStub implements Validation {
-    validate(_input: unknown): Error | undefined {
+    validate(_input: Record<string, unknown>): Error | undefined {
       return undefined
     }
   }

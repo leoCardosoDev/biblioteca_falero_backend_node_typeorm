@@ -8,14 +8,15 @@ export class EmailValidation implements Validation {
     private readonly emailValidator: EmailValidator
   ) { }
 
-  validate(input: unknown): Error | undefined {
-    if (typeof input !== 'object' || input === null) return undefined
-    const email = (input as Record<string, unknown>)[this.fieldName]
-    if (typeof email !== 'string') return undefined
-
+  validate(input: Record<string, unknown>): Error | undefined {
+    const email = input[this.fieldName]
+    if (typeof email !== 'string') {
+      return new InvalidParamError(this.fieldName)
+    }
     const isValid = this.emailValidator.isValid(email)
     if (!isValid) {
       return new InvalidParamError(this.fieldName)
     }
   }
 }
+

@@ -1,3 +1,3 @@
 export interface Validation {
-  validate: (input: unknown) => Error | undefined
+  validate: (input: Record<string, unknown>) => Error | undefined
 }

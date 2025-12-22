@@ -22,7 +22,7 @@ const makeAddUser = (): AddUser => {
 
 const makeValidation = (): Validation => {
   class ValidationStub implements Validation {
-    validate(_input: unknown): Error | undefined {
+    validate(_input: Record<string, unknown>): Error | undefined {
       return undefined
     }
   }
@@ -101,5 +101,15 @@ describe('AddUser Controller', () => {
       rg: 'valid_rg',
       cpf: 'valid_cpf'
     })
+  })
+
+  test('Should return 500 with empty stack if error has no stack', async () => {
+    const { sut, addUserStub } = makeSut()
+    const errorWithoutStack = new Error()
+    errorWithoutStack.stack = undefined
+    jest.spyOn(addUserStub, 'add').mockRejectedValueOnce(errorWithoutStack)
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toBeInstanceOf(ServerError)
   })
 })
