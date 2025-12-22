@@ -25,10 +25,10 @@ describe('User Routes', () => {
     await dataSource.synchronize(true) // Clear DB
   })
 
-  describe('POST /signup', () => {
+  describe('POST /users', () => {
     test('Should return 200 on success', async () => {
       await request(app)
-        .post('/api/signup')
+        .post('/api/users')
         .send({
           name: 'Rodrigo',
           email: 'rodrigo.manguinho@gmail.com',

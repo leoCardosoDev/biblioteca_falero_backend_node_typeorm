@@ -3,5 +3,5 @@ import { adaptRoute } from '@/main/adapters/express-route-adapter'
 import { makeAddUserController } from '@/main/factories/add-user-controller-factory'
 
 export default (router: Router): void => {
-  router.post('/signup', adaptRoute(makeAddUserController()))
+  router.post('/users', adaptRoute(makeAddUserController()))
 }
