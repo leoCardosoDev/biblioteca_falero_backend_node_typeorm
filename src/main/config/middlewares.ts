@@ -1,7 +1,6 @@
-import { Express, json } from 'express'
-import { cors } from './cors'
+import { FastifyInstance } from 'fastify'
+import cors from '@fastify/cors'
 
-export const setupMiddlewares = (app: Express): void => {
-  app.use(json())
-  app.use(cors)
+export const setupMiddlewares = (app: FastifyInstance): void => {
+  app.register(cors)
 }

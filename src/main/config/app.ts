@@ -1,9 +1,8 @@
-import express from 'express'
-import { setupMiddlewares } from './middlewares'
+import fastify from 'fastify'
 import { setupRoutes } from './routes'
+import { setupMiddlewares } from './middlewares'
 
-const app = express()
+const app = fastify()
 setupMiddlewares(app)
 setupRoutes(app)
-
 export default app

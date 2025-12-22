@@ -1,4 +1,3 @@
-import request from 'supertest'
 import app from '@/main/config/app'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
@@ -15,10 +14,12 @@ describe('User Routes', () => {
       synchronize: true,
       entities: [UserTypeOrmEntity]
     })
+    await app.ready()
   })
 
   afterAll(async () => {
     await TypeOrmHelper.disconnect()
+    await app.close()
   })
 
   beforeEach(async () => {
@@ -27,15 +28,17 @@ describe('User Routes', () => {
 
   describe('POST /users', () => {
     test('Should return 200 on success', async () => {
-      await request(app)
-        .post('/api/users')
-        .send({
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/users',
+        payload: {
           name: 'Leo Cardoso',
           email: 'leocardosodev@gmail.com',
           rg: '123456789',
           cpf: '12345678900'
-        })
-        .expect(200)
+        }
+      })
+      expect(response.statusCode).toBe(200)
     })
   })
 })
