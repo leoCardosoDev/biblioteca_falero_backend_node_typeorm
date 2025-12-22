@@ -1,7 +1,7 @@
-import { DbAddLogin } from '@/data/usecases/add-login/db-add-login'
-import { AddLoginRepository } from '@/data/protocols/db/add-login-repository'
-import { Hasher } from '@/data/protocols/cryptography/hasher'
-import { AddLoginParams } from '@/domain/usecases/add-login'
+import { DbCreateUserLogin } from '@/application/usecases/db-create-user-login'
+import { CreateUserLoginRepository } from '@/application/protocols/db/create-user-login-repository'
+import { Hasher } from '@/application/protocols/cryptography/hasher'
+import { CreateUserLoginParams } from '@/domain/usecases/create-user-login'
 import { LoginModel } from '@/domain/models/login'
 
 const makeHasher = (): Hasher => {
@@ -13,49 +13,47 @@ const makeHasher = (): Hasher => {
   return new HasherStub()
 }
 
-const makeAddLoginRepository = (): AddLoginRepository => {
-  class AddLoginRepositoryStub implements AddLoginRepository {
-    async add(_loginData: AddLoginParams): Promise<LoginModel> {
+const makeCreateUserLoginRepository = (): CreateUserLoginRepository => {
+  class CreateUserLoginRepositoryStub implements CreateUserLoginRepository {
+    async create(_data: CreateUserLoginParams): Promise<LoginModel> {
       return Promise.resolve({
         id: 'any_id',
         userId: 'any_user_id',
-        email: 'any_email@mail.com',
         password: 'hashed_password',
         role: 'any_role',
         accessToken: 'any_token'
       })
     }
   }
-  return new AddLoginRepositoryStub()
+  return new CreateUserLoginRepositoryStub()
 }
 
 interface SutTypes {
-  sut: DbAddLogin
+  sut: DbCreateUserLogin
   hasherStub: Hasher
-  addLoginRepositoryStub: AddLoginRepository
+  createUserLoginRepositoryStub: CreateUserLoginRepository
 }
 
 const makeSut = (): SutTypes => {
   const hasherStub = makeHasher()
-  const addLoginRepositoryStub = makeAddLoginRepository()
-  const sut = new DbAddLogin(hasherStub, addLoginRepositoryStub)
+  const createUserLoginRepositoryStub = makeCreateUserLoginRepository()
+  const sut = new DbCreateUserLogin(hasherStub, createUserLoginRepositoryStub)
   return {
     sut,
     hasherStub,
-    addLoginRepositoryStub
+    createUserLoginRepositoryStub
   }
 }
 
-describe('DbAddLogin UseCase', () => {
+describe('DbCreateUserLogin UseCase', () => {
   test('Should call Hasher with correct password', async () => {
     const { sut, hasherStub } = makeSut()
     const hashSpy = jest.spyOn(hasherStub, 'hash')
     const loginData = {
-      email: 'any_email@mail.com',
       password: 'valid_password',
       userId: 'valid_user_id'
     }
-    await sut.add(loginData)
+    await sut.create(loginData)
     expect(hashSpy).toHaveBeenCalledWith('valid_password')
   })
 
@@ -63,54 +61,48 @@ describe('DbAddLogin UseCase', () => {
     const { sut, hasherStub } = makeSut()
     jest.spyOn(hasherStub, 'hash').mockReturnValueOnce(Promise.reject(new Error()))
     const loginData = {
-      email: 'any_email@mail.com',
       password: 'valid_password',
       userId: 'valid_user_id'
     }
-    const promise = sut.add(loginData)
+    const promise = sut.create(loginData)
     await expect(promise).rejects.toThrow()
   })
 
-  test('Should call AddLoginRepository with correct values', async () => {
-    const { sut, addLoginRepositoryStub } = makeSut()
-    const addSpy = jest.spyOn(addLoginRepositoryStub, 'add')
+  test('Should call CreateUserLoginRepository with correct values', async () => {
+    const { sut, createUserLoginRepositoryStub } = makeSut()
+    const createSpy = jest.spyOn(createUserLoginRepositoryStub, 'create')
     const loginData = {
-      email: 'any_email@mail.com',
       password: 'valid_password',
       userId: 'valid_user_id'
     }
-    await sut.add(loginData)
-    expect(addSpy).toHaveBeenCalledWith({
-      email: 'any_email@mail.com',
+    await sut.create(loginData)
+    expect(createSpy).toHaveBeenCalledWith({
       password: 'hashed_password',
       userId: 'valid_user_id'
     })
   })
 
-  test('Should throw if AddLoginRepository throws', async () => {
-    const { sut, addLoginRepositoryStub } = makeSut()
-    jest.spyOn(addLoginRepositoryStub, 'add').mockReturnValueOnce(Promise.reject(new Error()))
+  test('Should throw if CreateUserLoginRepository throws', async () => {
+    const { sut, createUserLoginRepositoryStub } = makeSut()
+    jest.spyOn(createUserLoginRepositoryStub, 'create').mockReturnValueOnce(Promise.reject(new Error()))
     const loginData = {
-      email: 'any_email@mail.com',
       password: 'valid_password',
       userId: 'valid_user_id'
     }
-    const promise = sut.add(loginData)
+    const promise = sut.create(loginData)
     await expect(promise).rejects.toThrow()
   })
 
   test('Should return a Login on success', async () => {
     const { sut } = makeSut()
     const loginData = {
-      email: 'any_email@mail.com',
       password: 'valid_password',
       userId: 'valid_user_id'
     }
-    const login = await sut.add(loginData)
+    const login = await sut.create(loginData)
     expect(login).toEqual({
       id: 'any_id',
       userId: 'any_user_id',
-      email: 'any_email@mail.com',
       password: 'hashed_password',
       role: 'any_role',
       accessToken: 'any_token'

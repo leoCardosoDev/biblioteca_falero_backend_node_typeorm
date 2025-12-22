@@ -3,6 +3,7 @@ import 'reflect-metadata'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import env from '@/main/config/env'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
+import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
 
 TypeOrmHelper.connect({
   type: 'mysql',
@@ -11,7 +12,7 @@ TypeOrmHelper.connect({
   username: env.mysqlUser,
   password: env.mysqlPassword,
   database: env.mysqlDb,
-  entities: [UserTypeOrmEntity],
+  entities: [UserTypeOrmEntity, LoginTypeOrmEntity],
   synchronize: true
 })
   .then(async () => {

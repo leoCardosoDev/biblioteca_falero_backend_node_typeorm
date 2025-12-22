@@ -1,14 +1,14 @@
-import { AddLoginRepository } from '@/data/protocols/db/add-login-repository'
-import { AddLoginParams } from '@/domain/usecases/add-login'
+import { CreateUserLoginRepository } from '@/application/protocols/db/create-user-login-repository'
+import { CreateUserLoginParams } from '@/domain/usecases/create-user-login'
 import { LoginModel } from '@/domain/models/login'
-import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
-import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
+import { LoginTypeOrmEntity } from './entities/login-entity'
+import { TypeOrmHelper } from './typeorm-helper'
 
-export class LoginTypeOrmRepository implements AddLoginRepository {
-  async add(loginData: AddLoginParams): Promise<LoginModel> {
-    const loginRepo = await TypeOrmHelper.getRepository(LoginTypeOrmEntity)
-    const login = loginRepo.create(loginData)
-    await loginRepo.save(login)
+export class LoginTypeOrmRepository implements CreateUserLoginRepository {
+  async create(data: CreateUserLoginParams): Promise<LoginModel> {
+    const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+    const login = repository.create(data)
+    await repository.save(login)
     return login
   }
 }

@@ -10,7 +10,7 @@ export class AddUserController implements Controller {
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const error = this.validation.validate(httpRequest.body)
+      const error = this.validation.validate(httpRequest.body as Record<string, unknown>)
       if (error) {
         return badRequest(error)
       }

@@ -4,7 +4,8 @@ import { FastifyReply, FastifyRequest } from 'fastify'
 export const adaptRoute = (controller: Controller) => {
   return async (req: FastifyRequest, reply: FastifyReply) => {
     const httpRequest = {
-      body: req.body
+      body: req.body,
+      params: req.params
     }
     const httpResponse = await controller.handle(httpRequest)
     if (httpResponse.statusCode >= 200 && httpResponse.statusCode <= 299) {

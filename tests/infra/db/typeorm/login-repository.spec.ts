@@ -2,7 +2,7 @@ import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { LoginTypeOrmRepository } from '@/infra/db/typeorm/login-repository'
 import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
 import { DataSource } from 'typeorm'
-import { AddLoginParams } from '@/domain/usecases/add-login'
+import { CreateUserLoginParams } from '@/domain/usecases/create-user-login'
 
 describe('LoginTypeOrmRepository', () => {
   let dataSource: DataSource
@@ -31,17 +31,16 @@ describe('LoginTypeOrmRepository', () => {
 
   test('Should return an account on success', async () => {
     const sut = makeSut()
-    const addLoginParams: AddLoginParams = {
-      email: 'any_email@mail.com',
+    const createLoginParams: CreateUserLoginParams = {
       password: 'any_password',
       userId: 'any_user_id',
       role: 'any_role'
     }
-    const login = await sut.add(addLoginParams)
+    const login = await sut.create(createLoginParams)
     expect(login).toBeTruthy()
     expect(login.id).toBeTruthy()
-    expect(login.email).toBe('any_email@mail.com')
     expect(login.password).toBe('any_password')
     expect(login.userId).toBe('any_user_id')
+    expect(login.role).toBe('any_role')
   })
 })

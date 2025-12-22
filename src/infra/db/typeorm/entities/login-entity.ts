@@ -3,13 +3,11 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
 @Entity('logins')
 export class LoginTypeOrmEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string
+  id!: string
 
   @Column()
-  email: string
+  password!: string
 
-  @Column()
-  password: string
 
   @Column({ nullable: true })
   role?: string
@@ -18,6 +16,5 @@ export class LoginTypeOrmEntity {
   accessToken?: string
 
   @Column()
-  userId: string
+  userId!: string
 }
-
