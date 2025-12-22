@@ -4,3 +4,5 @@ coverage
 .env
 .DS_Store
 Thumbs.db
+.docker
+mysql_data
