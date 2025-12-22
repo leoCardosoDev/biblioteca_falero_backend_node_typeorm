@@ -1,3 +1,21 @@
 import 'module-alias/register'
+import 'reflect-metadata'
+import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
+import env from '@/main/config/env'
+import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
 
-console.log('Server started')
+TypeOrmHelper.connect({
+  type: 'mysql',
+  host: env.mysqlHost,
+  port: env.mysqlPort,
+  username: env.mysqlUser,
+  password: env.mysqlPassword,
+  database: env.mysqlDb,
+  entities: [UserTypeOrmEntity],
+  synchronize: true
+})
+  .then(async () => {
+    const app = (await import('./config/app')).default
+    app.listen(env.port, () => console.log(`Server running at http://localhost:${env.port}`))
+  })
+  .catch(console.error)
