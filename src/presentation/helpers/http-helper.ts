@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { ServerError } from '../errors'
-import { HttpResponse } from '../protocols/http'
+import { ServerError } from '@/presentation/errors'
+import { HttpResponse } from '@/presentation/protocols'
 
 export const badRequest = (error: Error): HttpResponse => ({
   statusCode: 400,
@@ -12,7 +11,7 @@ export const serverError = (error: Error): HttpResponse => ({
   body: new ServerError(error.stack as string)
 })
 
-export const ok = (data: any): HttpResponse => ({
+export const ok = (data: unknown): HttpResponse => ({
   statusCode: 200,
   body: data
 })
