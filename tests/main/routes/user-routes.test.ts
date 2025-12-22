@@ -30,8 +30,8 @@ describe('User Routes', () => {
       await request(app)
         .post('/api/users')
         .send({
-          name: 'Rodrigo',
-          email: 'rodrigo.manguinho@gmail.com',
+          name: 'Leo Cardoso',
+          email: 'leocardosodev@gmail.com',
           rg: '123456789',
           cpf: '12345678900'
         })
