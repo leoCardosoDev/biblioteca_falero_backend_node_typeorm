@@ -4,13 +4,15 @@
     "composite": true,
     "module": "commonjs",
     "types": [
-      "node"
+      "node",
+      "jest"
     ]
   },
   "include": [
     "eslint.config.mjs",
     "jest.config.js",
     "commitlint.config.js",
+    "src/**/*.ts",
     "tests/**/*.ts"
   ]
 }

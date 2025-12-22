@@ -7,7 +7,9 @@ module.exports = {
   coverageDirectory: 'coverage',
   testEnvironment: 'node',
   transform: {
-    '.+\\.ts$': 'ts-jest'
+    '.+\\.ts$': ['ts-jest', {
+      tsconfig: 'tsconfig.node.json'
+    }]
   },
   moduleNameMapper: {
     '@/tests/(.*)': '<rootDir>/tests/$1',
