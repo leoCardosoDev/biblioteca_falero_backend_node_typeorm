@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "module": "commonjs",
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "eslint.config.mjs",
+    "jest.config.js",
+    "commitlint.config.js",
+    "tests/**/*.ts"
+  ]
+}
