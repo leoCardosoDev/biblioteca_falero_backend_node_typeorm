@@ -1,7 +1,6 @@
-import { AddAccount, AddAccountParams } from '@/domain/usecases/add-account'
+import { AddAccount, AddAccountParams } from '@/domain/usecases'
 import { AccountModel } from '@/domain/models/account'
-import { Hasher } from '@/application/protocols/hasher'
-import { AddAccountRepository } from '@/application/protocols/add-account-repository'
+import { Hasher, AddAccountRepository } from '@/application/protocols'
 
 export class DbAddAccount implements AddAccount {
   constructor(
