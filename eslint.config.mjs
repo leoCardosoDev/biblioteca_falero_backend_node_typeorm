@@ -37,5 +37,11 @@ export default [
       "@typescript-eslint/no-var-requires": "off",
       "@typescript-eslint/no-require-imports": "off"
     }
+  },
+  {
+    files: ["**/config/routes.ts"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off"
+    }
   }
 ];
