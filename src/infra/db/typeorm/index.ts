@@ -1,5 +1,5 @@
 export * from './account-repository'
 export * from './typeorm-helper'
-export * from './entities/account'
-export * from './entities/log'
+export * from './entities/account-entity'
+export * from './entities/log-entity'
 export * from './log-repository'

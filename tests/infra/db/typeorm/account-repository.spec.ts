@@ -1,7 +1,7 @@
 import 'reflect-metadata'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { AccountRepository } from '@/infra/db/typeorm/account-repository'
-import { Account } from '@/infra/db/typeorm/entities/account'
+import { AccountTypeOrmEntity } from '@/infra/db/typeorm/entities/account-entity'
 
 describe('Account Repository', () => {
   beforeAll(async () => {
@@ -9,7 +9,7 @@ describe('Account Repository', () => {
       type: 'better-sqlite3',
       database: ':memory:',
       dropSchema: true,
-      entities: [Account],
+      entities: [AccountTypeOrmEntity],
       synchronize: true
     })
   })
@@ -19,7 +19,7 @@ describe('Account Repository', () => {
   })
 
   beforeEach(async () => {
-    const accountRepo = TypeOrmHelper.getRepository(Account)
+    const accountRepo = TypeOrmHelper.getRepository(AccountTypeOrmEntity)
     await accountRepo.clear()
   })
 

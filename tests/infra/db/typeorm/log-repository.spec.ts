@@ -1,7 +1,7 @@
 import 'reflect-metadata'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { LogRepository } from '@/infra/db/typeorm/log-repository'
-import { Log } from '@/infra/db/typeorm/entities/log'
+import { LogTypeOrmEntity } from '@/infra/db/typeorm/entities/log-entity'
 
 describe('Log Repository', () => {
   beforeAll(async () => {
@@ -9,7 +9,7 @@ describe('Log Repository', () => {
       type: 'better-sqlite3',
       database: ':memory:',
       dropSchema: true,
-      entities: [Log],
+      entities: [LogTypeOrmEntity],
       synchronize: true
     })
   })
@@ -19,14 +19,14 @@ describe('Log Repository', () => {
   })
 
   beforeEach(async () => {
-    const logRepo = TypeOrmHelper.getRepository(Log)
+    const logRepo = TypeOrmHelper.getRepository(LogTypeOrmEntity)
     await logRepo.clear()
   })
 
   test('Should create an error log on success', async () => {
     const sut = new LogRepository()
     await sut.logError('any_error')
-    const logRepo = TypeOrmHelper.getRepository(Log)
+    const logRepo = TypeOrmHelper.getRepository(LogTypeOrmEntity)
     const count = await logRepo.count()
     expect(count).toBe(1)
   })
