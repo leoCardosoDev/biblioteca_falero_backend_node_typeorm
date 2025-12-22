@@ -6,7 +6,7 @@ import { LoginModel } from '@/domain/models/login'
 
 const makeHasher = (): Hasher => {
   class HasherStub implements Hasher {
-    async hash(value: string): Promise<string> {
+    async hash(_value: string): Promise<string> {
       return Promise.resolve('hashed_password')
     }
   }
@@ -15,7 +15,7 @@ const makeHasher = (): Hasher => {
 
 const makeAddLoginRepository = (): AddLoginRepository => {
   class AddLoginRepositoryStub implements AddLoginRepository {
-    async add(loginData: AddLoginParams): Promise<LoginModel> {
+    async add(_loginData: AddLoginParams): Promise<LoginModel> {
       return Promise.resolve({
         id: 'any_id',
         userId: 'any_user_id',
