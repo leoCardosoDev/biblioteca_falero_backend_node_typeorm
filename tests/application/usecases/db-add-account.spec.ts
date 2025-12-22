@@ -1,12 +1,11 @@
 import { DbAddAccount } from '@/application/usecases/db-add-account'
-import { Hasher } from '@/application/protocols/hasher'
-import { AddAccountRepository } from '@/application/protocols/add-account-repository'
+import { Hasher, AddAccountRepository } from '@/application/protocols'
 import { AccountModel } from '@/domain/models/account'
-import { AddAccountParams } from '@/domain/usecases/add-account'
+import { AddAccountParams } from '@/domain/usecases'
 
 const makeHasher = (): Hasher => {
   class HasherStub implements Hasher {
-    async hash(plaintext: string): Promise<string> {
+    async hash(_plaintext: string): Promise<string> {
       return Promise.resolve('hashed_password')
     }
   }
@@ -15,7 +14,7 @@ const makeHasher = (): Hasher => {
 
 const makeAddAccountRepository = (): AddAccountRepository => {
   class AddAccountRepositoryStub implements AddAccountRepository {
-    async add(accountData: AddAccountParams): Promise<AccountModel> {
+    async add(_accountData: AddAccountParams): Promise<AccountModel> {
       const fakeAccount = {
         id: 'valid_id',
         name: 'valid_name',
