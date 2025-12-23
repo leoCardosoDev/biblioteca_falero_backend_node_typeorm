@@ -53,3 +53,33 @@ Cria credenciais de acesso para o usuário existente.
 
 ### 2.3 Error: Invalid User ID (Server Error or 400 depending on validation)
 Se o ID na URL for inválido.
+
+---
+
+## 3. Login (Authentication)
+
+**Endpoint**: `POST http://localhost:5050/api/login`
+
+### 3.1 Success (200 OK)
+Retorna o token de acesso e o nome do usuário.
+
+**Body (JSON)**:
+```json
+{
+  "email": "leocardosodev@gmail.com",
+  "password": "mySecurePassword123"
+}
+```
+
+**Response (JSON)**:
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "name": "Leo Cardoso"
+}
+```
+
+### 3.2 Error: Invalid Credentials (401 Unauthorized)
+Tente com senha ou email errados.
+
+---

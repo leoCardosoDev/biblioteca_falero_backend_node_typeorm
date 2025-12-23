@@ -1,6 +1,7 @@
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { LoginTypeOrmRepository } from '@/infra/db/typeorm/login-repository'
 import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
+import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
 import { DataSource } from 'typeorm'
 import { CreateUserLoginParams } from '@/domain/usecases/create-user-login'
 
@@ -13,7 +14,7 @@ describe('LoginTypeOrmRepository', () => {
       database: ':memory:',
       dropSchema: true,
       synchronize: true,
-      entities: [LoginTypeOrmEntity]
+      entities: [LoginTypeOrmEntity, UserTypeOrmEntity]
     })
   })
 
@@ -46,9 +47,18 @@ describe('LoginTypeOrmRepository', () => {
 
   test('Should return an account on loadByEmail success', async () => {
     const sut = makeSut()
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = userRepo.create({
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      rg: 'any_rg',
+      cpf: 'any_cpf'
+    })
+    await userRepo.save(user)
+
     const createLoginParams: CreateUserLoginParams = {
       password: 'hashed_password',
-      userId: 'any_email@mail.com',
+      userId: user.id,
       role: 'admin'
     }
     await sut.create(createLoginParams)
@@ -56,7 +66,7 @@ describe('LoginTypeOrmRepository', () => {
     expect(account).toBeTruthy()
     expect(account?.id).toBeTruthy()
     expect(account?.password).toBe('hashed_password')
-    expect(account?.userId).toBe('any_email@mail.com')
+    expect(account?.userId).toBe(user.id)
   })
 
   test('Should return undefined if loadByEmail fails', async () => {
@@ -67,15 +77,24 @@ describe('LoginTypeOrmRepository', () => {
 
   test('Should update the account accessToken on updateAccessToken success', async () => {
     const sut = makeSut()
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = userRepo.create({
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      rg: 'any_rg',
+      cpf: 'any_cpf'
+    })
+    await userRepo.save(user)
+
     const createLoginParams: CreateUserLoginParams = {
       password: 'any_password',
-      userId: 'any_user_id',
+      userId: user.id,
       role: 'any_role'
     }
     const login = await sut.create(createLoginParams)
     expect(login.accessToken).toBeFalsy()
     await sut.updateAccessToken(login.id, 'any_token')
-    const account = await sut.loadByEmail('any_user_id')
+    const account = await sut.loadByEmail('any_email@mail.com')
     expect(account?.accessToken).toBe('any_token')
   })
 })
