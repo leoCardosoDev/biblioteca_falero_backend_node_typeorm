@@ -28,7 +28,7 @@ export class DbAuthentication implements Authentication {
 
     return {
       accessToken,
-      name: account.userId
+      name: account.name ?? account.userId
     }
   }
 }

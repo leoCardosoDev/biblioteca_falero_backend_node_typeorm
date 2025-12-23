@@ -18,7 +18,8 @@ const makeFakeAccount = (): LoginModel => ({
   id: 'any_id',
   userId: 'any_user_id',
   password: 'hashed_password',
-  role: 'admin'
+  role: 'admin',
+  name: 'any_name'
 })
 
 const makeFakeAuthentication = (): AuthenticationParams => ({
@@ -158,7 +159,7 @@ describe('DbAuthentication UseCase', () => {
     const result = await sut.auth(makeFakeAuthentication())
     expect(result).toEqual({
       accessToken: 'any_token',
-      name: 'any_user_id'
+      name: 'any_name'
     })
   })
 })
