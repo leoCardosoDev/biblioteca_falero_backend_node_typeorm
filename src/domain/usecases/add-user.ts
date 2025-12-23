@@ -5,8 +5,9 @@ export interface AddUserParams {
   email: string
   rg: string
   cpf: string
+  dataNascimento: string
 }
 
 export interface AddUser {
-  add: (user: AddUserParams) => Promise<UserModel>
+  add: (user: AddUserParams) => Promise<UserModel | Error>
 }

@@ -2,17 +2,18 @@ import { AddUserController } from '@/presentation/controllers/add-user-controlle
 import { AddUser, AddUserParams } from '@/domain/usecases/add-user'
 import { UserModel } from '@/domain/models/user'
 import { Validation } from '@/presentation/protocols/validation'
-import { ServerError, MissingParamError } from '@/presentation/errors'
+import { ServerError, MissingParamError, EmailInUseError, CpfInUseError } from '@/presentation/errors'
 
 const makeAddUser = (): AddUser => {
   class AddUserStub implements AddUser {
-    async add(_data: AddUserParams): Promise<UserModel> {
+    async add(_data: AddUserParams): Promise<UserModel | Error> {
       const fakeUser: UserModel = {
         id: 'valid_id',
         name: 'valid_name',
         email: 'valid_email@mail.com',
         rg: 'valid_rg',
-        cpf: 'valid_cpf'
+        cpf: '12345678900',
+        dataNascimento: '1990-01-15'
       }
       return Promise.resolve(fakeUser)
     }
@@ -51,7 +52,8 @@ const makeFakeRequest = () => ({
     name: 'any_name',
     email: 'any_email@mail.com',
     rg: 'any_rg',
-    cpf: 'any_cpf'
+    cpf: '123.456.789-00',
+    dataNascimento: '1990-01-15'
   }
 })
 
@@ -77,7 +79,13 @@ describe('AddUser Controller', () => {
     const addSpy = jest.spyOn(addUserStub, 'add')
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
-    expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
+    expect(addSpy).toHaveBeenCalledWith({
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      rg: 'any_rg',
+      cpf: '12345678900',
+      dataNascimento: '1990-01-15'
+    })
   })
 
   test('Should return 500 if AddUser throws', async () => {
@@ -99,7 +107,8 @@ describe('AddUser Controller', () => {
       name: 'valid_name',
       email: 'valid_email@mail.com',
       rg: 'valid_rg',
-      cpf: 'valid_cpf'
+      cpf: '12345678900',
+      dataNascimento: '1990-01-15'
     })
   })
 
@@ -111,5 +120,21 @@ describe('AddUser Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toBeInstanceOf(ServerError)
+  })
+
+  test('Should return 403 if AddUser returns EmailInUseError', async () => {
+    const { sut, addUserStub } = makeSut()
+    jest.spyOn(addUserStub, 'add').mockReturnValueOnce(Promise.resolve(new EmailInUseError()))
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse.statusCode).toBe(403)
+    expect(httpResponse.body).toEqual(new EmailInUseError())
+  })
+
+  test('Should return 403 if AddUser returns CpfInUseError', async () => {
+    const { sut, addUserStub } = makeSut()
+    jest.spyOn(addUserStub, 'add').mockReturnValueOnce(Promise.resolve(new CpfInUseError()))
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse.statusCode).toBe(403)
+    expect(httpResponse.body).toEqual(new CpfInUseError())
   })
 })

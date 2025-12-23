@@ -1,6 +1,6 @@
 import { Controller, HttpRequest, HttpResponse, Validation } from '@/presentation/protocols'
-import { badRequest, serverError, ok } from '@/presentation/helpers'
-import { AddUser, AddUserParams } from '@/domain/usecases/add-user'
+import { badRequest, serverError, ok, forbidden } from '@/presentation/helpers'
+import { AddUser } from '@/domain/usecases/add-user'
 
 export class AddUserController implements Controller {
   constructor(
@@ -14,8 +14,24 @@ export class AddUserController implements Controller {
       if (error) {
         return badRequest(error)
       }
-      const user = await this.addUser.add(httpRequest.body as AddUserParams)
-      return ok(user)
+      const { name, email, rg, cpf, dataNascimento } = httpRequest.body as {
+        name: string
+        email: string
+        rg: string
+        cpf: string
+        dataNascimento: string
+      }
+      const userOrError = await this.addUser.add({
+        name,
+        email,
+        rg,
+        cpf: cpf.replace(/\D/g, ''),
+        dataNascimento
+      })
+      if (userOrError instanceof Error) {
+        return forbidden(userOrError)
+      }
+      return ok(userOrError)
     } catch (error) {
       return serverError(error as Error)
     }

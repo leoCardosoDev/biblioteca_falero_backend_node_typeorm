@@ -6,3 +6,4 @@ coverage
 Thumbs.db
 .docker
 mysql_data
+manual-api-test.md
