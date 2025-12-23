@@ -4,4 +4,5 @@ export type LoginModel = {
   password: string
   role?: string
   accessToken?: string
+  name?: string
 }

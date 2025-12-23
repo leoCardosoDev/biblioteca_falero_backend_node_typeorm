@@ -21,7 +21,9 @@ export class LoginTypeOrmRepository implements CreateUserLoginRepository, LoadAc
     if (user) {
       const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
       const login = await repository.findOne({ where: { userId: user.id } })
-      return login ?? undefined
+      if (login) {
+        return { ...login, name: user.name }
+      }
     }
     return undefined
   }
