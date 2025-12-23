@@ -12,12 +12,12 @@ export class LoginController implements Controller {
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const error = this.validation.validate(httpRequest.body)
+      const error = this.validation.validate(httpRequest.body as Record<string, unknown>)
       if (error) {
         return badRequest(error)
       }
 
-      const { email, password } = httpRequest.body
+      const { email, password } = httpRequest.body as { email: string; password: string }
       const authenticationModel = await this.authentication.auth({ email, password })
 
       if (!authenticationModel) {
