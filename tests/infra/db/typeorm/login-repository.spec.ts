@@ -75,6 +75,20 @@ describe('LoginTypeOrmRepository', () => {
     expect(account).toBeUndefined()
   })
 
+  test('Should return undefined if loadByEmail finds user but not login', async () => {
+    const sut = makeSut()
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = userRepo.create({
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      rg: 'any_rg',
+      cpf: 'any_cpf'
+    })
+    await userRepo.save(user)
+    const account = await sut.loadByEmail('any_email@mail.com')
+    expect(account).toBeUndefined()
+  })
+
   test('Should update the account accessToken on updateAccessToken success', async () => {
     const sut = makeSut()
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
