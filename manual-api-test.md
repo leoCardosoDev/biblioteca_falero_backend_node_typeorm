@@ -4,24 +4,53 @@
 
 **Endpoint**: `POST http://localhost:5050/api/users`
 
-### 1.1 Success (200 OK)
-Cria um novo usuário. Guarde o ID retornado.
-
-**Body (JSON)**:
+### 2. Add User (Success)
+**Endpoint:** `POST http://localhost:5050/api/users`
+**Payload:**
 ```json
 {
-  "name": "Leo Cardoso",
-  "email": "leocardosodev@gmail.com",
-  "rg": "12365478",
-  "cpf": "12345678901"
+  "name": "Maria Silva",
+  "email": "maria.silva@example.com",
+  "rg": "123456789",
+  "cpf": "123.456.789-00",
+  "dataNascimento": "1990-05-20"
+}
+```
+**Expected Response:** `200 OK`
+**Body:** JSON object with the created user (including ID).
+
+### 3. Add User (Duplicate Email)
+**Endpoint:** `POST http://localhost:5050/api/users`
+**Payload:** (Same as above)
+**Expected Response:** `403 Forbidden`
+**Body:**
+```json
+{
+  "name": "EmailInUseError",
+  "message": "The received email is already in use"
 }
 ```
 
-### 1.2 Error: Duplicate Email (403 Forbidden)
-Tente enviar o mesmo email novamente.
-
-### 1.3 Error: Duplicate CPF (403 Forbidden)
-Tente enviar o mesmo CPF novamente.
+### 4. Add User (Duplicate CPF)
+**Endpoint:** `POST http://localhost:5050/api/users`
+**Payload:** (Change email, keep CPF same as user 1)
+```json
+{
+  "name": "Maria Silva",
+  "email": "maria.other@example.com",
+  "rg": "123456789",
+  "cpf": "123.456.789-00",
+  "dataNascimento": "1990-05-20"
+}
+```
+**Expected Response:** `403 Forbidden`
+**Body:**
+```json
+{
+  "name": "CpfInUseError",
+  "message": "The received CPF is already in use"
+}
+```
 
 ---
 

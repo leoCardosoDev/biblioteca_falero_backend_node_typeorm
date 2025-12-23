@@ -6,6 +6,6 @@ import { UserTypeOrmRepository } from '@/infra/db/typeorm/user-repository'
 
 export const makeAddUserController = (): Controller => {
   const userTypeOrmRepository = new UserTypeOrmRepository()
-  const dbAddUser = new DbAddUser(userTypeOrmRepository)
+  const dbAddUser = new DbAddUser(userTypeOrmRepository, userTypeOrmRepository, userTypeOrmRepository)
   return new AddUserController(makeAddUserValidation(), dbAddUser)
 }

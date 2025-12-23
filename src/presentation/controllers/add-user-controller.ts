@@ -1,5 +1,5 @@
 import { Controller, HttpRequest, HttpResponse, Validation } from '@/presentation/protocols'
-import { badRequest, serverError, ok } from '@/presentation/helpers'
+import { badRequest, serverError, ok, forbidden } from '@/presentation/helpers'
 import { AddUser } from '@/domain/usecases/add-user'
 
 export class AddUserController implements Controller {
@@ -21,14 +21,17 @@ export class AddUserController implements Controller {
         cpf: string
         dataNascimento: string
       }
-      const user = await this.addUser.add({
+      const userOrError = await this.addUser.add({
         name,
         email,
         rg,
         cpf,
         dataNascimento: new Date(dataNascimento)
       })
-      return ok(user)
+      if (userOrError instanceof Error) {
+        return forbidden(userOrError)
+      }
+      return ok(userOrError)
     } catch (error) {
       return serverError(error as Error)
     }

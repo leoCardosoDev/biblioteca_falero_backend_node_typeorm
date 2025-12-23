@@ -2,11 +2,11 @@ import { AddUserController } from '@/presentation/controllers/add-user-controlle
 import { AddUser, AddUserParams } from '@/domain/usecases/add-user'
 import { UserModel } from '@/domain/models/user'
 import { Validation } from '@/presentation/protocols/validation'
-import { ServerError, MissingParamError } from '@/presentation/errors'
+import { ServerError, MissingParamError, EmailInUseError, CpfInUseError } from '@/presentation/errors'
 
 const makeAddUser = (): AddUser => {
   class AddUserStub implements AddUser {
-    async add(_data: AddUserParams): Promise<UserModel> {
+    async add(_data: AddUserParams): Promise<UserModel | Error> {
       const fakeUser: UserModel = {
         id: 'valid_id',
         name: 'valid_name',
@@ -120,5 +120,21 @@ describe('AddUser Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toBeInstanceOf(ServerError)
+  })
+
+  test('Should return 403 if AddUser returns EmailInUseError', async () => {
+    const { sut, addUserStub } = makeSut()
+    jest.spyOn(addUserStub, 'add').mockReturnValueOnce(Promise.resolve(new EmailInUseError()))
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse.statusCode).toBe(403)
+    expect(httpResponse.body).toEqual(new EmailInUseError())
+  })
+
+  test('Should return 403 if AddUser returns CpfInUseError', async () => {
+    const { sut, addUserStub } = makeSut()
+    jest.spyOn(addUserStub, 'add').mockReturnValueOnce(Promise.resolve(new CpfInUseError()))
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse.statusCode).toBe(403)
+    expect(httpResponse.body).toEqual(new CpfInUseError())
   })
 })
