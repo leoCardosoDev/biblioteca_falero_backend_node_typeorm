@@ -5,7 +5,7 @@ export interface AddUserParams {
   email: string
   rg: string
   cpf: string
-  dataNascimento: Date
+  dataNascimento: string
 }
 
 export interface AddUser {

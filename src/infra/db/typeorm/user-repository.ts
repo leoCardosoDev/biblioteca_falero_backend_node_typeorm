@@ -31,7 +31,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
       email: user.email,
       rg: user.rg,
       cpf: user.cpf,
-      dataNascimento: new Date(user.dataNascimento)
+      dataNascimento: user.dataNascimento
     }
   }
 
@@ -45,7 +45,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
       email: user.email,
       rg: user.rg,
       cpf: user.cpf,
-      dataNascimento: new Date(user.dataNascimento)
+      dataNascimento: user.dataNascimento
     }
   }
 }

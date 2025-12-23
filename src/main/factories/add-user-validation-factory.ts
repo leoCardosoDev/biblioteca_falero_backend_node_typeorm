@@ -1,4 +1,4 @@
-import { ValidationComposite, RequiredFieldValidation, EmailValidation } from '@/validation/validators'
+import { ValidationComposite, RequiredFieldValidation, EmailValidation, DateValidation } from '@/validation/validators'
 import { Validation } from '@/presentation/protocols/validation'
 import { EmailValidatorAdapter } from '@/infra/validators/email-validator-adapter'
 
@@ -8,5 +8,6 @@ export const makeAddUserValidation = (): ValidationComposite => {
     validations.push(new RequiredFieldValidation(field))
   }
   validations.push(new EmailValidation('email', new EmailValidatorAdapter()))
+  validations.push(new DateValidation('dataNascimento'))
   return new ValidationComposite(validations)
 }

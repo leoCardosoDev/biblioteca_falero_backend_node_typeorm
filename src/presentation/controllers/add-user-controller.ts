@@ -25,8 +25,8 @@ export class AddUserController implements Controller {
         name,
         email,
         rg,
-        cpf,
-        dataNascimento: new Date(dataNascimento)
+        cpf: cpf.replace(/\D/g, ''),
+        dataNascimento
       })
       if (userOrError instanceof Error) {
         return forbidden(userOrError)

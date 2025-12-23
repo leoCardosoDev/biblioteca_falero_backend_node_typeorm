@@ -17,7 +17,13 @@ export class UserTypeOrmEntity {
   @Column({ unique: true })
   cpf!: string
 
-  @Column({ type: 'date' })
-  dataNascimento!: Date
+  @Column({
+    type: 'date',
+    transformer: {
+      to: (value: string) => value,
+      from: (value: Date | string) => typeof value === 'string' ? value : value.toISOString().split('T')[0]
+    }
+  })
+  dataNascimento!: string
 }
 
