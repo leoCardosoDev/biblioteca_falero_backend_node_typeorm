@@ -8,6 +8,8 @@ export interface HttpRequest {
   headers?: HttpHeaders
   params?: unknown
   query?: unknown
+  userId?: string
+  role?: string
 }
 
 export interface HttpResponse {
