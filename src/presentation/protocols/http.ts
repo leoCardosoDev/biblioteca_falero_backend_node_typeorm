@@ -1,6 +1,11 @@
+export type HttpHeaders = {
+  authorization?: string
+  [key: string]: string | undefined
+}
+
 export interface HttpRequest {
   body?: unknown
-  headers?: unknown
+  headers?: HttpHeaders
   params?: unknown
   query?: unknown
 }
