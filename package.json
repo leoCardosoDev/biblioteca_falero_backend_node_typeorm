@@ -19,7 +19,8 @@
     "build": "rimraf dist && tsc -p tsconfig.app.json",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
-    "prepare": "husky"
+    "prepare": "husky",
+    "seed:admin": "npm run build && node dist/main/seeds/admin-seed.js"
   },
   "keywords": [],
   "author": "",

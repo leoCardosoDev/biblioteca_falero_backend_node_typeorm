@@ -1,114 +1,142 @@
 # Postman Scenarios (Fastify Clean Arch)
 
-## 1. Create User (AddUser)
+## ⚠️ Autenticação Obrigatória
+
+Todas as rotas (exceto `/login`) exigem autenticação via **Bearer Token**.
+
+### Como obter o token:
+1. Execute o **Seed Admin** (ver seção abaixo)
+2. Faça login com o Admin
+3. Use o token retornado no header: `Authorization: Bearer <token>`
+
+---
+
+## 0. Seed Admin (Primeiro Acesso)
+
+Execute o comando para criar o usuário Admin padrão:
+
+```bash
+npm run seed:admin
+```
+
+**Usuário Admin criado:**
+```json
+{
+  "name": "Leo Cardoso",
+  "email": "leocardosodev@gmail.com",
+  "rg": "12345678",
+  "cpf": "12345678901",
+  "dataNascimento": "1990-05-20",
+  "role": "ADMIN",
+  "password": "admin123"
+}
+```
+
+---
+
+## 1. Login (Público)
+
+**Endpoint**: `POST http://localhost:5050/api/login`
+
+### 1.1 Login como Admin
+**Body (JSON)**:
+```json
+{
+  "email": "leocardosodev@gmail.com",
+  "password": "admin123"
+}
+```
+
+**Response (200 OK)**:
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "name": "Leo Cardoso",
+  "role": "ADMIN"
+}
+```
+
+> 📋 **Copie o `accessToken`** para usar nas próximas requisições.
+
+### 1.2 Error: Invalid Credentials (401 Unauthorized)
+Tente com senha ou email errados.
+
+---
+
+## 2. Create User (🔒 LIBRARIAN ou ADMIN)
 
 **Endpoint**: `POST http://localhost:5050/api/users`
 
-### 2. Add User (Success)
-**Endpoint:** `POST http://localhost:5050/api/users`
+**Headers**:
+```
+Authorization: Bearer <accessToken>
+```
+
+### 2.1 Add User (Success)
 **Payload:**
 ```json
 {
   "name": "Maria Silva",
   "email": "maria.silva@example.com",
   "rg": "123456789",
-  "cpf": "123.456.789-00",
+  "cpf": "12345678900",
   "dataNascimento": "1990-05-20"
 }
 ```
 **Expected Response:** `200 OK`
-**Body:** JSON object with the created user (including ID).
 
-### 3. Add User (Duplicate Email)
-**Endpoint:** `POST http://localhost:5050/api/users`
-**Payload:** (Same as above)
+### 2.2 Add User (Duplicate Email)
 **Expected Response:** `403 Forbidden`
-**Body:**
 ```json
 {
-  "name": "EmailInUseError",
-  "message": "The received email is already in use"
+  "error": "The received email is already in use"
 }
 ```
 
-### 4. Add User (Duplicate CPF)
-**Endpoint:** `POST http://localhost:5050/api/users`
-**Payload:** (Change email, keep CPF same as user 1)
-```json
-{
-  "name": "Maria Silva",
-  "email": "maria.other@example.com",
-  "rg": "123456789",
-  "cpf": "123.456.789-00",
-  "dataNascimento": "1990-05-20"
-}
-```
+### 2.3 Add User (No Token)
 **Expected Response:** `403 Forbidden`
-**Body:**
 ```json
 {
-  "name": "CpfInUseError",
-  "message": "The received CPF is already in use"
+  "error": "Access denied"
 }
 ```
 
 ---
 
-## 2. Create Login for User (CreateUserLogin)
+## 3. Create Login for User (🔒 LIBRARIAN ou ADMIN)
 
 **Endpoint**: `POST http://localhost:5050/api/users/:userId/login`
 
 > ⚠️ Substitua `:userId` pelo ID retornado na criação do usuário.
 
-### 2.1 Success (200 OK)
-Cria credenciais de acesso para o usuário existente.
+**Headers**:
+```
+Authorization: Bearer <accessToken>
+```
 
-**URL Params**:
-- `userId`: `[Cole o ID aqui]`
-
+### 3.1 Success (200 OK)
 **Body (JSON)**:
 ```json
 {
-  "password": "mySecurePassword123"
+  "password": "userPassword123"
 }
 ```
-*Nota: Não é necessário enviar o email, ele já está vinculado ao usuário.*
 
-### 2.2 Error: Missing Password (400 Bad Request)
+### 3.2 Error: Missing Password (400 Bad Request)
 **Body (JSON)**:
 ```json
 {}
 ```
 
-### 2.3 Error: Invalid User ID (Server Error or 400 depending on validation)
-Se o ID na URL for inválido.
+### 3.3 Error: Access Denied (403 Forbidden)
+Sem token ou com role MEMBER.
 
 ---
 
-## 3. Login (Authentication)
+## Resumo de Permissões
 
-**Endpoint**: `POST http://localhost:5050/api/login`
-
-### 3.1 Success (200 OK)
-Retorna o token de acesso e o nome do usuário.
-
-**Body (JSON)**:
-```json
-{
-  "email": "leocardosodev@gmail.com",
-  "password": "mySecurePassword123"
-}
-```
-
-**Response (JSON)**:
-```json
-{
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "name": "Leo Cardoso"
-}
-```
-
-### 3.2 Error: Invalid Credentials (401 Unauthorized)
-Tente com senha ou email errados.
-
----
+| Rota | Método | Permissão |
+|------|--------|-----------|
+| `/api/login` | POST | 🌐 Pública |
+| `/api/users` | POST | 🔒 LIBRARIAN, ADMIN |
+| `/api/users/:userId/login` | POST | 🔒 LIBRARIAN, ADMIN |
