@@ -6,6 +6,7 @@ export type AuthenticationParams = {
 export type AuthenticationModel = {
   accessToken: string
   name: string
+  role: string
 }
 
 export interface Authentication {

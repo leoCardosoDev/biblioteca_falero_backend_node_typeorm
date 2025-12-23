@@ -1,12 +1,14 @@
 import jwt from 'jsonwebtoken'
+
+import { Role } from '@/domain/models'
 import { JwtAdapter } from './jwt-adapter'
 
 jest.mock('jsonwebtoken', () => ({
   sign(): string {
     return 'any_token'
   },
-  verify(): { id: string } {
-    return { id: 'any_value' }
+  verify(): { id: string, role: string } {
+    return { id: 'any_value', role: 'MEMBER' }
   }
 }))
 
@@ -19,13 +21,13 @@ describe('Jwt Adapter', () => {
     test('Should call sign with correct values', async () => {
       const sut = makeSut()
       const signSpy = jest.spyOn(jwt, 'sign')
-      await sut.encrypt('any_id')
-      expect(signSpy).toHaveBeenCalledWith({ id: 'any_id' }, 'secret')
+      await sut.encrypt({ id: 'any_id', role: Role.ADMIN })
+      expect(signSpy).toHaveBeenCalledWith({ id: 'any_id', role: 'ADMIN' }, 'secret')
     })
 
     test('Should return a token on sign success', async () => {
       const sut = makeSut()
-      const accessToken = await sut.encrypt('any_id')
+      const accessToken = await sut.encrypt({ id: 'any_id', role: Role.ADMIN })
       expect(accessToken).toBe('any_token')
     })
 
@@ -34,7 +36,7 @@ describe('Jwt Adapter', () => {
       jest.spyOn(jwt, 'sign').mockImplementationOnce(() => {
         throw new Error()
       })
-      const promise = sut.encrypt('any_id')
+      const promise = sut.encrypt({ id: 'any_id', role: Role.ADMIN })
       await expect(promise).rejects.toThrow()
     })
   })
@@ -47,10 +49,10 @@ describe('Jwt Adapter', () => {
       expect(verifySpy).toHaveBeenCalledWith('any_token', 'secret')
     })
 
-    test('Should return a value on verify success', async () => {
+    test('Should return TokenPayload on verify success', async () => {
       const sut = makeSut()
       const value = await sut.decrypt('any_token')
-      expect(value).toBe('any_value')
+      expect(value).toEqual({ id: 'any_value', role: Role.MEMBER })
     })
 
     test('Should throw if verify throws', async () => {

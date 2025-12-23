@@ -4,6 +4,7 @@ import { Encrypter } from '@/application/protocols/cryptography/encrypter'
 import { LoadAccountByEmailRepository } from '@/application/protocols/db/load-account-by-email-repository'
 import { UpdateAccessTokenRepository } from '@/application/protocols/db/update-access-token-repository'
 import { LoginModel } from '@/domain/models/login'
+import { TokenPayload, Role } from '@/domain/models'
 import { DbAuthentication } from './db-authentication'
 
 type SutTypes = {
@@ -18,7 +19,7 @@ const makeFakeAccount = (): LoginModel => ({
   id: 'any_id',
   userId: 'any_user_id',
   password: 'hashed_password',
-  role: 'admin',
+  role: 'ADMIN',
   name: 'any_name'
 })
 
@@ -47,7 +48,7 @@ const makeHashComparer = (): HashComparer => {
 
 const makeEncrypter = (): Encrypter => {
   class EncrypterStub implements Encrypter {
-    async encrypt(_plaintext: string): Promise<string> {
+    async encrypt(_payload: TokenPayload): Promise<string> {
       return await Promise.resolve('any_token')
     }
   }
@@ -126,11 +127,11 @@ describe('DbAuthentication UseCase', () => {
     expect(result).toBeUndefined()
   })
 
-  test('Should call Encrypter with correct id', async () => {
+  test('Should call Encrypter with correct payload', async () => {
     const { sut, encrypterStub } = makeSut()
     const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
     await sut.auth(makeFakeAuthentication())
-    expect(encryptSpy).toHaveBeenCalledWith('any_id')
+    expect(encryptSpy).toHaveBeenCalledWith({ id: 'any_id', role: Role.ADMIN })
   })
 
   test('Should throw if Encrypter throws', async () => {
@@ -159,7 +160,8 @@ describe('DbAuthentication UseCase', () => {
     const result = await sut.auth(makeFakeAuthentication())
     expect(result).toEqual({
       accessToken: 'any_token',
-      name: 'any_name'
+      name: 'any_name',
+      role: Role.ADMIN
     })
   })
 })

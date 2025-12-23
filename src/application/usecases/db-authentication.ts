@@ -1,4 +1,5 @@
 import { Authentication, AuthenticationParams, AuthenticationModel } from '@/domain/usecases/authentication'
+import { Role } from '@/domain/models'
 import { LoadAccountByEmailRepository } from '@/application/protocols/db/load-account-by-email-repository'
 import { HashComparer } from '@/application/protocols/cryptography/hash-comparer'
 import { Encrypter } from '@/application/protocols/cryptography/encrypter'
@@ -23,12 +24,14 @@ export class DbAuthentication implements Authentication {
       return undefined
     }
 
-    const accessToken = await this.encrypter.encrypt(account.id)
+    const role = (account.role as Role) ?? Role.MEMBER
+    const accessToken = await this.encrypter.encrypt({ id: account.id, role })
     await this.updateAccessTokenRepository.updateAccessToken(account.id, accessToken)
 
     return {
       accessToken,
-      name: account.name ?? account.userId
+      name: account.name ?? account.userId,
+      role
     }
   }
 }

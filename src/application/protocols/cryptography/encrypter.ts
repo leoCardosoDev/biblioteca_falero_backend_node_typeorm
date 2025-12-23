@@ -1,3 +1,5 @@
+import { TokenPayload } from '@/domain/models'
+
 export interface Encrypter {
-  encrypt: (plaintext: string) => Promise<string>
+  encrypt: (payload: TokenPayload) => Promise<string>
 }
