@@ -28,7 +28,7 @@ npm run seed:admin
   "cpf": "12345678901",
   "dataNascimento": "1990-05-20",
   "role": "ADMIN",
-  "password": "admin123"
+  "password": "any_password"
 }
 ```
 
@@ -43,7 +43,7 @@ npm run seed:admin
 ```json
 {
   "email": "leocardosodev@gmail.com",
-  "password": "admin123"
+  "password": "any_password"
 }
 ```
 
@@ -79,7 +79,7 @@ Authorization: Bearer <accessToken>
   "name": "Maria Silva",
   "email": "maria.silva@example.com",
   "rg": "123456789",
-  "cpf": "12345678900",
+  "cpf": "123.456.789-00",
   "dataNascimento": "1990-05-20"
 }
 ```

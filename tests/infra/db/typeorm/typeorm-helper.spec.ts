@@ -74,6 +74,11 @@ describe('TypeOrmHelper', () => {
       expect(initializeSpy).toHaveBeenCalledTimes(2)
     })
 
+    test('Should throw error if retries is 0 (loop skipped)', async () => {
+      const promise = TypeOrmHelper.connect({} as DataSourceOptions, 0)
+      await expect(promise).rejects.toThrow(new Error('Failed to connect to database'))
+    })
+
     test('Should return client after loop completes', async () => {
       initializeSpy.mockResolvedValueOnce(undefined)
       const client = await TypeOrmHelper.connect({} as DataSourceOptions, 1, 1000)

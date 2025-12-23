@@ -15,7 +15,7 @@ const adminUser = {
   dataNascimento: '1990-05-20'
 }
 
-const adminPassword = 'admin123'
+const adminPassword = '_Falero@dmin2025'
 const adminRole = 'ADMIN'
 
 const run = async (): Promise<void> => {

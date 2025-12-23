@@ -17,7 +17,7 @@ export const TypeOrmHelper = {
         await new Promise(resolve => setTimeout(resolve, delay))
       }
     }
-    return this.client
+    throw new Error('Failed to connect to database')
   },
 
   async disconnect(): Promise<void> {
