@@ -29,7 +29,7 @@ describe('LoginTypeOrmRepository', () => {
     return new LoginTypeOrmRepository()
   }
 
-  test('Should return an account on success', async () => {
+  test('Should return an account on create success', async () => {
     const sut = makeSut()
     const createLoginParams: CreateUserLoginParams = {
       password: 'any_password',
@@ -42,5 +42,40 @@ describe('LoginTypeOrmRepository', () => {
     expect(login.password).toBe('any_password')
     expect(login.userId).toBe('any_user_id')
     expect(login.role).toBe('any_role')
+  })
+
+  test('Should return an account on loadByEmail success', async () => {
+    const sut = makeSut()
+    const createLoginParams: CreateUserLoginParams = {
+      password: 'hashed_password',
+      userId: 'any_email@mail.com',
+      role: 'admin'
+    }
+    await sut.create(createLoginParams)
+    const account = await sut.loadByEmail('any_email@mail.com')
+    expect(account).toBeTruthy()
+    expect(account?.id).toBeTruthy()
+    expect(account?.password).toBe('hashed_password')
+    expect(account?.userId).toBe('any_email@mail.com')
+  })
+
+  test('Should return undefined if loadByEmail fails', async () => {
+    const sut = makeSut()
+    const account = await sut.loadByEmail('any_email@mail.com')
+    expect(account).toBeUndefined()
+  })
+
+  test('Should update the account accessToken on updateAccessToken success', async () => {
+    const sut = makeSut()
+    const createLoginParams: CreateUserLoginParams = {
+      password: 'any_password',
+      userId: 'any_user_id',
+      role: 'any_role'
+    }
+    const login = await sut.create(createLoginParams)
+    expect(login.accessToken).toBeFalsy()
+    await sut.updateAccessToken(login.id, 'any_token')
+    const account = await sut.loadByEmail('any_user_id')
+    expect(account?.accessToken).toBe('any_token')
   })
 })
