@@ -55,6 +55,20 @@ describe('Jwt Adapter', () => {
       expect(value).toEqual({ id: 'any_value', role: Role.MEMBER })
     })
 
+    test('Should return undefined if decoded id is missing', async () => {
+      const sut = makeSut()
+      jest.spyOn(jwt, 'verify').mockImplementationOnce(() => ({}))
+      const value = await sut.decrypt('any_token')
+      expect(value).toBeUndefined()
+    })
+
+    test('Should default to MEMBER role if role is missing', async () => {
+      const sut = makeSut()
+      jest.spyOn(jwt, 'verify').mockImplementationOnce(() => ({ id: 'any_id' }))
+      const value = await sut.decrypt('any_token')
+      expect(value).toEqual({ id: 'any_id', role: Role.MEMBER })
+    })
+
     test('Should throw if verify throws', async () => {
       const sut = makeSut()
       jest.spyOn(jwt, 'verify').mockImplementationOnce(() => {
