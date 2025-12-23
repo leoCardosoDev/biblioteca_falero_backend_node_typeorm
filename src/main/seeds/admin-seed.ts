@@ -64,7 +64,7 @@ const run = async (): Promise<void> => {
   console.log('🎉 Admin Seed completed successfully!')
   console.log('')
   console.log('📧 Email: leocardosodev@gmail.com')
-  console.log('🔑 Password: admin123')
+  console.log('🔑 Password: _Falero@dmin2025')
 }
 
 run().catch(console.error)
