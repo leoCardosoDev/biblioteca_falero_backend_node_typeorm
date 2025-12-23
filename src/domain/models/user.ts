@@ -4,4 +4,5 @@ export interface UserModel {
   email: string
   rg: string
   cpf: string
+  dataNascimento: Date
 }

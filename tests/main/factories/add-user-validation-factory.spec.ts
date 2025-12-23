@@ -18,7 +18,7 @@ describe('AddUserValidation Factory', () => {
   test('Should call ValidationComposite with all validations', () => {
     makeAddUserValidation()
     const validations: Validation[] = []
-    for (const field of ['name', 'email', 'rg', 'cpf']) {
+    for (const field of ['name', 'email', 'rg', 'cpf', 'dataNascimento']) {
       validations.push(new RequiredFieldValidation(field))
     }
     validations.push(new EmailValidation('email', makeEmailValidator()))

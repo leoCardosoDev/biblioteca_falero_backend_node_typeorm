@@ -52,7 +52,8 @@ describe('LoginTypeOrmRepository', () => {
       name: 'any_name',
       email: 'any_email@mail.com',
       rg: 'any_rg',
-      cpf: 'any_cpf'
+      cpf: 'any_cpf',
+      dataNascimento: new Date('1990-01-15')
     })
     await userRepo.save(user)
 
@@ -82,7 +83,8 @@ describe('LoginTypeOrmRepository', () => {
       name: 'any_name',
       email: 'any_email@mail.com',
       rg: 'any_rg',
-      cpf: 'any_cpf'
+      cpf: 'any_cpf',
+      dataNascimento: new Date('1990-01-15')
     })
     await userRepo.save(user)
     const account = await sut.loadByEmail('any_email@mail.com')
@@ -96,7 +98,8 @@ describe('LoginTypeOrmRepository', () => {
       name: 'any_name',
       email: 'any_email@mail.com',
       rg: 'any_rg',
-      cpf: 'any_cpf'
+      cpf: 'any_cpf',
+      dataNascimento: new Date('1990-01-15')
     })
     await userRepo.save(user)
 

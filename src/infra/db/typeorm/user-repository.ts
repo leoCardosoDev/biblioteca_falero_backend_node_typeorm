@@ -14,7 +14,8 @@ export class UserTypeOrmRepository implements AddUserRepository {
       name: user.name,
       email: user.email,
       rg: user.rg,
-      cpf: user.cpf
+      cpf: user.cpf,
+      dataNascimento: user.dataNascimento
     }
   }
 }

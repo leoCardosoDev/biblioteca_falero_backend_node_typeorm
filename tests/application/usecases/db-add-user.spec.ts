@@ -11,7 +11,8 @@ const makeAddUserRepository = (): AddUserRepository => {
         name: data.name,
         email: data.email,
         rg: data.rg,
-        cpf: data.cpf
+        cpf: data.cpf,
+        dataNascimento: data.dataNascimento
       }
       return Promise.resolve(fakeUser)
     }
@@ -41,7 +42,8 @@ describe('DbAddUser UseCase', () => {
       name: 'valid_name',
       email: 'valid_email@mail.com',
       rg: 'valid_rg',
-      cpf: 'valid_cpf'
+      cpf: 'valid_cpf',
+      dataNascimento: new Date('1990-01-15')
     }
     await sut.add(userData)
     expect(addSpy).toHaveBeenCalledWith(userData)
@@ -54,7 +56,8 @@ describe('DbAddUser UseCase', () => {
       name: 'valid_name',
       email: 'valid_email@mail.com',
       rg: 'valid_rg',
-      cpf: 'valid_cpf'
+      cpf: 'valid_cpf',
+      dataNascimento: new Date('1990-01-15')
     }
     const promise = sut.add(userData)
     await expect(promise).rejects.toThrow()
@@ -66,7 +69,8 @@ describe('DbAddUser UseCase', () => {
       name: 'valid_name',
       email: 'valid_email@mail.com',
       rg: 'valid_rg',
-      cpf: 'valid_cpf'
+      cpf: 'valid_cpf',
+      dataNascimento: new Date('1990-01-15')
     }
     const account = await sut.add(userData)
     expect(account).toEqual({
@@ -74,7 +78,8 @@ describe('DbAddUser UseCase', () => {
       name: 'valid_name',
       email: 'valid_email@mail.com',
       rg: 'valid_rg',
-      cpf: 'valid_cpf'
+      cpf: 'valid_cpf',
+      dataNascimento: new Date('1990-01-15')
     })
   })
 })

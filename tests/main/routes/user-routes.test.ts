@@ -35,7 +35,8 @@ describe('User Routes', () => {
           name: 'Leo Cardoso',
           email: 'leocardosodev@gmail.com',
           rg: '123456789',
-          cpf: '12345678900'
+          cpf: '12345678900',
+          dataNascimento: '1990-01-15'
         }
       })
       expect(response.statusCode).toBe(200)

@@ -12,7 +12,8 @@ const makeAddUser = (): AddUser => {
         name: 'valid_name',
         email: 'valid_email@mail.com',
         rg: 'valid_rg',
-        cpf: 'valid_cpf'
+        cpf: 'valid_cpf',
+        dataNascimento: new Date('1990-01-15')
       }
       return Promise.resolve(fakeUser)
     }
@@ -51,7 +52,8 @@ const makeFakeRequest = () => ({
     name: 'any_name',
     email: 'any_email@mail.com',
     rg: 'any_rg',
-    cpf: 'any_cpf'
+    cpf: 'any_cpf',
+    dataNascimento: '1990-01-15'
   }
 })
 
@@ -77,7 +79,13 @@ describe('AddUser Controller', () => {
     const addSpy = jest.spyOn(addUserStub, 'add')
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
-    expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
+    expect(addSpy).toHaveBeenCalledWith({
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      rg: 'any_rg',
+      cpf: 'any_cpf',
+      dataNascimento: new Date('1990-01-15')
+    })
   })
 
   test('Should return 500 if AddUser throws', async () => {
@@ -99,7 +107,8 @@ describe('AddUser Controller', () => {
       name: 'valid_name',
       email: 'valid_email@mail.com',
       rg: 'valid_rg',
-      cpf: 'valid_cpf'
+      cpf: 'valid_cpf',
+      dataNascimento: new Date('1990-01-15')
     })
   })
 

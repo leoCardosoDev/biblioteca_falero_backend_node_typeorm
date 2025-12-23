@@ -8,13 +8,16 @@ export class UserTypeOrmEntity {
   @Column()
   name!: string
 
-  @Column()
+  @Column({ unique: true })
   email!: string
 
   @Column()
   rg!: string
 
-  @Column()
+  @Column({ unique: true })
   cpf!: string
+
+  @Column({ type: 'date' })
+  dataNascimento!: Date
 }
 
