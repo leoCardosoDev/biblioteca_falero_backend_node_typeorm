@@ -1,11 +1,15 @@
 import { Hasher } from '@/application/protocols/cryptography/hasher'
-import bcrypt from 'bcrypt'
+import { HashComparer } from '@/application/protocols/cryptography/hash-comparer'
+import { hash, compare } from 'bcrypt'
 
-export class BcryptAdapter implements Hasher {
+export class BcryptAdapter implements Hasher, HashComparer {
   constructor(private readonly salt: number) { }
 
-  async hash(value: string): Promise<string> {
-    const hash = await bcrypt.hash(value, this.salt)
-    return hash
+  async hash(plaintext: string): Promise<string> {
+    return await hash(plaintext, this.salt)
+  }
+
+  async compare(plaintext: string, digest: string): Promise<boolean> {
+    return await compare(plaintext, digest)
   }
 }
