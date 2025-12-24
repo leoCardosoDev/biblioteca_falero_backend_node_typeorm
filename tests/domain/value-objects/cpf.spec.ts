@@ -26,4 +26,21 @@ describe('Cpf Value Object', () => {
   test('Should throw if CPF has all same digits', () => {
     expect(() => Cpf.create('111.111.111-11')).toThrow()
   })
+
+  test('Should throw if first digit is valid but second is invalid', () => {
+    // CPF 529.982.247-25 is valid. Changing last digit (25 -> 24) should fail on second digit check
+    expect(() => Cpf.create('529.982.247-24')).toThrow()
+  })
+
+  test('Should accept CPF where remainder equals 10 (edge case)', () => {
+    // CPF 12345678909: first check sum=210, (210*10)%11=10, triggers first remainder===10 branch
+    const cpf = Cpf.create('12345678909')
+    expect(cpf.value).toBe('12345678909')
+  })
+
+  test('Should accept CPF where second remainder equals 10 (edge case)', () => {
+    // CPF 00000001830: second check triggers remainder===10 branch
+    const cpf = Cpf.create('00000001830')
+    expect(cpf.value).toBe('00000001830')
+  })
 })

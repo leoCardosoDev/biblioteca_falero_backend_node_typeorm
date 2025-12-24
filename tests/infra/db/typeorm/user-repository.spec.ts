@@ -213,4 +213,60 @@ describe('UserTypeOrmRepository', () => {
     })
     await expect(promise).rejects.toThrow('User not found')
   })
+
+  test('Should update rg on success', async () => {
+    const sut = makeSut()
+    const user = await sut.add(makeUserData())
+    const updatedUser = await sut.update({
+      id: user.id,
+      rg: Rg.create('987654321') as Rg
+    })
+    expect(updatedUser.rg.value).toBe('987654321')
+  })
+
+  test('Should update cpf on success', async () => {
+    const sut = makeSut()
+    const user = await sut.add(makeUserData())
+    const updatedUser = await sut.update({
+      id: user.id,
+      cpf: Cpf.create('71428793860')
+    })
+    expect(updatedUser.cpf.value).toBe('71428793860')
+  })
+
+  test('Should update birthDate on success', async () => {
+    const sut = makeSut()
+    const user = await sut.add(makeUserData())
+    const updatedUser = await sut.update({
+      id: user.id,
+      birthDate: BirthDate.create('1985-05-20') as BirthDate
+    })
+    expect(updatedUser.birthDate.value).toBe('1985-05-20')
+  })
+
+  test('Should return user with undefined address if DB has invalid address data (defensive check)', async () => {
+    // Simulates corrupt data in DB - address fields exist but are invalid
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const entity = userRepo.create({
+      name: 'any_name',
+      email: 'corrupt_test@mail.com',
+      rg: '123456789',
+      cpf: '52998224725',
+      birthDate: '1990-01-15',
+      // Invalid address: state has wrong length (should be 2 chars)
+      addressStreet: 'any_street',
+      addressNumber: '123',
+      addressNeighborhood: 'any_neighborhood',
+      addressCity: 'any_city',
+      addressState: 'INVALID_STATE', // Invalid: more than 2 chars
+      addressZipCode: '12345678'
+    })
+    await userRepo.save(entity)
+
+    const sut = makeSut()
+    const user = await sut.loadByEmail('corrupt_test@mail.com')
+
+    expect(user).toBeTruthy()
+    expect(user?.address).toBeUndefined() // Defensive check: invalid address should not be assigned
+  })
 })
