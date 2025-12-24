@@ -42,7 +42,7 @@ describe('User Routes', () => {
           name: 'Leo Cardoso',
           email: 'leocardosodev@gmail.com',
           rg: '123456789',
-          cpf: '12345678900',
+          cpf: '529.982.247-25',
           dataNascimento: '1990-01-15'
         }
       })
@@ -59,7 +59,7 @@ describe('User Routes', () => {
           name: 'Leo Cardoso',
           email: 'leocardosodev@gmail.com',
           rg: '123456789',
-          cpf: '12345678900',
+          cpf: '529.982.247-25',
           dataNascimento: '1990-01-15'
         }
       })
@@ -76,7 +76,7 @@ describe('User Routes', () => {
           name: 'Leo Cardoso',
           email: 'leocardosodev@gmail.com',
           rg: '123456789',
-          cpf: '12345678900',
+          cpf: '529.982.247-25',
           dataNascimento: '1990-01-15'
         }
       })
@@ -109,7 +109,7 @@ describe('User Routes', () => {
         name: 'User 1',
         email: 'user1@mail.com',
         rg: 'rg1',
-        cpf: 'cpf1',
+        cpf: '52998224725',
         dataNascimento: '1990-01-15'
       }))
       const accessToken = makeAccessToken(Role.LIBRARIAN)
@@ -129,7 +129,7 @@ describe('User Routes', () => {
       const accessToken = makeAccessToken(Role.LIBRARIAN)
       const response = await app.inject({
         method: 'PUT',
-        url: '/api/users/any_id',
+        url: '/api/users/550e8400-e29b-41d4-a716-446655440000',
         headers: { authorization: `Bearer ${accessToken}` },
         payload: { name: 'updated_name' }
       })
@@ -142,7 +142,7 @@ describe('User Routes', () => {
         name: 'User To Update',
         email: 'update@mail.com',
         rg: 'rg_update',
-        cpf: 'cpf_update',
+        cpf: '52998224725',
         dataNascimento: '1990-01-15'
       }))
       const accessToken = makeAccessToken(Role.ADMIN)
@@ -162,7 +162,7 @@ describe('User Routes', () => {
       const accessToken = makeAccessToken(Role.LIBRARIAN)
       const response = await app.inject({
         method: 'DELETE',
-        url: '/api/users/any_id',
+        url: '/api/users/550e8400-e29b-41d4-a716-446655440000',
         headers: { authorization: `Bearer ${accessToken}` }
       })
       expect(response.statusCode).toBe(403)
@@ -174,7 +174,7 @@ describe('User Routes', () => {
         name: 'User To Delete',
         email: 'delete@mail.com',
         rg: 'rg_delete',
-        cpf: 'cpf_delete',
+        cpf: '71428793860',
         dataNascimento: '1990-01-15'
       }))
       const accessToken = makeAccessToken(Role.ADMIN)

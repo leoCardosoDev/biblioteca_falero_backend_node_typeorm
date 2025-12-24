@@ -2,6 +2,9 @@ import 'reflect-metadata'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { UserTypeOrmRepository } from '@/infra/db/typeorm/user-repository'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
+import { Email } from '@/domain/value-objects/email'
+import { Cpf } from '@/domain/value-objects/cpf'
+import { Id } from '@/domain/value-objects/id'
 
 describe('UserTypeOrmRepository', () => {
   beforeAll(async () => {
@@ -35,17 +38,17 @@ describe('UserTypeOrmRepository', () => {
     const sut = makeSut()
     const user = await sut.add({
       name: 'any_name',
-      email: 'any_email@mail.com',
+      email: Email.create('any_email@mail.com'),
       rg: 'any_rg',
-      cpf: 'any_cpf',
+      cpf: Cpf.create('529.982.247-25'),
       dataNascimento: '1990-01-15'
     })
     expect(user).toBeTruthy()
     expect(user.id).toBeTruthy()
     expect(user.name).toBe('any_name')
-    expect(user.email).toBe('any_email@mail.com')
+    expect(user.email.value).toBe('any_email@mail.com')
     expect(user.rg).toBe('any_rg')
-    expect(user.cpf).toBe('any_cpf')
+    expect(user.cpf.value).toBe('52998224725')
     expect(user.dataNascimento).toBe('1990-01-15')
   })
 
@@ -53,16 +56,16 @@ describe('UserTypeOrmRepository', () => {
     const sut = makeSut()
     await sut.add({
       name: 'any_name',
-      email: 'duplicate@mail.com',
+      email: Email.create('duplicate@mail.com'),
       rg: 'any_rg',
-      cpf: 'cpf_1',
+      cpf: Cpf.create('529.982.247-25'),
       dataNascimento: '1990-01-15'
     })
     const promise = sut.add({
       name: 'other_name',
-      email: 'duplicate@mail.com',
+      email: Email.create('duplicate@mail.com'),
       rg: 'other_rg',
-      cpf: 'cpf_2',
+      cpf: Cpf.create('71428793860'),
       dataNascimento: '1990-01-15'
     })
     await expect(promise).rejects.toThrow()
@@ -72,16 +75,16 @@ describe('UserTypeOrmRepository', () => {
     const sut = makeSut()
     await sut.add({
       name: 'any_name',
-      email: 'email_1@mail.com',
+      email: Email.create('email_1@mail.com'),
       rg: 'any_rg',
-      cpf: 'duplicate_cpf',
+      cpf: Cpf.create('529.982.247-25'),
       dataNascimento: '1990-01-15'
     })
     const promise = sut.add({
       name: 'other_name',
-      email: 'email_2@mail.com',
+      email: Email.create('email_2@mail.com'),
       rg: 'other_rg',
-      cpf: 'duplicate_cpf',
+      cpf: Cpf.create('529.982.247-25'),
       dataNascimento: '1990-01-15'
     })
     await expect(promise).rejects.toThrow()
@@ -91,18 +94,18 @@ describe('UserTypeOrmRepository', () => {
     const sut = makeSut()
     await sut.add({
       name: 'any_name',
-      email: 'any_email@mail.com',
+      email: Email.create('any_email@mail.com'),
       rg: 'any_rg',
-      cpf: 'any_cpf',
+      cpf: Cpf.create('529.982.247-25'),
       dataNascimento: '1990-01-15'
     })
     const user = await sut.loadByEmail('any_email@mail.com')
     expect(user).toBeTruthy()
     expect(user?.id).toBeTruthy()
     expect(user?.name).toBe('any_name')
-    expect(user?.email).toBe('any_email@mail.com')
+    expect(user?.email.value).toBe('any_email@mail.com')
     expect(user?.rg).toBe('any_rg')
-    expect(user?.cpf).toBe('any_cpf')
+    expect(user?.cpf.value).toBe('52998224725')
     expect(user?.dataNascimento).toBe('1990-01-15')
   })
 
@@ -116,24 +119,24 @@ describe('UserTypeOrmRepository', () => {
     const sut = makeSut()
     await sut.add({
       name: 'any_name',
-      email: 'any_email@mail.com',
+      email: Email.create('any_email@mail.com'),
       rg: 'any_rg',
-      cpf: 'any_cpf',
+      cpf: Cpf.create('529.982.247-25'),
       dataNascimento: '1990-01-15'
     })
-    const user = await sut.loadByCpf('any_cpf')
+    const user = await sut.loadByCpf('52998224725')
     expect(user).toBeTruthy()
     expect(user?.id).toBeTruthy()
     expect(user?.name).toBe('any_name')
-    expect(user?.email).toBe('any_email@mail.com')
+    expect(user?.email.value).toBe('any_email@mail.com')
     expect(user?.rg).toBe('any_rg')
-    expect(user?.cpf).toBe('any_cpf')
+    expect(user?.cpf.value).toBe('52998224725')
     expect(user?.dataNascimento).toBe('1990-01-15')
   })
 
   test('Should return undefined if loadByCpf finds no user', async () => {
     const sut = makeSut()
-    const user = await sut.loadByCpf('any_cpf')
+    const user = await sut.loadByCpf('52998224725')
     expect(user).toBeUndefined()
   })
 
@@ -141,16 +144,16 @@ describe('UserTypeOrmRepository', () => {
     const sut = makeSut()
     await sut.add({
       name: 'User 1',
-      email: 'user1@mail.com',
+      email: Email.create('user1@mail.com'),
       rg: 'rg1',
-      cpf: 'cpf1',
+      cpf: Cpf.create('529.982.247-25'),
       dataNascimento: '1990-01-15'
     })
     await sut.add({
       name: 'User 2',
-      email: 'user2@mail.com',
+      email: Email.create('user2@mail.com'),
       rg: 'rg2',
-      cpf: 'cpf2',
+      cpf: Cpf.create('71428793860'),
       dataNascimento: '1990-01-15'
     })
     const users = await sut.loadAll()
@@ -169,18 +172,18 @@ describe('UserTypeOrmRepository', () => {
     const sut = makeSut()
     const user = await sut.add({
       name: 'any_name',
-      email: 'any_email@mail.com',
+      email: Email.create('any_email@mail.com'),
       rg: 'any_rg',
-      cpf: 'any_cpf',
+      cpf: Cpf.create('529.982.247-25'),
       dataNascimento: '1990-01-15'
     })
     const updatedUser = await sut.update({
       id: user.id,
       name: 'updated_name',
-      email: 'updated_email@mail.com'
+      email: Email.create('updated_email@mail.com')
     })
     expect(updatedUser.name).toBe('updated_name')
-    expect(updatedUser.email).toBe('updated_email@mail.com')
+    expect(updatedUser.email.value).toBe('updated_email@mail.com')
     expect(updatedUser.rg).toBe('any_rg')
   })
 
@@ -188,12 +191,12 @@ describe('UserTypeOrmRepository', () => {
     const sut = makeSut()
     const user = await sut.add({
       name: 'any_name',
-      email: 'any_email@mail.com',
+      email: Email.create('any_email@mail.com'),
       rg: 'any_rg',
-      cpf: 'any_cpf',
+      cpf: Cpf.create('529.982.247-25'),
       dataNascimento: '1990-01-15'
     })
-    await sut.delete(user.id)
+    await sut.delete(user.id.value)
     const deletedUser = await sut.loadByEmail('any_email@mail.com')
     expect(deletedUser).toBeUndefined()
   })

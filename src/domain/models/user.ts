@@ -1,8 +1,12 @@
+import { Id } from '@/domain/value-objects/id'
+import { Email } from '@/domain/value-objects/email'
+import { Cpf } from '@/domain/value-objects/cpf'
+
 export interface UserModel {
-  id: string
+  id: Id
   name: string
-  email: string
+  email: Email
   rg: string
-  cpf: string
+  cpf: Cpf
   dataNascimento: string
 }
