@@ -6,6 +6,7 @@ import { makeAddUserController } from '@/main/factories/add-user-controller-fact
 import { makeAuthMiddleware, makeLibrarianOrAdmin, makeAdminOnly } from '@/main/factories/middlewares'
 import { makeLoadUsersController } from '@/main/factories/load-users-controller-factory'
 import { makeUpdateUserController } from '@/main/factories/update-user-controller-factory'
+import { makeDeleteUserController } from '@/main/factories/delete-user-controller-factory'
 
 export default (router: FastifyInstance): void => {
   router.post('/users', {
@@ -28,4 +29,11 @@ export default (router: FastifyInstance): void => {
       adaptMiddleware(makeAdminOnly())
     ]
   }, adaptRoute(makeUpdateUserController()))
+
+  router.delete('/users/:id', {
+    preHandler: [
+      adaptMiddleware(makeAuthMiddleware()),
+      adaptMiddleware(makeAdminOnly())
+    ]
+  }, adaptRoute(makeDeleteUserController()))
 }
