@@ -9,7 +9,15 @@ export class LoadUsersController implements Controller {
   async handle(_request: unknown): Promise<HttpResponse> {
     try {
       const users = await this.loadUsers.load()
-      return ok(users)
+      const serializedUsers = users.map(user => ({
+        id: user.id.value,
+        name: user.name,
+        email: user.email.value,
+        rg: user.rg,
+        cpf: user.cpf.value,
+        dataNascimento: user.dataNascimento
+      }))
+      return ok(serializedUsers)
     } catch (error) {
       return serverError(error as Error)
     }

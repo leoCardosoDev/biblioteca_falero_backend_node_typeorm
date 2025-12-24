@@ -1,22 +1,25 @@
 import { LoadUsersController } from '@/presentation/controllers/user/load-users-controller'
 import { LoadUsers } from '@/domain/usecases/load-users'
 import { UserModel } from '@/domain/models/user'
-import { ok, serverError } from '@/presentation/helpers/http-helper'
+import { serverError } from '@/presentation/helpers/http-helper'
+import { Id } from '@/domain/value-objects/id'
+import { Email } from '@/domain/value-objects/email'
+import { Cpf } from '@/domain/value-objects/cpf'
 
 const makeFakeUsers = (): UserModel[] => {
   return [{
-    id: 'any_id',
+    id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
     name: 'any_name',
-    email: 'any_email@mail.com',
+    email: Email.create('any_email@mail.com'),
     rg: 'any_rg',
-    cpf: 'any_cpf',
+    cpf: Cpf.create('529.982.247-25'),
     dataNascimento: 'any_date'
   }, {
-    id: 'other_id',
+    id: Id.create('550e8400-e29b-41d4-a716-446655440001'),
     name: 'other_name',
-    email: 'other_email@mail.com',
+    email: Email.create('other_email@mail.com'),
     rg: 'other_rg',
-    cpf: 'other_cpf',
+    cpf: Cpf.create('71428793860'),
     dataNascimento: 'other_date'
   }]
 }
@@ -55,7 +58,25 @@ describe('LoadUsers Controller', () => {
   test('Should return 200 on success', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle({})
-    expect(httpResponse).toEqual(ok(makeFakeUsers()))
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual([
+      {
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'any_name',
+        email: 'any_email@mail.com',
+        rg: 'any_rg',
+        cpf: '52998224725',
+        dataNascimento: 'any_date'
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440001',
+        name: 'other_name',
+        email: 'other_email@mail.com',
+        rg: 'other_rg',
+        cpf: '71428793860',
+        dataNascimento: 'other_date'
+      }
+    ])
   })
 
   test('Should return 500 if LoadUsers throws', async () => {

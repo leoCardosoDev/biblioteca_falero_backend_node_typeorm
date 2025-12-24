@@ -13,11 +13,11 @@ export class DbAddUser implements AddUser {
   ) { }
 
   async add(userData: AddUserParams): Promise<UserModel | Error> {
-    const userByEmail = await this.loadUserByEmailRepository.loadByEmail(userData.email)
+    const userByEmail = await this.loadUserByEmailRepository.loadByEmail(userData.email.value)
     if (userByEmail) {
       return new EmailInUseError()
     }
-    const userByCpf = await this.loadUserByCpfRepository.loadByCpf(userData.cpf)
+    const userByCpf = await this.loadUserByCpfRepository.loadByCpf(userData.cpf.value)
     if (userByCpf) {
       return new CpfInUseError()
     }

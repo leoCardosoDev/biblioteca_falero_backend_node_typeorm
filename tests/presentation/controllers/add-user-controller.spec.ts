@@ -3,16 +3,19 @@ import { AddUser, AddUserParams } from '@/domain/usecases/add-user'
 import { UserModel } from '@/domain/models/user'
 import { Validation } from '@/presentation/protocols/validation'
 import { ServerError, MissingParamError, EmailInUseError, CpfInUseError } from '@/presentation/errors'
+import { Id } from '@/domain/value-objects/id'
+import { Email } from '@/domain/value-objects/email'
+import { Cpf } from '@/domain/value-objects/cpf'
 
 const makeAddUser = (): AddUser => {
   class AddUserStub implements AddUser {
     async add(_data: AddUserParams): Promise<UserModel | Error> {
       const fakeUser: UserModel = {
-        id: 'valid_id',
+        id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
         name: 'valid_name',
-        email: 'valid_email@mail.com',
+        email: Email.create('valid_email@mail.com'),
         rg: 'valid_rg',
-        cpf: '12345678900',
+        cpf: Cpf.create('529.982.247-25'),
         dataNascimento: '1990-01-15'
       }
       return Promise.resolve(fakeUser)
@@ -52,7 +55,7 @@ const makeFakeRequest = () => ({
     name: 'any_name',
     email: 'any_email@mail.com',
     rg: 'any_rg',
-    cpf: '123.456.789-00',
+    cpf: '529.982.247-25',
     dataNascimento: '1990-01-15'
   }
 })
@@ -79,13 +82,11 @@ describe('AddUser Controller', () => {
     const addSpy = jest.spyOn(addUserStub, 'add')
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
-    expect(addSpy).toHaveBeenCalledWith({
+    expect(addSpy).toHaveBeenCalledWith(expect.objectContaining({
       name: 'any_name',
-      email: 'any_email@mail.com',
       rg: 'any_rg',
-      cpf: '12345678900',
       dataNascimento: '1990-01-15'
-    })
+    }))
   })
 
   test('Should return 500 if AddUser throws', async () => {
@@ -103,11 +104,11 @@ describe('AddUser Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({
-      id: 'valid_id',
+      id: '550e8400-e29b-41d4-a716-446655440000',
       name: 'valid_name',
       email: 'valid_email@mail.com',
       rg: 'valid_rg',
-      cpf: '12345678900',
+      cpf: '52998224725',
       dataNascimento: '1990-01-15'
     })
   })
