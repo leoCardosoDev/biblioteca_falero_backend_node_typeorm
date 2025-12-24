@@ -7,6 +7,8 @@ import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { BirthDate } from '@/domain/value-objects/birth-date'
+import { Address } from '@/domain/value-objects/address'
+import { Id } from '@/domain/value-objects/id'
 
 describe('UserTypeOrmRepository', () => {
   beforeAll(async () => {
@@ -161,5 +163,54 @@ describe('UserTypeOrmRepository', () => {
     await sut.delete(user.id.value)
     const deletedUser = await sut.loadByEmail('any_email@mail.com')
     expect(deletedUser).toBeUndefined()
+  })
+
+  test('Should add a user with address on success', async () => {
+    const sut = makeSut()
+    const userData = {
+      ...makeUserData(),
+      address: Address.create({
+        street: 'any_street',
+        number: '123',
+        complement: 'apt 1',
+        neighborhood: 'any_neighborhood',
+        city: 'any_city',
+        state: 'SP',
+        zipCode: '12345678'
+      }) as Address
+    }
+    const user = await sut.add(userData)
+    expect(user.address).toBeTruthy()
+    expect(user.address?.street).toBe('any_street')
+    expect(user.address?.number).toBe('123')
+    expect(user.address?.city).toBe('any_city')
+  })
+
+  test('Should update a user with address on success', async () => {
+    const sut = makeSut()
+    const user = await sut.add(makeUserData())
+    const updatedUser = await sut.update({
+      id: user.id,
+      address: Address.create({
+        street: 'updated_street',
+        number: '456',
+        neighborhood: 'updated_neighborhood',
+        city: 'updated_city',
+        state: 'RJ',
+        zipCode: '87654321'
+      }) as Address
+    })
+    expect(updatedUser.address).toBeTruthy()
+    expect(updatedUser.address?.street).toBe('updated_street')
+    expect(updatedUser.address?.city).toBe('updated_city')
+  })
+
+  test('Should throw if update is called with non-existent id', async () => {
+    const sut = makeSut()
+    const promise = sut.update({
+      id: Id.create('550e8400-e29b-41d4-a716-446655440099'),
+      name: Name.create('any_name') as Name
+    })
+    await expect(promise).rejects.toThrow('User not found')
   })
 })
