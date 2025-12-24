@@ -58,6 +58,13 @@ npm run prepare
 | `npm run lint` | Verifica problemas de linting |
 | `npm run build` | Compila o TS para JS na pasta `dist` |
 
+### Test Coverage Strategy (TypeORM)
+Branches below 100% in `infra/db/typeorm/entities` are expected due to TypeORM decorators.
+Internal library code is not unit-testable.
+- Statements: 100%
+- Lines: 100%
+- Branches: <100% (Acceptable for Entities)
+
 ## 📂 Estrutura de Pastas
 
 ```text

@@ -1,0 +1,7 @@
+export * from './invalid-address-error'
+export * from './invalid-birth-date-error'
+export * from './invalid-cpf-error'
+export * from './invalid-email-error'
+export * from './invalid-id-error'
+export * from './invalid-name-error'
+export * from './invalid-rg-error'
