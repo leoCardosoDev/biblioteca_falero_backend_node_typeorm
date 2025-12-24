@@ -209,4 +209,46 @@ describe('AddUser Controller', () => {
     })
     expect(httpResponse.statusCode).toBe(200)
   })
+
+  test('Should return 400 if Name.create returns error', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      body: {
+        name: 'a', // Invalid name (too short)
+        email: 'valid_email@mail.com',
+        rg: '123456789',
+        cpf: '529.982.247-25',
+        birthDate: '1990-01-15'
+      }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if Rg.create returns error', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      body: {
+        name: 'any_name',
+        email: 'valid_email@mail.com',
+        rg: '', // Invalid Rg (empty)
+        cpf: '529.982.247-25',
+        birthDate: '1990-01-15'
+      }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if BirthDate.create returns error', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      body: {
+        name: 'any_name',
+        email: 'valid_email@mail.com',
+        rg: '123456789',
+        cpf: '529.982.247-25',
+        birthDate: 'invalid-date' // Invalid BirthDate
+      }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
 })

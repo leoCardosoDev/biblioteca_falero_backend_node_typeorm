@@ -9,6 +9,7 @@ import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { BirthDate } from '@/domain/value-objects/birth-date'
+import { Address } from '@/domain/value-objects/address'
 
 const makeFakeUser = (): UserModel => ({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
@@ -56,10 +57,39 @@ describe('UpdateUser Controller', () => {
     const updateSpy = jest.spyOn(updateUserStub, 'update')
     const httpRequest = {
       params: { id: '550e8400-e29b-41d4-a716-446655440000' },
-      body: { name: 'updated_name' }
+      body: {
+        name: 'updated_name',
+        email: 'updated_email@mail.com',
+        rg: '987654321', // Valid Rg
+        cpf: '714.287.938-60', // Valid CPF
+        birthDate: '1985-05-20', // Valid BirthDate
+        address: { // Valid Address
+          street: 'updated_street',
+          number: '456',
+          neighborhood: 'updated_neighborhood',
+          city: 'updated_city',
+          state: 'RJ',
+          zipCode: '87654321'
+        }
+      }
     }
     await sut.handle(httpRequest)
-    expect(updateSpy).toHaveBeenCalled()
+    expect(updateSpy).toHaveBeenCalledWith({
+      id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
+      name: Name.create('updated_name'),
+      email: Email.create('updated_email@mail.com'),
+      rg: Rg.create('987654321'),
+      cpf: Cpf.create('714.287.938-60'),
+      birthDate: BirthDate.create('1985-05-20'),
+      address: Address.create({
+        street: 'updated_street',
+        number: '456',
+        neighborhood: 'updated_neighborhood',
+        city: 'updated_city',
+        state: 'RJ',
+        zipCode: '87654321'
+      })
+    })
   })
 
   test('Should return 200 on success', async () => {
@@ -96,6 +126,15 @@ describe('UpdateUser Controller', () => {
     const httpResponse = await sut.handle({
       params: { id: 'invalid-uuid' },
       body: { name: 'updated_name' }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if name is invalid', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { name: 'a' } // Invalid name (too short)
     })
     expect(httpResponse.statusCode).toBe(400)
   })
