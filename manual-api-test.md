@@ -28,7 +28,7 @@ npm run seed:admin
   "cpf": "12345678901",
   "dataNascimento": "1990-05-20",
   "role": "ADMIN",
-  "password": "any_password"
+  "password": "_Falero@dmin2025"
 }
 ```
 
@@ -43,7 +43,7 @@ npm run seed:admin
 ```json
 {
   "email": "leocardosodev@gmail.com",
-  "password": "any_password"
+  "password": "_Falero@dmin2025"
 }
 ```
 
@@ -79,7 +79,7 @@ Authorization: Bearer <accessToken>
   "name": "Maria Silva",
   "email": "maria.silva@example.com",
   "rg": "123456789",
-  "cpf": "123.456.789-00",
+  "cpf": "12345678900",
   "dataNascimento": "1990-05-20"
 }
 ```
@@ -133,14 +133,6 @@ Sem token ou com role MEMBER.
 
 ---
 
-## Resumo de Permissões
-
-| Rota | Método | Permissão |
-|------|--------|-----------|
-| `/api/login` | POST | 🌐 Pública |
-| `/api/users/:userId/login` | POST | 🔒 LIBRARIAN, ADMIN |
-
----
 
 ## 4. List Users (LoadUsers)
 
@@ -152,19 +144,16 @@ Authorization: Bearer <accessToken>
 ```
 
 ### 4.1 Success (200 OK)
-**Response**:
-```json
-[
-  {
-    "id": "any_id",
-    "name": "Maria Silva",
-    "email": "maria.silva@example.com",
-    "rg": "123456789",
-    "cpf": "123.456.789-00",
-    "dataNascimento": "1990-05-20"
-  }
-]
-```
+**Response**: JSON Array of users.
 
 ### 4.2 Error: Access Denied (403 Forbidden)
-Sem token ou com role MEMBER.
+Requires ADMIN or LIBRARIAN role.
+
+---
+
+
+| Rota | Método | Permissão |
+|------|--------|-----------|
+| `/api/login` | POST | 🌐 Pública |
+| `/api/users` | POST | 🔒 LIBRARIAN, ADMIN |
+| `/api/users/:userId/login` | POST | 🔒 LIBRARIAN, ADMIN |
