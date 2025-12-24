@@ -1,16 +1,23 @@
 import { UpdateUserController } from '@/presentation/controllers/user/update-user-controller'
 import { UpdateUser, UpdateUserParams } from '@/domain/usecases/update-user'
 import { UserModel } from '@/domain/models/user'
-import { ok, serverError, badRequest } from '@/presentation/helpers/http-helper'
+import { serverError, badRequest } from '@/presentation/helpers/http-helper'
 import { MissingParamError } from '@/presentation/errors'
+import { Id } from '@/domain/value-objects/id'
+import { Email } from '@/domain/value-objects/email'
+import { Cpf } from '@/domain/value-objects/cpf'
+import { Name } from '@/domain/value-objects/name'
+import { Rg } from '@/domain/value-objects/rg'
+import { BirthDate } from '@/domain/value-objects/birth-date'
+import { Address } from '@/domain/value-objects/address'
 
 const makeFakeUser = (): UserModel => ({
-  id: 'any_id',
-  name: 'any_name',
-  email: 'any_email@mail.com',
-  rg: 'any_rg',
-  cpf: 'any_cpf',
-  dataNascimento: 'any_date'
+  id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
+  name: Name.create('any_name') as Name,
+  email: Email.create('any_email@mail.com'),
+  rg: Rg.create('123456789') as Rg,
+  cpf: Cpf.create('529.982.247-25'),
+  birthDate: BirthDate.create('1990-01-15') as BirthDate
 })
 
 const makeUpdateUser = (): UpdateUser => {
@@ -49,34 +56,140 @@ describe('UpdateUser Controller', () => {
     const { sut, updateUserStub } = makeSut()
     const updateSpy = jest.spyOn(updateUserStub, 'update')
     const httpRequest = {
-      params: { id: 'any_id' },
-      body: { name: 'updated_name' }
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: {
+        name: 'updated_name',
+        email: 'updated_email@mail.com',
+        rg: '987654321', // Valid Rg
+        cpf: '714.287.938-60', // Valid CPF
+        birthDate: '1985-05-20', // Valid BirthDate
+        address: { // Valid Address
+          street: 'updated_street',
+          number: '456',
+          neighborhood: 'updated_neighborhood',
+          city: 'updated_city',
+          state: 'RJ',
+          zipCode: '87654321'
+        }
+      }
     }
     await sut.handle(httpRequest)
     expect(updateSpy).toHaveBeenCalledWith({
-      id: 'any_id',
-      name: 'updated_name'
+      id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
+      name: Name.create('updated_name'),
+      email: Email.create('updated_email@mail.com'),
+      rg: Rg.create('987654321'),
+      cpf: Cpf.create('714.287.938-60'),
+      birthDate: BirthDate.create('1985-05-20'),
+      address: Address.create({
+        street: 'updated_street',
+        number: '456',
+        neighborhood: 'updated_neighborhood',
+        city: 'updated_city',
+        state: 'RJ',
+        zipCode: '87654321'
+      })
     })
   })
 
   test('Should return 200 on success', async () => {
     const { sut } = makeSut()
     const httpRequest = {
-      params: { id: 'any_id' },
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
       body: { name: 'updated_name' }
     }
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(ok(makeFakeUser()))
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({
+      id: '550e8400-e29b-41d4-a716-446655440000',
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      rg: '123456789',
+      cpf: '52998224725',
+      birthDate: '1990-01-15'
+    })
   })
 
   test('Should return 500 if UpdateUser throws', async () => {
     const { sut, updateUserStub } = makeSut()
     jest.spyOn(updateUserStub, 'update').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
     const httpRequest = {
-      params: { id: 'any_id' },
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
       body: { name: 'updated_name' }
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  test('Should return 400 if id is invalid', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: { id: 'invalid-uuid' },
+      body: { name: 'updated_name' }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if name is invalid', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { name: 'a' } // Invalid name (too short)
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if email is invalid', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { email: 'invalid-email' }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if cpf is invalid', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { cpf: '00000000000' }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if rg is invalid', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { rg: 'invalid!' }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if birthDate is invalid', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { birthDate: '2099-01-01' }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if address is invalid', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: {
+        address: {
+          street: '',
+          number: '',
+          neighborhood: '',
+          city: '',
+          state: '',
+          zipCode: ''
+        }
+      }
+    })
+    expect(httpResponse.statusCode).toBe(400)
   })
 })

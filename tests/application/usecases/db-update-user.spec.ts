@@ -2,14 +2,20 @@ import { DbUpdateUser } from '@/application/usecases/db-update-user'
 import { UpdateUserParams } from '@/domain/usecases/update-user'
 import { UserModel } from '@/domain/models/user'
 import { UpdateUserRepository } from '@/application/protocols/db/update-user-repository'
+import { Id } from '@/domain/value-objects/id'
+import { Email } from '@/domain/value-objects/email'
+import { Cpf } from '@/domain/value-objects/cpf'
+import { Name } from '@/domain/value-objects/name'
+import { Rg } from '@/domain/value-objects/rg'
+import { BirthDate } from '@/domain/value-objects/birth-date'
 
 const makeFakeUser = (): UserModel => ({
-  id: 'any_id',
-  name: 'any_name',
-  email: 'any_email@mail.com',
-  rg: 'any_rg',
-  cpf: 'any_cpf',
-  dataNascimento: 'any_date'
+  id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
+  name: Name.create('any_name') as Name,
+  email: Email.create('any_email@mail.com'),
+  rg: Rg.create('123456789') as Rg,
+  cpf: Cpf.create('529.982.247-25'),
+  birthDate: BirthDate.create('1990-01-15') as BirthDate
 })
 
 const makeUpdateUserRepository = (): UpdateUserRepository => {
@@ -40,8 +46,8 @@ describe('DbUpdateUser UseCase', () => {
     const { sut, updateUserRepositoryStub } = makeSut()
     const updateSpy = jest.spyOn(updateUserRepositoryStub, 'update')
     const userData = {
-      id: 'any_id',
-      name: 'updated_name'
+      id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
+      name: Name.create('updated_name') as Name
     }
     await sut.update(userData)
     expect(updateSpy).toHaveBeenCalledWith(userData)
@@ -51,8 +57,8 @@ describe('DbUpdateUser UseCase', () => {
     const { sut, updateUserRepositoryStub } = makeSut()
     jest.spyOn(updateUserRepositoryStub, 'update').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
     const promise = sut.update({
-      id: 'any_id',
-      name: 'updated_name'
+      id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
+      name: Name.create('updated_name') as Name
     })
     await expect(promise).rejects.toThrow()
   })
@@ -60,10 +66,11 @@ describe('DbUpdateUser UseCase', () => {
   test('Should return an updated user on success', async () => {
     const { sut } = makeSut()
     const userData = {
-      id: 'any_id',
-      name: 'updated_name'
+      id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
+      name: Name.create('updated_name') as Name
     }
     const user = await sut.update(userData)
-    expect(user).toEqual(makeFakeUser())
+    expect(user.id.value).toBe('550e8400-e29b-41d4-a716-446655440000')
+    expect(user.name.value).toBe('any_name')
   })
 })

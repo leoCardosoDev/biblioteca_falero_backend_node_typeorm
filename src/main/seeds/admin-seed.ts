@@ -12,7 +12,7 @@ const adminUser = {
   email: 'leocardosodev@gmail.com',
   rg: '12345678',
   cpf: '12345678901',
-  dataNascimento: '1990-05-20'
+  birthDate: '1990-05-20'
 }
 
 const adminPassword = '_Falero@dmin2025'
