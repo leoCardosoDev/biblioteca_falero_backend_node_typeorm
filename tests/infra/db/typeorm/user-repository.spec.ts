@@ -136,4 +136,51 @@ describe('UserTypeOrmRepository', () => {
     const user = await sut.loadByCpf('any_cpf')
     expect(user).toBeUndefined()
   })
+
+  test('Should return all users on loadAll success', async () => {
+    const sut = makeSut()
+    await sut.add({
+      name: 'User 1',
+      email: 'user1@mail.com',
+      rg: 'rg1',
+      cpf: 'cpf1',
+      dataNascimento: '1990-01-15'
+    })
+    await sut.add({
+      name: 'User 2',
+      email: 'user2@mail.com',
+      rg: 'rg2',
+      cpf: 'cpf2',
+      dataNascimento: '1990-01-15'
+    })
+    const users = await sut.loadAll()
+    expect(users.length).toBe(2)
+    expect(users[0].name).toBe('User 1')
+    expect(users[1].name).toBe('User 2')
+  })
+
+  test('Should return empty list if no users found', async () => {
+    const sut = makeSut()
+    const users = await sut.loadAll()
+    expect(users.length).toBe(0)
+  })
+
+  test('Should update a user on success', async () => {
+    const sut = makeSut()
+    const user = await sut.add({
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      rg: 'any_rg',
+      cpf: 'any_cpf',
+      dataNascimento: '1990-01-15'
+    })
+    const updatedUser = await sut.update({
+      id: user.id,
+      name: 'updated_name',
+      email: 'updated_email@mail.com'
+    })
+    expect(updatedUser.name).toBe('updated_name')
+    expect(updatedUser.email).toBe('updated_email@mail.com')
+    expect(updatedUser.rg).toBe('any_rg')
+  })
 })
