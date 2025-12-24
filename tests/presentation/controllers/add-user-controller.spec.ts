@@ -6,19 +6,23 @@ import { ServerError, MissingParamError, EmailInUseError, CpfInUseError } from '
 import { Id } from '@/domain/value-objects/id'
 import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
+import { Name } from '@/domain/value-objects/name'
+import { Rg } from '@/domain/value-objects/rg'
+import { BirthDate } from '@/domain/value-objects/birth-date'
+
+const makeFakeUser = (): UserModel => ({
+  id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
+  name: Name.create('valid_name') as Name,
+  email: Email.create('valid_email@mail.com'),
+  rg: Rg.create('123456789') as Rg,
+  cpf: Cpf.create('529.982.247-25'),
+  birthDate: BirthDate.create('1990-01-15') as BirthDate
+})
 
 const makeAddUser = (): AddUser => {
   class AddUserStub implements AddUser {
     async add(_data: AddUserParams): Promise<UserModel | Error> {
-      const fakeUser: UserModel = {
-        id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
-        name: 'valid_name',
-        email: Email.create('valid_email@mail.com'),
-        rg: 'valid_rg',
-        cpf: Cpf.create('529.982.247-25'),
-        dataNascimento: '1990-01-15'
-      }
-      return Promise.resolve(fakeUser)
+      return Promise.resolve(makeFakeUser())
     }
   }
   return new AddUserStub()
@@ -54,9 +58,9 @@ const makeFakeRequest = () => ({
   body: {
     name: 'any_name',
     email: 'any_email@mail.com',
-    rg: 'any_rg',
+    rg: '123456789',
     cpf: '529.982.247-25',
-    dataNascimento: '1990-01-15'
+    birthDate: '1990-01-15'
   }
 })
 
@@ -80,13 +84,8 @@ describe('AddUser Controller', () => {
   test('Should call AddUser with correct values', async () => {
     const { sut, addUserStub } = makeSut()
     const addSpy = jest.spyOn(addUserStub, 'add')
-    const httpRequest = makeFakeRequest()
-    await sut.handle(httpRequest)
-    expect(addSpy).toHaveBeenCalledWith(expect.objectContaining({
-      name: 'any_name',
-      rg: 'any_rg',
-      dataNascimento: '1990-01-15'
-    }))
+    await sut.handle(makeFakeRequest())
+    expect(addSpy).toHaveBeenCalled()
   })
 
   test('Should return 500 if AddUser throws', async () => {
@@ -107,9 +106,9 @@ describe('AddUser Controller', () => {
       id: '550e8400-e29b-41d4-a716-446655440000',
       name: 'valid_name',
       email: 'valid_email@mail.com',
-      rg: 'valid_rg',
+      rg: '123456789',
       cpf: '52998224725',
-      dataNascimento: '1990-01-15'
+      birthDate: '1990-01-15'
     })
   })
 

@@ -18,11 +18,11 @@ describe('AddUserValidation Factory', () => {
   test('Should call ValidationComposite with all validations', () => {
     makeAddUserValidation()
     const validations: Validation[] = []
-    for (const field of ['name', 'email', 'rg', 'cpf', 'dataNascimento']) {
+    for (const field of ['name', 'email', 'rg', 'cpf', 'birthDate']) {
       validations.push(new RequiredFieldValidation(field))
     }
     validations.push(new EmailValidation('email', makeEmailValidator()))
-    validations.push(new DateValidation('dataNascimento'))
+    validations.push(new DateValidation('birthDate'))
     expect(ValidationComposite).toHaveBeenCalledWith(validations)
   })
 })

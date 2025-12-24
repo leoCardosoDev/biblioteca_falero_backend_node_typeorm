@@ -26,7 +26,7 @@ npm run seed:admin
   "email": "leocardosodev@gmail.com",
   "rg": "12345678",
   "cpf": "12345678901",
-  "dataNascimento": "1990-05-20",
+  "birthDate": "1990-05-20",
   "role": "ADMIN",
   "password": "_Falero@dmin2025"
 }
@@ -80,7 +80,7 @@ Authorization: Bearer <accessToken>
   "email": "maria.silva@example.com",
   "rg": "123456789",
   "cpf": "12345678900",
-  "dataNascimento": "1990-05-20"
+  "birthDate": "1990-05-20"
 }
 ```
 **Expected Response:** `200 OK`

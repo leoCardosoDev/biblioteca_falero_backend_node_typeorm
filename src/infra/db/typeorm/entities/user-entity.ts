@@ -28,9 +28,30 @@ export class UserTypeOrmEntity {
   cpf!: string
 
   @Column({
+    name: 'birth_date',
     type: 'date',
     transformer: dateTransformer
   })
-  dataNascimento!: string
-}
+  birthDate!: string
 
+  @Column({ name: 'address_street', nullable: true })
+  addressStreet?: string
+
+  @Column({ name: 'address_number', nullable: true })
+  addressNumber?: string
+
+  @Column({ name: 'address_complement', nullable: true })
+  addressComplement?: string
+
+  @Column({ name: 'address_neighborhood', nullable: true })
+  addressNeighborhood?: string
+
+  @Column({ name: 'address_city', nullable: true })
+  addressCity?: string
+
+  @Column({ name: 'address_state', nullable: true })
+  addressState?: string
+
+  @Column({ name: 'address_zip_code', nullable: true })
+  addressZipCode?: string
+}

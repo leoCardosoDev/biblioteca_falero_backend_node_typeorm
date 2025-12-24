@@ -43,7 +43,7 @@ describe('User Routes', () => {
           email: 'leocardosodev@gmail.com',
           rg: '123456789',
           cpf: '529.982.247-25',
-          dataNascimento: '1990-01-15'
+          birthDate: '1990-01-15'
         }
       })
       expect(response.statusCode).toBe(403)
@@ -60,7 +60,7 @@ describe('User Routes', () => {
           email: 'leocardosodev@gmail.com',
           rg: '123456789',
           cpf: '529.982.247-25',
-          dataNascimento: '1990-01-15'
+          birthDate: '1990-01-15'
         }
       })
       expect(response.statusCode).toBe(403)
@@ -77,7 +77,7 @@ describe('User Routes', () => {
           email: 'leocardosodev@gmail.com',
           rg: '123456789',
           cpf: '529.982.247-25',
-          dataNascimento: '1990-01-15'
+          birthDate: '1990-01-15'
         }
       })
       expect(response.statusCode).toBe(200)
@@ -110,7 +110,7 @@ describe('User Routes', () => {
         email: 'user1@mail.com',
         rg: 'rg1',
         cpf: '52998224725',
-        dataNascimento: '1990-01-15'
+        birthDate: '1990-01-15'
       }))
       const accessToken = makeAccessToken(Role.LIBRARIAN)
       const response = await app.inject({
@@ -143,7 +143,7 @@ describe('User Routes', () => {
         email: 'update@mail.com',
         rg: 'rg_update',
         cpf: '52998224725',
-        dataNascimento: '1990-01-15'
+        birthDate: '1990-01-15'
       }))
       const accessToken = makeAccessToken(Role.ADMIN)
       const response = await app.inject({
@@ -175,7 +175,7 @@ describe('User Routes', () => {
         email: 'delete@mail.com',
         rg: 'rg_delete',
         cpf: '71428793860',
-        dataNascimento: '1990-01-15'
+        birthDate: '1990-01-15'
       }))
       const accessToken = makeAccessToken(Role.ADMIN)
       const response = await app.inject({

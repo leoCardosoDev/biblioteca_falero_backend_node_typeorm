@@ -12,27 +12,54 @@ import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
 import { Id } from '@/domain/value-objects/id'
 import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
+import { Name } from '@/domain/value-objects/name'
+import { Rg } from '@/domain/value-objects/rg'
+import { BirthDate } from '@/domain/value-objects/birth-date'
+import { Address } from '@/domain/value-objects/address'
 
 export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmailRepository, LoadUserByCpfRepository, LoadUsersRepository, UpdateUserRepository, DeleteUserRepository {
   private toUserModel(entity: UserTypeOrmEntity): UserModel {
+    let address: Address | undefined
+    if (entity.addressStreet && entity.addressNumber && entity.addressNeighborhood && entity.addressCity && entity.addressState && entity.addressZipCode) {
+      const addressResult = Address.create({
+        street: entity.addressStreet,
+        number: entity.addressNumber,
+        complement: entity.addressComplement,
+        neighborhood: entity.addressNeighborhood,
+        city: entity.addressCity,
+        state: entity.addressState,
+        zipCode: entity.addressZipCode
+      })
+      if (addressResult instanceof Address) {
+        address = addressResult
+      }
+    }
     return {
       id: Id.create(entity.id),
-      name: entity.name,
+      name: Name.create(entity.name) as Name,
       email: Email.create(entity.email),
-      rg: entity.rg,
+      rg: Rg.create(entity.rg) as Rg,
       cpf: Cpf.create(entity.cpf),
-      dataNascimento: entity.dataNascimento
+      birthDate: BirthDate.create(entity.birthDate) as BirthDate,
+      address
     }
   }
 
   async add(data: AddUserParams): Promise<UserModel> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const user = userRepo.create({
-      name: data.name,
+      name: data.name.value,
       email: data.email.value,
-      rg: data.rg,
+      rg: data.rg.value,
       cpf: data.cpf.value,
-      dataNascimento: data.dataNascimento
+      birthDate: data.birthDate.value,
+      addressStreet: data.address?.street,
+      addressNumber: data.address?.number,
+      addressComplement: data.address?.complement,
+      addressNeighborhood: data.address?.neighborhood,
+      addressCity: data.address?.city,
+      addressState: data.address?.state,
+      addressZipCode: data.address?.zipCode
     })
     await userRepo.save(user)
     return this.toUserModel(user)
@@ -64,11 +91,20 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
     if (!user) {
       throw new Error('User not found')
     }
-    if (userData.name) user.name = userData.name
+    if (userData.name) user.name = userData.name.value
     if (userData.email) user.email = userData.email.value
-    if (userData.rg) user.rg = userData.rg
+    if (userData.rg) user.rg = userData.rg.value
     if (userData.cpf) user.cpf = userData.cpf.value
-    if (userData.dataNascimento) user.dataNascimento = userData.dataNascimento
+    if (userData.birthDate) user.birthDate = userData.birthDate.value
+    if (userData.address) {
+      user.addressStreet = userData.address.street
+      user.addressNumber = userData.address.number
+      user.addressComplement = userData.address.complement
+      user.addressNeighborhood = userData.address.neighborhood
+      user.addressCity = userData.address.city
+      user.addressState = userData.address.state
+      user.addressZipCode = userData.address.zipCode
+    }
 
     await userRepo.save(user)
     return this.toUserModel(user)
