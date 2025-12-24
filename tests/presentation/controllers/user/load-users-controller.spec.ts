@@ -5,22 +5,25 @@ import { serverError } from '@/presentation/helpers/http-helper'
 import { Id } from '@/domain/value-objects/id'
 import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
+import { Name } from '@/domain/value-objects/name'
+import { Rg } from '@/domain/value-objects/rg'
+import { BirthDate } from '@/domain/value-objects/birth-date'
 
 const makeFakeUsers = (): UserModel[] => {
   return [{
     id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
-    name: 'any_name',
+    name: Name.create('any_name') as Name,
     email: Email.create('any_email@mail.com'),
-    rg: 'any_rg',
+    rg: Rg.create('123456789') as Rg,
     cpf: Cpf.create('529.982.247-25'),
-    dataNascimento: 'any_date'
+    birthDate: BirthDate.create('1990-01-15') as BirthDate
   }, {
     id: Id.create('550e8400-e29b-41d4-a716-446655440001'),
-    name: 'other_name',
+    name: Name.create('other_name') as Name,
     email: Email.create('other_email@mail.com'),
-    rg: 'other_rg',
+    rg: Rg.create('987654321') as Rg,
     cpf: Cpf.create('71428793860'),
-    dataNascimento: 'other_date'
+    birthDate: BirthDate.create('1985-05-20') as BirthDate
   }]
 }
 
@@ -64,17 +67,17 @@ describe('LoadUsers Controller', () => {
         id: '550e8400-e29b-41d4-a716-446655440000',
         name: 'any_name',
         email: 'any_email@mail.com',
-        rg: 'any_rg',
+        rg: '123456789',
         cpf: '52998224725',
-        dataNascimento: 'any_date'
+        birthDate: '1990-01-15'
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440001',
         name: 'other_name',
         email: 'other_email@mail.com',
-        rg: 'other_rg',
+        rg: '987654321',
         cpf: '71428793860',
-        dataNascimento: 'other_date'
+        birthDate: '1985-05-20'
       }
     ])
   })

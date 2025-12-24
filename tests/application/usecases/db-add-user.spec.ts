@@ -8,14 +8,17 @@ import { EmailInUseError, CpfInUseError } from '@/presentation/errors'
 import { Id } from '@/domain/value-objects/id'
 import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
+import { Name } from '@/domain/value-objects/name'
+import { Rg } from '@/domain/value-objects/rg'
+import { BirthDate } from '@/domain/value-objects/birth-date'
 
 const makeFakeUser = (): UserModel => ({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
-  name: 'valid_name',
+  name: Name.create('valid_name') as Name,
   email: Email.create('valid_email@mail.com'),
-  rg: 'valid_rg',
+  rg: Rg.create('123456789') as Rg,
   cpf: Cpf.create('529.982.247-25'),
-  dataNascimento: '1990-01-15'
+  birthDate: BirthDate.create('1990-01-15') as BirthDate
 })
 
 const makeLoadUserByEmailRepository = (): LoadUserByEmailRepository => {
@@ -66,11 +69,11 @@ const makeSut = (): SutTypes => {
 }
 
 const makeFakeUserData = (): AddUserParams => ({
-  name: 'valid_name',
+  name: Name.create('valid_name') as Name,
   email: Email.create('valid_email@mail.com'),
-  rg: 'valid_rg',
+  rg: Rg.create('123456789') as Rg,
   cpf: Cpf.create('529.982.247-25'),
-  dataNascimento: '1990-01-15'
+  birthDate: BirthDate.create('1990-01-15') as BirthDate
 })
 
 describe('DbAddUser UseCase', () => {

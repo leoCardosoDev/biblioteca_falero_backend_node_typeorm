@@ -4,10 +4,11 @@ import { EmailValidatorAdapter } from '@/infra/validators/email-validator-adapte
 
 export const makeAddUserValidation = (): ValidationComposite => {
   const validations: Validation[] = []
-  for (const field of ['name', 'email', 'rg', 'cpf', 'dataNascimento']) {
+  for (const field of ['name', 'email', 'rg', 'cpf', 'birthDate']) {
     validations.push(new RequiredFieldValidation(field))
   }
   validations.push(new EmailValidation('email', new EmailValidatorAdapter()))
-  validations.push(new DateValidation('dataNascimento'))
+  validations.push(new DateValidation('birthDate'))
+
   return new ValidationComposite(validations)
 }

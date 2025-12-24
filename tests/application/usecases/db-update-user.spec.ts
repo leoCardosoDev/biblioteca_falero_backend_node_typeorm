@@ -5,14 +5,17 @@ import { UpdateUserRepository } from '@/application/protocols/db/update-user-rep
 import { Id } from '@/domain/value-objects/id'
 import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
+import { Name } from '@/domain/value-objects/name'
+import { Rg } from '@/domain/value-objects/rg'
+import { BirthDate } from '@/domain/value-objects/birth-date'
 
 const makeFakeUser = (): UserModel => ({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
-  name: 'any_name',
+  name: Name.create('any_name') as Name,
   email: Email.create('any_email@mail.com'),
-  rg: 'any_rg',
+  rg: Rg.create('123456789') as Rg,
   cpf: Cpf.create('529.982.247-25'),
-  dataNascimento: 'any_date'
+  birthDate: BirthDate.create('1990-01-15') as BirthDate
 })
 
 const makeUpdateUserRepository = (): UpdateUserRepository => {
@@ -44,7 +47,7 @@ describe('DbUpdateUser UseCase', () => {
     const updateSpy = jest.spyOn(updateUserRepositoryStub, 'update')
     const userData = {
       id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
-      name: 'updated_name'
+      name: Name.create('updated_name') as Name
     }
     await sut.update(userData)
     expect(updateSpy).toHaveBeenCalledWith(userData)
@@ -55,7 +58,7 @@ describe('DbUpdateUser UseCase', () => {
     jest.spyOn(updateUserRepositoryStub, 'update').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
     const promise = sut.update({
       id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
-      name: 'updated_name'
+      name: Name.create('updated_name') as Name
     })
     await expect(promise).rejects.toThrow()
   })
@@ -64,10 +67,10 @@ describe('DbUpdateUser UseCase', () => {
     const { sut } = makeSut()
     const userData = {
       id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
-      name: 'updated_name'
+      name: Name.create('updated_name') as Name
     }
     const user = await sut.update(userData)
     expect(user.id.value).toBe('550e8400-e29b-41d4-a716-446655440000')
-    expect(user.name).toBe('any_name')
+    expect(user.name.value).toBe('any_name')
   })
 })

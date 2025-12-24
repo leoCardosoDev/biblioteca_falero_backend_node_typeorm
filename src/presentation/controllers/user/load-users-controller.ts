@@ -11,11 +11,20 @@ export class LoadUsersController implements Controller {
       const users = await this.loadUsers.load()
       const serializedUsers = users.map(user => ({
         id: user.id.value,
-        name: user.name,
+        name: user.name.value,
         email: user.email.value,
-        rg: user.rg,
+        rg: user.rg.value,
         cpf: user.cpf.value,
-        dataNascimento: user.dataNascimento
+        birthDate: user.birthDate.value,
+        address: user.address ? {
+          street: user.address.street,
+          number: user.address.number,
+          complement: user.address.complement,
+          neighborhood: user.address.neighborhood,
+          city: user.address.city,
+          state: user.address.state,
+          zipCode: user.address.zipCode
+        } : undefined
       }))
       return ok(serializedUsers)
     } catch (error) {
