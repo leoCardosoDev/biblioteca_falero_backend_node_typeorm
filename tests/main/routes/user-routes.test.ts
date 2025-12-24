@@ -156,4 +156,34 @@ describe('User Routes', () => {
       expect(response.json().name).toBe('updated_name_confirmed')
     })
   })
+
+  describe('DELETE /users/:id', () => {
+    test('Should return 403 if user role is not ADMIN', async () => {
+      const accessToken = makeAccessToken(Role.LIBRARIAN)
+      const response = await app.inject({
+        method: 'DELETE',
+        url: '/api/users/any_id',
+        headers: { authorization: `Bearer ${accessToken}` }
+      })
+      expect(response.statusCode).toBe(403)
+    })
+
+    test('Should return 204 on success', async () => {
+      const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+      const user = await userRepo.save(userRepo.create({
+        name: 'User To Delete',
+        email: 'delete@mail.com',
+        rg: 'rg_delete',
+        cpf: 'cpf_delete',
+        dataNascimento: '1990-01-15'
+      }))
+      const accessToken = makeAccessToken(Role.ADMIN)
+      const response = await app.inject({
+        method: 'DELETE',
+        url: `/api/users/${user.id}`,
+        headers: { authorization: `Bearer ${accessToken}` }
+      })
+      expect(response.statusCode).toBe(204)
+    })
+  })
 })
