@@ -90,4 +90,67 @@ describe('UpdateUser Controller', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(serverError(new Error()))
   })
+
+  test('Should return 400 if id is invalid', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: { id: 'invalid-uuid' },
+      body: { name: 'updated_name' }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if email is invalid', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { email: 'invalid-email' }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if cpf is invalid', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { cpf: '00000000000' }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if rg is invalid', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { rg: 'invalid!' }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if birthDate is invalid', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { birthDate: '2099-01-01' }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if address is invalid', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: {
+        address: {
+          street: '',
+          number: '',
+          neighborhood: '',
+          city: '',
+          state: '',
+          zipCode: ''
+        }
+      }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
 })

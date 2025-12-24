@@ -1,0 +1,7 @@
+export * from './address'
+export * from './birth-date'
+export * from './cpf'
+export * from './email'
+export * from './id'
+export * from './name'
+export * from './rg'

@@ -137,4 +137,76 @@ describe('AddUser Controller', () => {
     expect(httpResponse.statusCode).toBe(403)
     expect(httpResponse.body).toEqual(new CpfInUseError())
   })
+
+  test('Should return 400 if Email.create throws InvalidEmailError', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      body: {
+        name: 'any_name',
+        email: 'invalid-email',
+        rg: '123456789',
+        cpf: '529.982.247-25',
+        birthDate: '1990-01-15'
+      }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if Cpf.create throws InvalidCpfError', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      body: {
+        name: 'any_name',
+        email: 'valid_email@mail.com',
+        rg: '123456789',
+        cpf: '00000000000',
+        birthDate: '1990-01-15'
+      }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if Address.create returns error', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      body: {
+        name: 'any_name',
+        email: 'valid_email@mail.com',
+        rg: '123456789',
+        cpf: '529.982.247-25',
+        birthDate: '1990-01-15',
+        address: {
+          street: '',
+          number: '',
+          neighborhood: '',
+          city: '',
+          state: '',
+          zipCode: ''
+        }
+      }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 200 with address if valid address is provided', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      body: {
+        name: 'any_name',
+        email: 'any_email@mail.com',
+        rg: '123456789',
+        cpf: '529.982.247-25',
+        birthDate: '1990-01-15',
+        address: {
+          street: 'any_street',
+          number: '123',
+          neighborhood: 'any_neighborhood',
+          city: 'any_city',
+          state: 'SP',
+          zipCode: '12345678'
+        }
+      }
+    })
+    expect(httpResponse.statusCode).toBe(200)
+  })
 })
