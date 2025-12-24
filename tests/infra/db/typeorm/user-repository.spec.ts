@@ -183,4 +183,18 @@ describe('UserTypeOrmRepository', () => {
     expect(updatedUser.email).toBe('updated_email@mail.com')
     expect(updatedUser.rg).toBe('any_rg')
   })
+
+  test('Should delete a user on success', async () => {
+    const sut = makeSut()
+    const user = await sut.add({
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      rg: 'any_rg',
+      cpf: 'any_cpf',
+      dataNascimento: '1990-01-15'
+    })
+    await sut.delete(user.id)
+    const deletedUser = await sut.loadByEmail('any_email@mail.com')
+    expect(deletedUser).toBeUndefined()
+  })
 })
