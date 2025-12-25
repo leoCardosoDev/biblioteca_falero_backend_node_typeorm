@@ -4,6 +4,7 @@ import { DataSourceOptions } from 'typeorm'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
 import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
+import { SessionTypeOrmEntity } from '@/infra/db/typeorm/entities/session-entity'
 import { BcryptAdapter } from '@/infra/cryptography/bcrypt-adapter'
 import env from '@/main/config/env'
 
@@ -28,7 +29,7 @@ const run = async (): Promise<void> => {
     username: env.mysqlUser,
     password: env.mysqlPassword,
     database: env.mysqlDb,
-    entities: [UserTypeOrmEntity, LoginTypeOrmEntity],
+    entities: [UserTypeOrmEntity, LoginTypeOrmEntity, SessionTypeOrmEntity],
     synchronize: true
   }
 
