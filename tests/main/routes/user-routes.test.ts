@@ -108,7 +108,7 @@ describe('User Routes', () => {
       await userRepo.save(userRepo.create({
         name: 'User 1',
         email: 'user1@mail.com',
-        rg: 'rg1',
+        rg: '123456789',
         cpf: '52998224725',
         birthDate: '1990-01-15'
       }))
@@ -141,7 +141,7 @@ describe('User Routes', () => {
       const user = await userRepo.save(userRepo.create({
         name: 'User To Update',
         email: 'update@mail.com',
-        rg: 'rg_update',
+        rg: '234567890',
         cpf: '52998224725',
         birthDate: '1990-01-15'
       }))
@@ -173,7 +173,7 @@ describe('User Routes', () => {
       const user = await userRepo.save(userRepo.create({
         name: 'User To Delete',
         email: 'delete@mail.com',
-        rg: 'rg_delete',
+        rg: '345678901',
         cpf: '71428793860',
         birthDate: '1990-01-15'
       }))

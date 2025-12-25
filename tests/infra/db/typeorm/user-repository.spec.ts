@@ -269,4 +269,28 @@ describe('UserTypeOrmRepository', () => {
     expect(user).toBeTruthy()
     expect(user?.address).toBeUndefined() // Defensive check: invalid address should not be assigned
   })
+
+  test('Should exclude users with invalid email from loadAll results (domain shielding)', async () => {
+    // Insert a valid user
+    const sut = makeSut()
+    await sut.add(makeUserData())
+
+    // Directly insert a user with invalid email (bypassing domain validation)
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const corruptEntity = userRepo.create({
+      name: 'Corrupt User',
+      email: 'invalid-email-no-at-symbol', // Invalid: no '@'
+      rg: '111222333',
+      cpf: '71428793860',
+      birthDate: '1985-03-10'
+    })
+    await userRepo.save(corruptEntity)
+
+    // Act
+    const users = await sut.loadAll()
+
+    // Assert: Should NOT throw, should return only the valid user
+    expect(users.length).toBe(1)
+    expect(users[0].email.value).toBe('any_email@mail.com')
+  })
 })
