@@ -11,7 +11,7 @@ const adminUser = {
   name: 'Leo Cardoso',
   email: 'leocardosodev@gmail.com',
   rg: '12345678',
-  cpf: '12345678901',
+  cpf: '83350329047',
   birthDate: '1990-05-20'
 }
 
