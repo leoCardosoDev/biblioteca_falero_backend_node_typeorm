@@ -1,6 +1,7 @@
-export class AccessDeniedError extends Error {
+import { AppError } from './app-error'
+
+export class AccessDeniedError extends AppError {
   constructor() {
-    super('Access denied')
-    this.name = 'AccessDeniedError'
+    super('FORBIDDEN', 'Access denied')
   }
 }

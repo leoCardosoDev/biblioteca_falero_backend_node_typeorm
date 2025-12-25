@@ -3,7 +3,6 @@ import { Authentication, AuthenticationParams, AuthenticationModel } from '@/dom
 import { Validation } from '@/presentation/protocols/validation'
 import { HttpRequest } from '@/presentation/protocols/http'
 import { MissingParamError } from '@/presentation/errors'
-import { badRequest, serverError, unauthorized, ok } from '@/presentation/helpers/http-helper'
 
 const makeAuthentication = (): Authentication => {
   class AuthenticationStub implements Authentication {
@@ -63,8 +62,9 @@ describe('Login Controller', () => {
   test('Should return 400 if Validation returns an error', async () => {
     const { sut, validationStub } = makeSut()
     jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new MissingParamError('any_field'))
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')))
+    const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body.error.code).toBe('MISSING_PARAM')
   })
 
   test('Should call Authentication with correct values', async () => {
@@ -80,25 +80,28 @@ describe('Login Controller', () => {
   test('Should return 401 if Authentication returns undefined', async () => {
     const { sut, authenticationStub } = makeSut()
     jest.spyOn(authenticationStub, 'auth').mockResolvedValueOnce(undefined)
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(unauthorized())
+    const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
+    expect(httpResponse.statusCode).toBe(401)
+    expect(httpResponse.body.error.code).toBe('UNAUTHORIZED')
   })
 
   test('Should return 200 with accessToken and name on success', async () => {
     const { sut } = makeSut()
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(ok({
+    const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { accessToken: string; name: string; role: string } }
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({
       accessToken: 'any_token',
       name: 'any_name',
       role: 'any_role'
-    }))
+    })
   })
 
   test('Should return 500 if Authentication throws', async () => {
     const { sut, authenticationStub } = makeSut()
     jest.spyOn(authenticationStub, 'auth').mockRejectedValueOnce(new Error())
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(serverError(new Error()))
+    const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body.error.code).toBe('INTERNAL_ERROR')
   })
 
   test('Should return 500 if Validation throws', async () => {
@@ -106,7 +109,8 @@ describe('Login Controller', () => {
     jest.spyOn(validationStub, 'validate').mockImplementationOnce(() => {
       throw new Error()
     })
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(serverError(new Error()))
+    const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body.error.code).toBe('INTERNAL_ERROR')
   })
 })

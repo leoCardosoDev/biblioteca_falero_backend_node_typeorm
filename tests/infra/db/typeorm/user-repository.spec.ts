@@ -152,9 +152,10 @@ describe('UserTypeOrmRepository', () => {
       name: Name.create('updated_name') as Name,
       email: Email.create('updated_email@mail.com')
     })
-    expect(updatedUser.name.value).toBe('updated_name')
-    expect(updatedUser.email.value).toBe('updated_email@mail.com')
-    expect(updatedUser.rg.value).toBe('123456789')
+    expect(updatedUser).toBeTruthy()
+    expect(updatedUser!.name.value).toBe('updated_name')
+    expect(updatedUser!.email.value).toBe('updated_email@mail.com')
+    expect(updatedUser!.rg.value).toBe('123456789')
   })
 
   test('Should delete a user on success', async () => {
@@ -200,18 +201,19 @@ describe('UserTypeOrmRepository', () => {
         zipCode: '87654321'
       }) as Address
     })
-    expect(updatedUser.address).toBeTruthy()
-    expect(updatedUser.address?.street).toBe('updated_street')
-    expect(updatedUser.address?.city).toBe('updated_city')
+    expect(updatedUser).toBeTruthy()
+    expect(updatedUser!.address).toBeTruthy()
+    expect(updatedUser!.address?.street).toBe('updated_street')
+    expect(updatedUser!.address?.city).toBe('updated_city')
   })
 
-  test('Should throw if update is called with non-existent id', async () => {
+  test('Should return null if update is called with non-existent id', async () => {
     const sut = makeSut()
-    const promise = sut.update({
+    const result = await sut.update({
       id: Id.create('550e8400-e29b-41d4-a716-446655440099'),
       name: Name.create('any_name') as Name
     })
-    await expect(promise).rejects.toThrow('User not found')
+    expect(result).toBeNull()
   })
 
   test('Should update rg on success', async () => {
@@ -221,7 +223,8 @@ describe('UserTypeOrmRepository', () => {
       id: user.id,
       rg: Rg.create('987654321') as Rg
     })
-    expect(updatedUser.rg.value).toBe('987654321')
+    expect(updatedUser).toBeTruthy()
+    expect(updatedUser!.rg.value).toBe('987654321')
   })
 
   test('Should update cpf on success', async () => {
@@ -231,7 +234,8 @@ describe('UserTypeOrmRepository', () => {
       id: user.id,
       cpf: Cpf.create('71428793860')
     })
-    expect(updatedUser.cpf.value).toBe('71428793860')
+    expect(updatedUser).toBeTruthy()
+    expect(updatedUser!.cpf.value).toBe('71428793860')
   })
 
   test('Should update birthDate on success', async () => {
@@ -241,7 +245,8 @@ describe('UserTypeOrmRepository', () => {
       id: user.id,
       birthDate: BirthDate.create('1985-05-20') as BirthDate
     })
-    expect(updatedUser.birthDate.value).toBe('1985-05-20')
+    expect(updatedUser).toBeTruthy()
+    expect(updatedUser!.birthDate.value).toBe('1985-05-20')
   })
 
   test('Should return user with undefined address if DB has invalid address data (defensive check)', async () => {
@@ -268,5 +273,176 @@ describe('UserTypeOrmRepository', () => {
 
     expect(user).toBeTruthy()
     expect(user?.address).toBeUndefined() // Defensive check: invalid address should not be assigned
+  })
+
+  test('Should exclude users with invalid email from loadAll results (domain shielding)', async () => {
+    // Insert a valid user
+    const sut = makeSut()
+    await sut.add(makeUserData())
+
+    // Directly insert a user with invalid email (bypassing domain validation)
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const corruptEntity = userRepo.create({
+      name: 'Corrupt User',
+      email: 'invalid-email-no-at-symbol', // Invalid: no '@'
+      rg: '111222333',
+      cpf: '71428793860',
+      birthDate: '1985-03-10'
+    })
+    await userRepo.save(corruptEntity)
+
+    // Act
+    const users = await sut.loadAll()
+
+    // Assert: Should NOT throw, should return only the valid user
+    expect(users.length).toBe(1)
+    expect(users[0].email.value).toBe('any_email@mail.com')
+  })
+
+  test('Should exclude users with invalid Name from loadAll results', async () => {
+    const sut = makeSut()
+    await sut.add(makeUserData())
+
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const corruptEntity = userRepo.create({
+      name: 'A', // Invalid: too short (min 2 chars)
+      email: 'invalid_name_user@mail.com',
+      rg: '111222333',
+      cpf: '71428793860',
+      birthDate: '1985-03-10'
+    })
+    await userRepo.save(corruptEntity)
+
+    const users = await sut.loadAll()
+
+    expect(users.length).toBe(1)
+    expect(users[0].name.value).toBe('any_name')
+  })
+
+  test('Should exclude users with invalid RG from loadAll results', async () => {
+    const sut = makeSut()
+    await sut.add(makeUserData())
+
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const corruptEntity = userRepo.create({
+      name: 'Valid Name',
+      email: 'invalid_rg_user@mail.com',
+      rg: '', // Invalid: empty RG
+      cpf: '71428793860',
+      birthDate: '1985-03-10'
+    })
+    await userRepo.save(corruptEntity)
+
+    const users = await sut.loadAll()
+
+    expect(users.length).toBe(1)
+    expect(users[0].email.value).toBe('any_email@mail.com')
+  })
+
+  test('Should exclude users with invalid BirthDate from loadAll results', async () => {
+    const sut = makeSut()
+    await sut.add(makeUserData())
+
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const corruptEntity = userRepo.create({
+      name: 'Valid Name',
+      email: 'invalid_birthdate_user@mail.com',
+      rg: '111222333',
+      cpf: '71428793860',
+      birthDate: 'not-a-valid-date' // Invalid: unparseable date
+    })
+    await userRepo.save(corruptEntity)
+
+    const users = await sut.loadAll()
+
+    expect(users.length).toBe(1)
+    expect(users[0].email.value).toBe('any_email@mail.com')
+  })
+
+  test('Should return undefined from loadByEmail if user data is corrupt', async () => {
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const corruptEntity = userRepo.create({
+      name: 'Valid Name',
+      email: 'corrupt_loadbyemail@mail.com',
+      rg: '', // Invalid: empty RG
+      cpf: '71428793860',
+      birthDate: '1985-03-10'
+    })
+    await userRepo.save(corruptEntity)
+
+    const sut = makeSut()
+    const user = await sut.loadByEmail('corrupt_loadbyemail@mail.com')
+
+    expect(user).toBeUndefined()
+  })
+
+  test('Should return undefined from loadByCpf if user data is corrupt', async () => {
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const corruptEntity = userRepo.create({
+      name: 'A', // Invalid: too short
+      email: 'corrupt_loadbycpf@mail.com',
+      rg: '111222333',
+      cpf: '71428793860',
+      birthDate: '1985-03-10'
+    })
+    await userRepo.save(corruptEntity)
+
+    const sut = makeSut()
+    const user = await sut.loadByCpf('71428793860')
+
+    expect(user).toBeUndefined()
+  })
+
+  test('Should throw error if add fails to reconstitute saved user (line 102)', async () => {
+    const sut = makeSut()
+    // Spy on private method to force null return after save
+    jest.spyOn(sut as unknown as { toUserModel: () => null }, 'toUserModel').mockReturnValueOnce(null)
+
+    const promise = sut.add(makeUserData())
+
+    await expect(promise).rejects.toThrow('Failed to create user: data corruption detected after save')
+  })
+
+  test('Should throw error if update fails to reconstitute saved user (line 151)', async () => {
+    const sut = makeSut()
+    const user = await sut.add(makeUserData())
+
+    // Spy on private method to force null return after update
+    jest.spyOn(sut as unknown as { toUserModel: () => null }, 'toUserModel').mockReturnValueOnce(null)
+
+    const promise = sut.update({
+      id: user.id,
+      name: Name.create('updated_name') as Name
+    })
+
+    await expect(promise).rejects.toThrow('Failed to update user: data corruption detected after save')
+  })
+
+  test('Should handle non-Error thrown by VO creation (line 77 String(error) fallback)', async () => {
+    // Insert a user directly in DB (bypassing VOs)
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const entityWithValidData = userRepo.create({
+      name: 'Valid Name',
+      email: 'test_string_error@mail.com',
+      rg: '111222333',
+      cpf: '71428793860',
+      birthDate: '1985-03-10'
+    })
+    await userRepo.save(entityWithValidData)
+
+    const sut = makeSut()
+
+    // Mock Email.create to throw a non-Error value (string) when called
+    jest.spyOn(Email, 'create').mockImplementation(() => {
+      throw 'string-error-not-Error-instance'
+    })
+
+    const users = await sut.loadAll()
+
+    // Should exclude the user because Email.create threw a non-Error
+    expect(users.length).toBe(0)
+
+    // Restore
+    jest.restoreAllMocks()
   })
 })

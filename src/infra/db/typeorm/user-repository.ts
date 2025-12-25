@@ -18,30 +18,65 @@ import { BirthDate } from '@/domain/value-objects/birth-date'
 import { Address } from '@/domain/value-objects/address'
 
 export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmailRepository, LoadUserByCpfRepository, LoadUsersRepository, UpdateUserRepository, DeleteUserRepository {
-  private toUserModel(entity: UserTypeOrmEntity): UserModel {
-    let address: Address | undefined
-    if (entity.addressStreet && entity.addressNumber && entity.addressNeighborhood && entity.addressCity && entity.addressState && entity.addressZipCode) {
-      const addressResult = Address.create({
-        street: entity.addressStreet,
-        number: entity.addressNumber,
-        complement: entity.addressComplement,
-        neighborhood: entity.addressNeighborhood,
-        city: entity.addressCity,
-        state: entity.addressState,
-        zipCode: entity.addressZipCode
-      })
-      if (addressResult instanceof Address) {
-        address = addressResult
+  private toUserModel(entity: UserTypeOrmEntity): UserModel | null {
+    try {
+      // Validate Name (returns Error on failure)
+      const nameOrError = Name.create(entity.name)
+      if (!(nameOrError instanceof Name)) {
+        console.error(`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: Invalid Name - "${entity.name}"`)
+        return null
       }
-    }
-    return {
-      id: Id.create(entity.id),
-      name: Name.create(entity.name) as Name,
-      email: Email.create(entity.email),
-      rg: Rg.create(entity.rg) as Rg,
-      cpf: Cpf.create(entity.cpf),
-      birthDate: BirthDate.create(entity.birthDate) as BirthDate,
-      address
+
+      // Validate Rg (returns Error on failure)
+      const rgOrError = Rg.create(entity.rg)
+      if (!(rgOrError instanceof Rg)) {
+        console.error(`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: Invalid RG - "${entity.rg}"`)
+        return null
+      }
+
+      // Validate BirthDate (returns Error on failure)
+      const birthDateOrError = BirthDate.create(entity.birthDate)
+      if (!(birthDateOrError instanceof BirthDate)) {
+        console.error(`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: Invalid BirthDate - "${entity.birthDate}"`)
+        return null
+      }
+
+      // Validate Email (throws on failure)
+      const email = Email.create(entity.email)
+
+      // Validate Cpf (throws on failure)
+      const cpf = Cpf.create(entity.cpf)
+
+      // Address is optional, handle gracefully
+      let address: Address | undefined
+      if (entity.addressStreet && entity.addressNumber && entity.addressNeighborhood && entity.addressCity && entity.addressState && entity.addressZipCode) {
+        const addressResult = Address.create({
+          street: entity.addressStreet,
+          number: entity.addressNumber,
+          complement: entity.addressComplement,
+          neighborhood: entity.addressNeighborhood,
+          city: entity.addressCity,
+          state: entity.addressState,
+          zipCode: entity.addressZipCode
+        })
+        if (addressResult instanceof Address) {
+          address = addressResult
+        }
+      }
+
+      return {
+        id: Id.create(entity.id),
+        name: nameOrError,
+        email,
+        rg: rgOrError,
+        cpf,
+        birthDate: birthDateOrError,
+        address
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      console.error(`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: ${errorMessage}`)
+      return null
     }
   }
 
@@ -62,34 +97,38 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
       addressZipCode: data.address?.zipCode
     })
     await userRepo.save(user)
-    return this.toUserModel(user)
+    const result = this.toUserModel(user)
+    if (!result) {
+      throw new Error('Failed to create user: data corruption detected after save')
+    }
+    return result
   }
 
   async loadByEmail(email: string): Promise<UserModel | undefined> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const user = await userRepo.findOne({ where: { email } })
     if (!user) return undefined
-    return this.toUserModel(user)
+    return this.toUserModel(user) ?? undefined
   }
 
   async loadByCpf(cpf: string): Promise<UserModel | undefined> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const user = await userRepo.findOne({ where: { cpf } })
     if (!user) return undefined
-    return this.toUserModel(user)
+    return this.toUserModel(user) ?? undefined
   }
 
   async loadAll(): Promise<UserModel[]> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const users = await userRepo.find()
-    return users.map(user => this.toUserModel(user))
+    return users.map(user => this.toUserModel(user)).filter((user): user is UserModel => user !== null)
   }
 
-  async update(userData: UpdateUserParams): Promise<UserModel> {
+  async update(userData: UpdateUserParams): Promise<UserModel | null> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const user = await userRepo.findOne({ where: { id: userData.id.value } })
     if (!user) {
-      throw new Error('User not found')
+      return null
     }
     if (userData.name) user.name = userData.name.value
     if (userData.email) user.email = userData.email.value
@@ -107,7 +146,11 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
     }
 
     await userRepo.save(user)
-    return this.toUserModel(user)
+    const result = this.toUserModel(user)
+    if (!result) {
+      throw new Error('Failed to update user: data corruption detected after save')
+    }
+    return result
   }
 
   async delete(id: string): Promise<void> {

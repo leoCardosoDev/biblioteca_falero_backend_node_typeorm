@@ -1,6 +1,7 @@
-export class UnauthorizedError extends Error {
+import { AppError } from './app-error'
+
+export class UnauthorizedError extends AppError {
   constructor() {
-    super('Unauthorized')
-    this.name = 'UnauthorizedError'
+    super('UNAUTHORIZED', 'Unauthorized')
   }
 }

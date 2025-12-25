@@ -1,6 +1,5 @@
 import { CreateUserLoginController } from '@/presentation/controllers/create-user-login-controller'
 import { MissingParamError } from '@/presentation/errors'
-import { badRequest, serverError, ok } from '@/presentation/helpers'
 import { Validation } from '@/presentation/protocols'
 import { CreateUserLogin, CreateUserLoginParams } from '@/domain/usecases/create-user-login'
 import { LoginModel } from '@/domain/models/login'
@@ -70,20 +69,22 @@ describe('CreateUserLogin Controller', () => {
     jest.spyOn(createUserLoginStub, 'create').mockImplementationOnce(async () => {
       return Promise.reject(new Error())
     })
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(serverError(new Error()))
+    const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body.error.code).toBe('INTERNAL_ERROR')
   })
 
   test('Should return 200 if valid data is provided', async () => {
     const { sut } = makeSut()
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(ok({
+    const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: unknown }
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({
       id: 'valid_id',
       userId: 'valid_user_id',
       password: 'valid_password',
       role: 'valid_role',
       accessToken: 'valid_token'
-    }))
+    })
   })
 
   test('Should call Validation with correct value', async () => {
@@ -97,8 +98,9 @@ describe('CreateUserLogin Controller', () => {
   test('Should return 400 if Validation returns an error', async () => {
     const { sut, validationStub } = makeSut()
     jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new MissingParamError('any_field'))
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')))
+    const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body.error.code).toBe('MISSING_PARAM')
   })
 
   test('Should return 400 if password does not meet policy requirements', async () => {
@@ -109,8 +111,8 @@ describe('CreateUserLogin Controller', () => {
         password: 'weak'
       }
     }
-    const httpResponse = await sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest) as { statusCode: number; body: { error: { message: string } } }
     expect(httpResponse.statusCode).toBe(400)
-    expect((httpResponse.body as Error).message).toContain('Password')
+    expect(httpResponse.body.error.message).toContain('Password')
   })
 })

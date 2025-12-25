@@ -108,7 +108,7 @@ describe('User Routes', () => {
       await userRepo.save(userRepo.create({
         name: 'User 1',
         email: 'user1@mail.com',
-        rg: 'rg1',
+        rg: '123456789',
         cpf: '52998224725',
         birthDate: '1990-01-15'
       }))
@@ -136,12 +136,23 @@ describe('User Routes', () => {
       expect(response.statusCode).toBe(403)
     })
 
+    test('Should return 404 if user does not exist', async () => {
+      const accessToken = makeAccessToken(Role.ADMIN)
+      const response = await app.inject({
+        method: 'PUT',
+        url: '/api/users/550e8400-e29b-41d4-a716-446655440000',
+        headers: { authorization: `Bearer ${accessToken}` },
+        payload: { name: 'non_existent_user' }
+      })
+      expect(response.statusCode).toBe(404)
+    })
+
     test('Should return 200 on success', async () => {
       const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
       const user = await userRepo.save(userRepo.create({
         name: 'User To Update',
         email: 'update@mail.com',
-        rg: 'rg_update',
+        rg: '234567890',
         cpf: '52998224725',
         birthDate: '1990-01-15'
       }))
@@ -173,7 +184,7 @@ describe('User Routes', () => {
       const user = await userRepo.save(userRepo.create({
         name: 'User To Delete',
         email: 'delete@mail.com',
-        rg: 'rg_delete',
+        rg: '345678901',
         cpf: '71428793860',
         birthDate: '1990-01-15'
       }))

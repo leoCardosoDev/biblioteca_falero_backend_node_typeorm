@@ -8,6 +8,7 @@ import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { BirthDate } from '@/domain/value-objects/birth-date'
+import { Address } from '@/domain/value-objects/address'
 
 const makeFakeUsers = (): UserModel[] => {
   return [{
@@ -87,5 +88,37 @@ describe('LoadUsers Controller', () => {
     jest.spyOn(loadUsersStub, 'load').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
     const httpResponse = await sut.handle({})
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  test('Should serialize user address when present', async () => {
+    const { sut, loadUsersStub } = makeSut()
+    const userWithAddress: UserModel = {
+      id: Id.create('550e8400-e29b-41d4-a716-446655440002'),
+      name: Name.create('user_with_address') as Name,
+      email: Email.create('address@mail.com'),
+      rg: Rg.create('999888777') as Rg,
+      cpf: Cpf.create('529.982.247-25'),
+      birthDate: BirthDate.create('1990-01-15') as BirthDate,
+      address: Address.create({
+        street: 'any_street',
+        number: '123',
+        neighborhood: 'any_neighborhood',
+        city: 'any_city',
+        state: 'SP',
+        zipCode: '12345678'
+      }) as Address
+    }
+    jest.spyOn(loadUsersStub, 'load').mockResolvedValueOnce([userWithAddress])
+    const httpResponse = await sut.handle({})
+    expect(httpResponse.statusCode).toBe(200)
+    expect((httpResponse.body as Array<{ address: unknown }>)[0].address).toEqual({
+      street: 'any_street',
+      number: '123',
+      complement: undefined,
+      neighborhood: 'any_neighborhood',
+      city: 'any_city',
+      state: 'SP',
+      zipCode: '12345678'
+    })
   })
 })

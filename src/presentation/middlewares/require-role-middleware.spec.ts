@@ -10,6 +10,15 @@ const makeFakeRequest = (role: Role = Role.MEMBER): HttpRequest => ({
 })
 
 describe('RequireRoleMiddleware', () => {
+  beforeAll(() => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2025-01-01T00:00:00.000Z'))
+  })
+
+  afterAll(() => {
+    jest.useRealTimers()
+  })
+
   test('Should return 403 if no userId is provided', async () => {
     const sut = new RequireRoleMiddleware([Role.ADMIN])
     const httpResponse = await sut.handle({})

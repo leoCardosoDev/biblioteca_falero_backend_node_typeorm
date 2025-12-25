@@ -1,8 +1,9 @@
 import { Controller } from '@/presentation/protocols/controller'
 import { HttpResponse } from '@/presentation/protocols/http'
 import { UpdateUser } from '@/domain/usecases/update-user'
-import { ok, serverError, badRequest } from '@/presentation/helpers/http-helper'
+import { ok, serverError, badRequest, notFound } from '@/presentation/helpers/http-helper'
 import { MissingParamError } from '@/presentation/errors'
+import { NotFoundError } from '@/domain/errors'
 import { Id } from '@/domain/value-objects/id'
 import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
@@ -67,6 +68,9 @@ export class UpdateUserController implements Controller {
       }
 
       const user = await this.updateUser.update(updateData)
+      if (!user) {
+        return notFound(new NotFoundError('User'))
+      }
       return ok({
         id: user.id.value,
         name: user.name.value,

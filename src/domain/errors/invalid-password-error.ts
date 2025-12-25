@@ -1,6 +1,7 @@
-export class InvalidPasswordError extends Error {
+import { DomainError } from './domain-error'
+
+export class InvalidPasswordError extends DomainError {
   constructor(message: string) {
     super(message)
-    this.name = 'InvalidPasswordError'
   }
 }

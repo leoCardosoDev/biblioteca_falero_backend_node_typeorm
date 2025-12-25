@@ -5,7 +5,7 @@ import { UpdateUserRepository } from '@/application/protocols/db/update-user-rep
 export class DbUpdateUser implements UpdateUser {
   constructor(private readonly updateUserRepository: UpdateUserRepository) { }
 
-  async update(userData: UpdateUserParams): Promise<UserModel> {
+  async update(userData: UpdateUserParams): Promise<UserModel | null> {
     return await this.updateUserRepository.update(userData)
   }
 }

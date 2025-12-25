@@ -1,3 +1,7 @@
+export * from './domain-error'
+export * from './email-in-use-error'
+export * from './cpf-in-use-error'
+export * from './not-found-error'
 export * from './invalid-address-error'
 export * from './invalid-birth-date-error'
 export * from './invalid-cpf-error'

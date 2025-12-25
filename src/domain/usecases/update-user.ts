@@ -18,5 +18,5 @@ export type UpdateUserParams = {
 }
 
 export interface UpdateUser {
-  update: (userData: UpdateUserParams) => Promise<UserModel>
+  update: (userData: UpdateUserParams) => Promise<UserModel | null>
 }

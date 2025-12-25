@@ -1,7 +1,10 @@
-export class ServerError extends Error {
-  constructor(stack: string) {
-    super('Internal server error')
-    this.name = 'ServerError'
-    this.stack = stack
+import { AppError } from './app-error'
+
+export class ServerError extends AppError {
+  constructor(stack?: string) {
+    super('INTERNAL_ERROR', 'Internal server error')
+    if (stack) {
+      this.stack = stack
+    }
   }
 }

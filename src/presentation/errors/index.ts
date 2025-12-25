@@ -1,6 +1,5 @@
+export * from './app-error'
 export * from './missing-param-error'
 export * from './server-error'
-export * from './email-in-use-error'
-export * from './cpf-in-use-error'
 export * from './access-denied-error'
 export * from './unauthorized-error'

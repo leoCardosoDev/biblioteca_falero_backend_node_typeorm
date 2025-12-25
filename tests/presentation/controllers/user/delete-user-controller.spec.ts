@@ -1,7 +1,5 @@
 import { DeleteUserController } from '@/presentation/controllers/user/delete-user-controller'
 import { DeleteUser } from '@/domain/usecases/delete-user'
-import { serverError, badRequest } from '@/presentation/helpers/http-helper'
-import { MissingParamError } from '@/presentation/errors'
 
 const makeDeleteUser = (): DeleteUser => {
   class DeleteUserStub implements DeleteUser {
@@ -29,8 +27,9 @@ const makeSut = (): SutTypes => {
 describe('DeleteUser Controller', () => {
   test('Should return 400 if no id is provided', async () => {
     const { sut } = makeSut()
-    const httpResponse = await sut.handle({})
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('id')))
+    const httpResponse = await sut.handle({}) as { statusCode: number; body: { error: { code: string } } }
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body.error.code).toBe('MISSING_PARAM')
   })
 
   test('Should call DeleteUser with correct id', async () => {
@@ -58,7 +57,8 @@ describe('DeleteUser Controller', () => {
     const httpRequest = {
       params: { id: 'any_id' }
     }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(serverError(new Error()))
+    const httpResponse = await sut.handle(httpRequest) as { statusCode: number; body: { error: { code: string } } }
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body.error.code).toBe('INTERNAL_ERROR')
   })
 })
