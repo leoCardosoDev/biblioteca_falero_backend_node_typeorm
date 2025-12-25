@@ -1,3 +1,5 @@
+import { LoginId } from '@/domain/models/ids'
+
 export interface UpdateAccessTokenRepository {
-  updateAccessToken: (id: string, token: string) => Promise<void>
+  updateAccessToken: (id: LoginId, token: string) => Promise<void>
 }

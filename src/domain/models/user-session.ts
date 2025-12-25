@@ -1,6 +1,8 @@
+import { SessionId, UserId } from './ids'
+
 export type UserSessionModel = {
-  id: string
-  userId: string
+  id: SessionId
+  userId: UserId
   refreshTokenHash: string
   expiresAt: Date
   ipAddress?: string

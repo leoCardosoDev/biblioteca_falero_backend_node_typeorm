@@ -3,6 +3,7 @@ import { LoadAccountByEmailRepository } from '@/application/protocols/db/load-ac
 import { UpdateAccessTokenRepository } from '@/application/protocols/db/update-access-token-repository'
 import { CreateUserLoginParams } from '@/domain/usecases/create-user-login'
 import { LoginModel } from '@/domain/models/login'
+import { LoginId } from '@/domain/models/ids'
 import { LoginTypeOrmEntity } from './entities/login-entity'
 import { UserTypeOrmEntity } from './entities/user-entity'
 import { TypeOrmHelper } from './typeorm-helper'
@@ -12,7 +13,7 @@ export class LoginTypeOrmRepository implements CreateUserLoginRepository, LoadAc
     const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
     const login = repository.create(data)
     await repository.save(login)
-    return login
+    return login as unknown as LoginModel
   }
 
   async loadByEmail(email: string): Promise<LoginModel | undefined> {
@@ -22,13 +23,13 @@ export class LoginTypeOrmRepository implements CreateUserLoginRepository, LoadAc
       const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
       const login = await repository.findOne({ where: { userId: user.id } })
       if (login) {
-        return { ...login, name: user.name }
+        return { ...login, name: user.name } as unknown as LoginModel
       }
     }
     return undefined
   }
 
-  async updateAccessToken(id: string, token: string): Promise<void> {
+  async updateAccessToken(id: LoginId, token: string): Promise<void> {
     const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
     await repository.update({ id }, { accessToken: token })
   }
