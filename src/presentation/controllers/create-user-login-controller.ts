@@ -1,6 +1,7 @@
 import { Controller, HttpRequest, HttpResponse, Validation } from '@/presentation/protocols'
 import { badRequest, serverError, ok } from '@/presentation/helpers'
 import { CreateUserLogin, CreateUserLoginParams } from '@/domain/usecases/create-user-login'
+import { Password } from '@/domain/value-objects/password'
 
 export class CreateUserLoginController implements Controller {
   constructor(
@@ -18,7 +19,14 @@ export class CreateUserLoginController implements Controller {
       if (error) {
         return badRequest(error)
       }
-      const login = await this.createUserLogin.create(requestData as CreateUserLoginParams)
+
+      const { userId, password } = requestData as { userId: string; password: string }
+      const passwordVO = Password.create(password)
+      if (passwordVO instanceof Error) {
+        return badRequest(passwordVO)
+      }
+
+      const login = await this.createUserLogin.create({ userId, password } as CreateUserLoginParams)
       return ok(login)
     } catch (error) {
       return serverError(error as Error)
