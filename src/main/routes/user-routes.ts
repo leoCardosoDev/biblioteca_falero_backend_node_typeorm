@@ -25,11 +25,13 @@ const addUserSchema = {
   security: [{ bearerAuth: [] }],
   body: {
     type: 'object',
-    required: ['name', 'email', 'role'],
+    required: ['name', 'email', 'cpf', 'birthDate'],
     properties: {
       name: { type: 'string', description: 'User full name' },
       email: { type: 'string', format: 'email', description: 'User email address' },
-      role: { type: 'string', enum: ['admin', 'librarian', 'user'], description: 'User role' }
+      rg: { type: 'string', description: 'User RG document' },
+      cpf: { type: 'string', description: 'User CPF document' },
+      birthDate: { type: 'string', format: 'date', description: 'User birth date (YYYY-MM-DD)' }
     }
   },
   response: {

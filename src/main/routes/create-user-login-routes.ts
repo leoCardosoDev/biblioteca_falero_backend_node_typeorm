@@ -18,9 +18,9 @@ const createUserLoginSchema = {
   },
   body: {
     type: 'object',
-    required: ['username', 'password'],
+    required: ['password'],
     properties: {
-      username: { type: 'string', description: 'Login username' },
+      username: { type: 'string', description: 'Login username (optional)' },
       password: { type: 'string', description: 'Login password (min 8 chars, requires uppercase, lowercase, number, special char)' }
     }
   },

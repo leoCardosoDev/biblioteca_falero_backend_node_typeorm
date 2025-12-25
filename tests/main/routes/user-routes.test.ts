@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 
-import app from '@/main/config/app'
+import app, { setupApp } from '@/main/config/app'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
 import { DataSource } from 'typeorm'
@@ -21,6 +21,7 @@ describe('User Routes', () => {
       synchronize: true,
       entities: [UserTypeOrmEntity]
     })
+    await setupApp()
     await app.ready()
   })
 

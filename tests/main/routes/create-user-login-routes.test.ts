@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { DataSource } from 'typeorm'
 
-import app from '@/main/config/app'
+import app, { setupApp } from '@/main/config/app'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
@@ -22,6 +22,7 @@ describe('CreateUserLogin Routes', () => {
       synchronize: true,
       entities: [LoginTypeOrmEntity, UserTypeOrmEntity]
     })
+    await setupApp()
     await app.ready()
   })
 
