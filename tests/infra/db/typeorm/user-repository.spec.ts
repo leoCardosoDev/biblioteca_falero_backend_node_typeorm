@@ -293,4 +293,98 @@ describe('UserTypeOrmRepository', () => {
     expect(users.length).toBe(1)
     expect(users[0].email.value).toBe('any_email@mail.com')
   })
+
+  test('Should exclude users with invalid Name from loadAll results', async () => {
+    const sut = makeSut()
+    await sut.add(makeUserData())
+
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const corruptEntity = userRepo.create({
+      name: 'A', // Invalid: too short (min 2 chars)
+      email: 'invalid_name_user@mail.com',
+      rg: '111222333',
+      cpf: '71428793860',
+      birthDate: '1985-03-10'
+    })
+    await userRepo.save(corruptEntity)
+
+    const users = await sut.loadAll()
+
+    expect(users.length).toBe(1)
+    expect(users[0].name.value).toBe('any_name')
+  })
+
+  test('Should exclude users with invalid RG from loadAll results', async () => {
+    const sut = makeSut()
+    await sut.add(makeUserData())
+
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const corruptEntity = userRepo.create({
+      name: 'Valid Name',
+      email: 'invalid_rg_user@mail.com',
+      rg: '', // Invalid: empty RG
+      cpf: '71428793860',
+      birthDate: '1985-03-10'
+    })
+    await userRepo.save(corruptEntity)
+
+    const users = await sut.loadAll()
+
+    expect(users.length).toBe(1)
+    expect(users[0].email.value).toBe('any_email@mail.com')
+  })
+
+  test('Should exclude users with invalid BirthDate from loadAll results', async () => {
+    const sut = makeSut()
+    await sut.add(makeUserData())
+
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const corruptEntity = userRepo.create({
+      name: 'Valid Name',
+      email: 'invalid_birthdate_user@mail.com',
+      rg: '111222333',
+      cpf: '71428793860',
+      birthDate: 'not-a-valid-date' // Invalid: unparseable date
+    })
+    await userRepo.save(corruptEntity)
+
+    const users = await sut.loadAll()
+
+    expect(users.length).toBe(1)
+    expect(users[0].email.value).toBe('any_email@mail.com')
+  })
+
+  test('Should return undefined from loadByEmail if user data is corrupt', async () => {
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const corruptEntity = userRepo.create({
+      name: 'Valid Name',
+      email: 'corrupt_loadbyemail@mail.com',
+      rg: '', // Invalid: empty RG
+      cpf: '71428793860',
+      birthDate: '1985-03-10'
+    })
+    await userRepo.save(corruptEntity)
+
+    const sut = makeSut()
+    const user = await sut.loadByEmail('corrupt_loadbyemail@mail.com')
+
+    expect(user).toBeUndefined()
+  })
+
+  test('Should return undefined from loadByCpf if user data is corrupt', async () => {
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const corruptEntity = userRepo.create({
+      name: 'A', // Invalid: too short
+      email: 'corrupt_loadbycpf@mail.com',
+      rg: '111222333',
+      cpf: '71428793860',
+      birthDate: '1985-03-10'
+    })
+    await userRepo.save(corruptEntity)
+
+    const sut = makeSut()
+    const user = await sut.loadByCpf('71428793860')
+
+    expect(user).toBeUndefined()
+  })
 })
