@@ -387,4 +387,57 @@ describe('UserTypeOrmRepository', () => {
 
     expect(user).toBeUndefined()
   })
+
+  test('Should throw error if add fails to reconstitute saved user (line 102)', async () => {
+    const sut = makeSut()
+    // Spy on private method to force null return after save
+    jest.spyOn(sut as unknown as { toUserModel: () => null }, 'toUserModel').mockReturnValueOnce(null)
+
+    const promise = sut.add(makeUserData())
+
+    await expect(promise).rejects.toThrow('Failed to create user: data corruption detected after save')
+  })
+
+  test('Should throw error if update fails to reconstitute saved user (line 151)', async () => {
+    const sut = makeSut()
+    const user = await sut.add(makeUserData())
+
+    // Spy on private method to force null return after update
+    jest.spyOn(sut as unknown as { toUserModel: () => null }, 'toUserModel').mockReturnValueOnce(null)
+
+    const promise = sut.update({
+      id: user.id,
+      name: Name.create('updated_name') as Name
+    })
+
+    await expect(promise).rejects.toThrow('Failed to update user: data corruption detected after save')
+  })
+
+  test('Should handle non-Error thrown by VO creation (line 77 String(error) fallback)', async () => {
+    // Insert a user directly in DB (bypassing VOs)
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const entityWithValidData = userRepo.create({
+      name: 'Valid Name',
+      email: 'test_string_error@mail.com',
+      rg: '111222333',
+      cpf: '71428793860',
+      birthDate: '1985-03-10'
+    })
+    await userRepo.save(entityWithValidData)
+
+    const sut = makeSut()
+
+    // Mock Email.create to throw a non-Error value (string) when called
+    jest.spyOn(Email, 'create').mockImplementation(() => {
+      throw 'string-error-not-Error-instance'
+    })
+
+    const users = await sut.loadAll()
+
+    // Should exclude the user because Email.create threw a non-Error
+    expect(users.length).toBe(0)
+
+    // Restore
+    jest.restoreAllMocks()
+  })
 })
