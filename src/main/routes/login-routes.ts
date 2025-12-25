@@ -3,5 +3,12 @@ import { adaptRoute } from '@/main/adapters/fastify-route-adapter'
 import { makeLoginController } from '@/main/factories/login/login-controller-factory'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
-  fastify.post('/login', adaptRoute(makeLoginController()))
+  fastify.post('/login', {
+    config: {
+      rateLimit: {
+        max: 5,
+        timeWindow: '1 minute'
+      }
+    }
+  }, adaptRoute(makeLoginController()))
 }
