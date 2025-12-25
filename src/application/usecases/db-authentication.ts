@@ -1,5 +1,6 @@
 import { Authentication, AuthenticationParams, AuthenticationModel } from '@/domain/usecases/authentication'
 import { Role } from '@/domain/models'
+import { ExpirationDate } from '@/domain/value-objects/expiration-date'
 import { LoadAccountByEmailRepository } from '@/application/protocols/db/load-account-by-email-repository'
 import { HashComparer } from '@/application/protocols/cryptography/hash-comparer'
 import { Encrypter } from '@/application/protocols/cryptography/encrypter'
@@ -39,8 +40,7 @@ export class DbAuthentication implements Authentication {
     const refreshTokenHash = await this.hasher.hash(refreshToken)
 
     // Calculate expiration date
-    const expiresAt = new Date()
-    expiresAt.setDate(expiresAt.getDate() + this.refreshTokenExpirationDays)
+    const expiresAt = ExpirationDate.fromDays(this.refreshTokenExpirationDays).toDate()
 
     // Save session
     await this.saveSessionRepository.save({

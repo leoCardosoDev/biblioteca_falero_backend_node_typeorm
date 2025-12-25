@@ -1,11 +1,11 @@
 import { RefreshToken, RefreshTokenParams, RefreshTokenResult } from '@/domain/usecases/refresh-token'
 import { Role } from '@/domain/models'
+import { ExpirationDate } from '@/domain/value-objects/expiration-date'
 import {
   LoadSessionByTokenRepository,
   InvalidateSessionRepository,
   SaveSessionRepository,
-  LoadUserBySessionRepository,
-  InvalidateAllUserSessionsRepository
+  LoadUserBySessionRepository
 } from '@/application/protocols/db/session-repository'
 import { Hasher } from '@/application/protocols/cryptography/hasher'
 import { Encrypter } from '@/application/protocols/cryptography/encrypter'
@@ -16,7 +16,6 @@ export class DbRefreshToken implements RefreshToken {
     private readonly loadSessionByTokenRepository: LoadSessionByTokenRepository,
     private readonly loadUserBySessionRepository: LoadUserBySessionRepository,
     private readonly invalidateSessionRepository: InvalidateSessionRepository,
-    private readonly invalidateAllUserSessionsRepository: InvalidateAllUserSessionsRepository,
     private readonly saveSessionRepository: SaveSessionRepository,
     private readonly hasher: Hasher,
     private readonly encrypter: Encrypter,
@@ -55,8 +54,7 @@ export class DbRefreshToken implements RefreshToken {
     const newRefreshTokenHash = await this.hasher.hash(newRefreshToken)
 
     // Calculate new expiration date
-    const expiresAt = new Date()
-    expiresAt.setDate(expiresAt.getDate() + this.refreshTokenExpirationDays)
+    const expiresAt = ExpirationDate.fromDays(this.refreshTokenExpirationDays).toDate()
 
     // Save new session
     await this.saveSessionRepository.save({
