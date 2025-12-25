@@ -11,6 +11,28 @@ Todas as rotas (exceto `/login`) exigem autenticação via **Bearer Token**.
 
 ---
 
+## 🧹 Reset do Ambiente
+
+Para limpar completamente o banco de dados e recriar o ambiente:
+
+1. Pare os containers e remova volumes/imagens:
+   ```bash
+   npm run down
+   # Remova volumes/imagens do docker se necessário e a pasta mysql_data
+   ```
+
+2. Subir o ambiente novamente:
+   ```bash
+   npm run up
+   ```
+
+3. Recrie o usuário admin:
+   ```bash
+   npm run seed:admin
+   ```
+
+---
+
 ## 0. Seed Admin (Primeiro Acesso)
 
 Execute o comando para criar o usuário Admin padrão:
@@ -133,12 +155,59 @@ Sem token ou com role MEMBER.
 
 ---
 
+## 5. Update User (🔒 ADMIN Only)
+
+**Endpoint**: `PUT http://localhost:5050/api/users/:id`
+
+**Headers**:
+```
+Authorization: Bearer <accessToken>
+```
+
+### 5.1 Success (200 OK)
+**Body**:
+```json
+{
+  "name": "Maria Updated",
+  "email": "maria.updated@example.com"
+}
+```
+
+### 5.2 Error: Access Denied (403 Forbidden)
+Requires ADMIN role. Librarians cannot update users.
+
+### 5.3 Error: Email In Use (403 Forbidden)
+If trying to update to an email that belongs to another user.
+
+---
+
+## 6. Delete User (🔒 ADMIN Only)
+
+**Endpoint**: `DELETE http://localhost:5050/api/users/:id`
+
+**Headers**:
+```
+Authorization: Bearer <accessToken>
+```
+
+### 6.1 Success (204 No Content)
+Returns empty body.
+
+### 6.2 Error: Access Denied (403 Forbidden)
+Requires ADMIN role.
+
+---
+
 ## Resumo de Permissões
 
 | Rota | Método | Permissão |
 |------|--------|-----------|
 | `/api/login` | POST | 🌐 Pública |
+| `/api/users` | POST | 🔒 LIBRARIAN, ADMIN |
+| `/api/users` | GET | 🔒 LIBRARIAN, ADMIN |
 | `/api/users/:userId/login` | POST | 🔒 LIBRARIAN, ADMIN |
+| `/api/users/:id` | PUT | 🔒 ADMIN |
+| `/api/users/:id` | DELETE | 🔒 ADMIN |
 
 ---
 
