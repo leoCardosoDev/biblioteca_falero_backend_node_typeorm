@@ -23,8 +23,8 @@ const makeCreateUserLogin = (): CreateUserLogin => {
 
 const makeValidation = (): Validation => {
   class ValidationStub implements Validation {
-    validate(_input: unknown): Error | null {
-      return null
+    validate(_input: Record<string, unknown>): Error | undefined {
+      return undefined
     }
   }
   return new ValidationStub()
@@ -33,7 +33,7 @@ const makeValidation = (): Validation => {
 const makeFakeRequest = (): HttpRequest => ({
   body: {
     userId: 'any_user_id',
-    password: 'any_password'
+    password: 'Abcdefg1!'
   }
 })
 
@@ -61,7 +61,7 @@ describe('CreateUserLogin Controller', () => {
     await sut.handle(makeFakeRequest())
     expect(createSpy).toHaveBeenCalledWith({
       userId: 'any_user_id',
-      password: 'any_password'
+      password: 'Abcdefg1!'
     })
   })
 
@@ -99,5 +99,18 @@ describe('CreateUserLogin Controller', () => {
     jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new MissingParamError('any_field'))
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')))
+  })
+
+  test('Should return 400 if password does not meet policy requirements', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        userId: 'any_user_id',
+        password: 'weak'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect((httpResponse.body as Error).message).toContain('Password')
   })
 })
