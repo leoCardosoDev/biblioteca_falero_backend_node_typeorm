@@ -8,6 +8,8 @@ import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { BirthDate } from '@/domain/value-objects/birth-date'
 import { Address } from '@/domain/value-objects/address'
+import { notFound } from '@/presentation/helpers/http-helper'
+import { NotFoundError } from '@/domain/errors'
 
 const makeFakeUser = (): UserModel => ({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
@@ -137,6 +139,17 @@ describe('UpdateUser Controller', () => {
       body: { name: 'a' } // Invalid name (too short)
     })
     expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 404 if UpdateUser returns null', async () => {
+    const { sut, updateUserStub } = makeSut()
+    jest.spyOn(updateUserStub, 'update').mockResolvedValueOnce(null)
+    const httpRequest = {
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { name: 'updated_name' }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(notFound(new NotFoundError('User')))
   })
 
   test('Should return 400 if email is invalid', async () => {

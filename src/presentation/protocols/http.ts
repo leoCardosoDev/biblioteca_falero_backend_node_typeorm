@@ -10,6 +10,7 @@ export interface HttpRequest {
   query?: unknown
   userId?: string
   role?: string
+  ip?: string
 }
 
 export interface HttpResponse {
