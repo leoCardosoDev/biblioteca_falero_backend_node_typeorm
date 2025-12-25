@@ -14,7 +14,6 @@ export const makeDbRefreshToken = (): RefreshToken => {
     sessionRepository,  // LoadSessionByTokenRepository
     sessionRepository,  // LoadUserBySessionRepository
     sessionRepository,  // InvalidateSessionRepository
-    sessionRepository,  // InvalidateAllUserSessionsRepository
     sessionRepository,  // SaveSessionRepository
     sha256Adapter,      // Hasher
     jwtAdapter,         // Encrypter

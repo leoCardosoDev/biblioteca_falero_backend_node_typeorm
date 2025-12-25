@@ -4,8 +4,7 @@ import {
   LoadSessionByTokenRepository,
   InvalidateSessionRepository,
   SaveSessionRepository,
-  LoadUserBySessionRepository,
-  InvalidateAllUserSessionsRepository
+  LoadUserBySessionRepository
 } from '@/application/protocols/db/session-repository'
 import { Hasher } from '@/application/protocols/cryptography/hasher'
 import { Encrypter } from '@/application/protocols/cryptography/encrypter'
@@ -16,7 +15,6 @@ type SutTypes = {
   loadSessionByTokenRepositoryStub: LoadSessionByTokenRepository
   loadUserBySessionRepositoryStub: LoadUserBySessionRepository
   invalidateSessionRepositoryStub: InvalidateSessionRepository
-  invalidateAllUserSessionsRepositoryStub: InvalidateAllUserSessionsRepository
   saveSessionRepositoryStub: SaveSessionRepository
   hasherStub: Hasher
   encrypterStub: Encrypter
@@ -76,15 +74,6 @@ const makeInvalidateSessionRepository = (): InvalidateSessionRepository => {
   return new InvalidateSessionRepositoryStub()
 }
 
-const makeInvalidateAllUserSessionsRepository = (): InvalidateAllUserSessionsRepository => {
-  class InvalidateAllUserSessionsRepositoryStub implements InvalidateAllUserSessionsRepository {
-    async invalidateAllByUserId(_userId: string): Promise<void> {
-      await Promise.resolve()
-    }
-  }
-  return new InvalidateAllUserSessionsRepositoryStub()
-}
-
 const makeSaveSessionRepository = (): SaveSessionRepository => {
   class SaveSessionRepositoryStub implements SaveSessionRepository {
     async save(_session: Omit<UserSessionModel, 'id' | 'createdAt'>): Promise<UserSessionModel> {
@@ -116,7 +105,6 @@ const makeSut = (): SutTypes => {
   const loadSessionByTokenRepositoryStub = makeLoadSessionByTokenRepository()
   const loadUserBySessionRepositoryStub = makeLoadUserBySessionRepository()
   const invalidateSessionRepositoryStub = makeInvalidateSessionRepository()
-  const invalidateAllUserSessionsRepositoryStub = makeInvalidateAllUserSessionsRepository()
   const saveSessionRepositoryStub = makeSaveSessionRepository()
   const hasherStub = makeHasher()
   const encrypterStub = makeEncrypter()
@@ -124,7 +112,6 @@ const makeSut = (): SutTypes => {
     loadSessionByTokenRepositoryStub,
     loadUserBySessionRepositoryStub,
     invalidateSessionRepositoryStub,
-    invalidateAllUserSessionsRepositoryStub,
     saveSessionRepositoryStub,
     hasherStub,
     encrypterStub,
@@ -135,7 +122,6 @@ const makeSut = (): SutTypes => {
     loadSessionByTokenRepositoryStub,
     loadUserBySessionRepositoryStub,
     invalidateSessionRepositoryStub,
-    invalidateAllUserSessionsRepositoryStub,
     saveSessionRepositoryStub,
     hasherStub,
     encrypterStub
