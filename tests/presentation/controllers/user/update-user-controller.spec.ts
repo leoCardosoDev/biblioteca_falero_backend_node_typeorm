@@ -192,4 +192,35 @@ describe('UpdateUser Controller', () => {
     })
     expect(httpResponse.statusCode).toBe(400)
   })
+
+  test('Should serialize user address when returned', async () => {
+    const { sut, updateUserStub } = makeSut()
+    const userWithAddress = {
+      ...makeFakeUser(),
+      address: Address.create({
+        street: 'updated_street',
+        number: '456',
+        neighborhood: 'updated_neighborhood',
+        city: 'updated_city',
+        state: 'RJ',
+        zipCode: '87654321'
+      }) as Address
+    }
+    jest.spyOn(updateUserStub, 'update').mockResolvedValueOnce(userWithAddress)
+    const httpRequest = {
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { name: 'any_name' }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body.address).toEqual({
+      street: 'updated_street',
+      number: '456',
+      complement: undefined,
+      neighborhood: 'updated_neighborhood',
+      city: 'updated_city',
+      state: 'RJ',
+      zipCode: '87654321'
+    })
+  })
 })

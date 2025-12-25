@@ -9,6 +9,7 @@ import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { BirthDate } from '@/domain/value-objects/birth-date'
+import { Address } from '@/domain/value-objects/address'
 
 const makeFakeUser = (): UserModel => ({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
@@ -189,7 +190,19 @@ describe('AddUser Controller', () => {
   })
 
   test('Should return 200 with address if valid address is provided', async () => {
-    const { sut } = makeSut()
+    const { sut, addUserStub } = makeSut()
+    const userWithAddress = {
+      ...makeFakeUser(),
+      address: Address.create({
+        street: 'returned_street',
+        number: '789',
+        neighborhood: 'returned_neighborhood',
+        city: 'returned_city',
+        state: 'SP',
+        zipCode: '12345678'
+      }) as Address
+    }
+    jest.spyOn(addUserStub, 'add').mockResolvedValueOnce(userWithAddress)
     const httpResponse = await sut.handle({
       body: {
         name: 'any_name',
@@ -208,6 +221,15 @@ describe('AddUser Controller', () => {
       }
     })
     expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body.address).toEqual({
+      street: 'returned_street',
+      number: '789',
+      complement: undefined,
+      neighborhood: 'returned_neighborhood',
+      city: 'returned_city',
+      state: 'SP',
+      zipCode: '12345678'
+    })
   })
 
   test('Should return 400 if Name.create returns error', async () => {
