@@ -1,8 +1,6 @@
 import { UpdateUserController } from '@/presentation/controllers/user/update-user-controller'
 import { UpdateUser, UpdateUserParams } from '@/domain/usecases/update-user'
 import { UserModel } from '@/domain/models/user'
-import { serverError, badRequest } from '@/presentation/helpers/http-helper'
-import { MissingParamError } from '@/presentation/errors'
 import { Id } from '@/domain/value-objects/id'
 import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
@@ -48,8 +46,9 @@ describe('UpdateUser Controller', () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle({
       body: { name: 'any_name' }
-    })
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('id')))
+    }) as { statusCode: number; body: { error: { code: string } } }
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body.error.code).toBe('MISSING_PARAM')
   })
 
   test('Should call UpdateUser with correct values', async () => {
@@ -117,8 +116,9 @@ describe('UpdateUser Controller', () => {
       params: { id: '550e8400-e29b-41d4-a716-446655440000' },
       body: { name: 'updated_name' }
     }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(serverError(new Error()))
+    const httpResponse = await sut.handle(httpRequest) as { statusCode: number; body: { error: { code: string } } }
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body.error.code).toBe('INTERNAL_ERROR')
   })
 
   test('Should return 400 if id is invalid', async () => {
@@ -211,7 +211,7 @@ describe('UpdateUser Controller', () => {
       params: { id: '550e8400-e29b-41d4-a716-446655440000' },
       body: { name: 'any_name' }
     }
-    const httpResponse = await sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest) as { statusCode: number; body: { address: unknown } }
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body.address).toEqual({
       street: 'updated_street',

@@ -1,6 +1,7 @@
-export class InvalidCpfError extends Error {
+import { DomainError } from './domain-error'
+
+export class InvalidCpfError extends DomainError {
   constructor() {
     super('Invalid CPF')
-    this.name = 'InvalidCpfError'
   }
 }

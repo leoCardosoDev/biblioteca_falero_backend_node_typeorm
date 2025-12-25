@@ -124,11 +124,11 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
     return users.map(user => this.toUserModel(user)).filter((user): user is UserModel => user !== null)
   }
 
-  async update(userData: UpdateUserParams): Promise<UserModel> {
+  async update(userData: UpdateUserParams): Promise<UserModel | null> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const user = await userRepo.findOne({ where: { id: userData.id.value } })
     if (!user) {
-      throw new Error('User not found')
+      return null
     }
     if (userData.name) user.name = userData.name.value
     if (userData.email) user.email = userData.email.value

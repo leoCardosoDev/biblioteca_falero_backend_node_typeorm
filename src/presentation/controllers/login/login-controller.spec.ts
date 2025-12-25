@@ -19,7 +19,8 @@ const makeAuthentication = (): Authentication => {
     async auth(_params: AuthenticationParams): Promise<AuthenticationModel | undefined> {
       return await Promise.resolve({
         accessToken: 'any_token',
-        name: 'any_name'
+        name: 'any_name',
+        role: 'any_role'
       })
     }
   }
@@ -51,6 +52,15 @@ const makeFakeRequest = (): HttpRequest => ({
 })
 
 describe('Login Controller', () => {
+  beforeAll(() => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2025-01-01T00:00:00.000Z'))
+  })
+
+  afterAll(() => {
+    jest.useRealTimers()
+  })
+
   test('Should call Validation with correct value', async () => {
     const { sut, validationStub } = makeSut()
     const validateSpy = jest.spyOn(validationStub, 'validate')
@@ -94,7 +104,8 @@ describe('Login Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(ok({
       accessToken: 'any_token',
-      name: 'any_name'
+      name: 'any_name',
+      role: 'any_role'
     }))
   })
 })

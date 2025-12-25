@@ -136,6 +136,17 @@ describe('User Routes', () => {
       expect(response.statusCode).toBe(403)
     })
 
+    test('Should return 404 if user does not exist', async () => {
+      const accessToken = makeAccessToken(Role.ADMIN)
+      const response = await app.inject({
+        method: 'PUT',
+        url: '/api/users/550e8400-e29b-41d4-a716-446655440000',
+        headers: { authorization: `Bearer ${accessToken}` },
+        payload: { name: 'non_existent_user' }
+      })
+      expect(response.statusCode).toBe(404)
+    })
+
     test('Should return 200 on success', async () => {
       const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
       const user = await userRepo.save(userRepo.create({

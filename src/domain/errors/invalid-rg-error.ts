@@ -1,6 +1,7 @@
-export class InvalidRgError extends Error {
+import { DomainError } from './domain-error'
+
+export class InvalidRgError extends DomainError {
   constructor(rg: string) {
     super(`The RG "${rg}" is invalid`)
-    this.name = 'InvalidRgError'
   }
 }

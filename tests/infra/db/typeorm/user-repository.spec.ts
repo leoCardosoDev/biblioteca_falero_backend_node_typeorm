@@ -152,9 +152,10 @@ describe('UserTypeOrmRepository', () => {
       name: Name.create('updated_name') as Name,
       email: Email.create('updated_email@mail.com')
     })
-    expect(updatedUser.name.value).toBe('updated_name')
-    expect(updatedUser.email.value).toBe('updated_email@mail.com')
-    expect(updatedUser.rg.value).toBe('123456789')
+    expect(updatedUser).toBeTruthy()
+    expect(updatedUser!.name.value).toBe('updated_name')
+    expect(updatedUser!.email.value).toBe('updated_email@mail.com')
+    expect(updatedUser!.rg.value).toBe('123456789')
   })
 
   test('Should delete a user on success', async () => {
@@ -200,18 +201,19 @@ describe('UserTypeOrmRepository', () => {
         zipCode: '87654321'
       }) as Address
     })
-    expect(updatedUser.address).toBeTruthy()
-    expect(updatedUser.address?.street).toBe('updated_street')
-    expect(updatedUser.address?.city).toBe('updated_city')
+    expect(updatedUser).toBeTruthy()
+    expect(updatedUser!.address).toBeTruthy()
+    expect(updatedUser!.address?.street).toBe('updated_street')
+    expect(updatedUser!.address?.city).toBe('updated_city')
   })
 
-  test('Should throw if update is called with non-existent id', async () => {
+  test('Should return null if update is called with non-existent id', async () => {
     const sut = makeSut()
-    const promise = sut.update({
+    const result = await sut.update({
       id: Id.create('550e8400-e29b-41d4-a716-446655440099'),
       name: Name.create('any_name') as Name
     })
-    await expect(promise).rejects.toThrow('User not found')
+    expect(result).toBeNull()
   })
 
   test('Should update rg on success', async () => {
@@ -221,7 +223,8 @@ describe('UserTypeOrmRepository', () => {
       id: user.id,
       rg: Rg.create('987654321') as Rg
     })
-    expect(updatedUser.rg.value).toBe('987654321')
+    expect(updatedUser).toBeTruthy()
+    expect(updatedUser!.rg.value).toBe('987654321')
   })
 
   test('Should update cpf on success', async () => {
@@ -231,7 +234,8 @@ describe('UserTypeOrmRepository', () => {
       id: user.id,
       cpf: Cpf.create('71428793860')
     })
-    expect(updatedUser.cpf.value).toBe('71428793860')
+    expect(updatedUser).toBeTruthy()
+    expect(updatedUser!.cpf.value).toBe('71428793860')
   })
 
   test('Should update birthDate on success', async () => {
@@ -241,7 +245,8 @@ describe('UserTypeOrmRepository', () => {
       id: user.id,
       birthDate: BirthDate.create('1985-05-20') as BirthDate
     })
-    expect(updatedUser.birthDate.value).toBe('1985-05-20')
+    expect(updatedUser).toBeTruthy()
+    expect(updatedUser!.birthDate.value).toBe('1985-05-20')
   })
 
   test('Should return user with undefined address if DB has invalid address data (defensive check)', async () => {
