@@ -44,18 +44,23 @@ export class SessionTypeOrmRepository implements
   }
 
   async loadUserBySessionId(sessionId: string): Promise<{ id: string; name: string; role: string } | null> {
-    const sessionRepo = TypeOrmHelper.getRepository(SessionTypeOrmEntity)
-    const session = await sessionRepo.findOne({ where: { id: sessionId } })
-    if (!session) return null
+    const dataSource = TypeOrmHelper.getRepository(SessionTypeOrmEntity)
 
-    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
-    const user = await userRepo.findOne({ where: { id: session.userId } })
-    if (!user) return null
+    // Single query with JOINs for better performance
+    const result = await dataSource
+      .createQueryBuilder('session')
+      .innerJoin(UserTypeOrmEntity, 'user', 'user.id = session.userId')
+      .leftJoin(LoginTypeOrmEntity, 'login', 'login.userId = session.userId')
+      .select(['user.id', 'user.name', 'login.role'])
+      .where('session.id = :sessionId', { sessionId })
+      .getRawOne()
 
-    // Fetch role from logins table (where the actual role is stored)
-    const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
-    const login = await loginRepo.findOne({ where: { userId: session.userId } })
+    if (!result) return null
 
-    return { id: user.id, name: user.name ?? '', role: login?.role ?? 'MEMBER' }
+    return {
+      id: result.user_id,
+      name: result.user_name ?? '',
+      role: result.login_role ?? 'MEMBER'
+    }
   }
 }
