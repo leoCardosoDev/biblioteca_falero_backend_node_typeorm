@@ -263,4 +263,30 @@ describe('DbAuthentication UseCase', () => {
     const result = await sut.auth(makeFakeAuthentication())
     expect(result?.name).toBe('any_user_id')
   })
+
+  test('Should default role to MEMBER if account.role is null', async () => {
+    const { sut, loadAccountByEmailRepositoryStub } = makeSut()
+    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce({
+      id: 'any_id',
+      userId: 'any_user_id',
+      password: 'hashed_password',
+      role: null as unknown as string,
+      name: 'any_name'
+    })
+    const result = await sut.auth(makeFakeAuthentication())
+    expect(result?.role).toBe(Role.MEMBER)
+  })
+
+  test('Should use userId as name if account.name is null', async () => {
+    const { sut, loadAccountByEmailRepositoryStub } = makeSut()
+    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce({
+      id: 'any_id',
+      userId: 'any_user_id',
+      password: 'hashed_password',
+      role: 'ADMIN',
+      name: null as unknown as string
+    })
+    const result = await sut.auth(makeFakeAuthentication())
+    expect(result?.name).toBe('any_user_id')
+  })
 })

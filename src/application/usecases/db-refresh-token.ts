@@ -19,44 +19,27 @@ export class DbRefreshToken implements RefreshToken {
     private readonly saveSessionRepository: SaveSessionRepository,
     private readonly hasher: Hasher,
     private readonly encrypter: Encrypter,
-    private readonly refreshTokenExpirationDays: number = 7
+    private readonly refreshTokenExpirationDays: number
   ) { }
 
   async refresh(params: RefreshTokenParams): Promise<RefreshTokenResult | null> {
     const tokenHash = await this.hasher.hash(params.refreshToken)
     const session = await this.loadSessionByTokenRepository.loadByToken(tokenHash)
-
-    if (!session) {
+    if (!session || !session.isValid || new Date() > session.expiresAt) {
       return null
     }
 
-    // Check if session is valid and not expired
-    if (!session.isValid) {
-      return null
-    }
-
-    if (new Date() > session.expiresAt) {
-      return null
-    }
-
-    // Load user data
     const user = await this.loadUserBySessionRepository.loadUserBySessionId(session.id)
-
     if (!user) {
       return null
     }
 
-    // Token Rotation: Invalidate old session
     await this.invalidateSessionRepository.invalidate(session.id)
 
-    // Generate new refresh token
     const newRefreshToken = crypto.randomBytes(32).toString('hex')
     const newRefreshTokenHash = await this.hasher.hash(newRefreshToken)
-
-    // Calculate new expiration date
     const expiresAt = ExpirationDate.fromDays(this.refreshTokenExpirationDays).toDate()
 
-    // Save new session
     await this.saveSessionRepository.save({
       userId: session.userId,
       refreshTokenHash: newRefreshTokenHash,
@@ -66,7 +49,6 @@ export class DbRefreshToken implements RefreshToken {
       isValid: true
     })
 
-    // Generate new access token
     const role = (user.role as Role) ?? Role.MEMBER
     const accessToken = await this.encrypter.encrypt({ id: user.id, role })
 

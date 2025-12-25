@@ -35,8 +35,7 @@ describe('SessionTypeOrmRepository', () => {
       email: 'any_email@mail.com',
       rg: 'any_rg',
       cpf: 'any_cpf',
-      birthDate: '2020-01-01',
-      role: 'MEMBER'
+      birthDate: '2020-01-01'
     })
     return await repo.save(user)
   }
@@ -107,31 +106,7 @@ describe('SessionTypeOrmRepository', () => {
     })
   })
 
-  describe('invalidateAllByUserId()', () => {
-    test('Should invalidate all sessions by userId', async () => {
-      const user = await makeUser()
-      await sut.save({
-        userId: user.id,
-        refreshTokenHash: 'hash_1',
-        expiresAt: new Date(),
-        isValid: true
-      })
-      await sut.save({
-        userId: user.id,
-        refreshTokenHash: 'hash_2',
-        expiresAt: new Date(),
-        isValid: true
-      })
 
-      await sut.invalidateAllByUserId(user.id)
-
-      const session1 = await sut.loadByToken('hash_1')
-      const session2 = await sut.loadByToken('hash_2')
-
-      expect(session1).toBeNull()
-      expect(session2).toBeNull()
-    })
-  })
 
   describe('loadUserBySessionId()', () => {
     test('Should return user info with role from logins table', async () => {
@@ -154,6 +129,22 @@ describe('SessionTypeOrmRepository', () => {
     test('Should return null if session does not exist', async () => {
       const result = await sut.loadUserBySessionId('invalid_id')
       expect(result).toBeNull()
+    })
+
+    test('Should return user info with default role MEMBER if no login found', async () => {
+      const user = await makeUser()
+      const session = await sut.save({
+        userId: user.id,
+        refreshTokenHash: 'any_hash',
+        expiresAt: new Date(),
+        isValid: true
+      })
+
+      const loadedUser = await sut.loadUserBySessionId(session.id)
+      expect(loadedUser).toBeTruthy()
+      expect(loadedUser?.id).toBe(user.id)
+      expect(loadedUser?.name).toBe(user.name)
+      expect(loadedUser?.role).toBe('MEMBER')
     })
   })
 

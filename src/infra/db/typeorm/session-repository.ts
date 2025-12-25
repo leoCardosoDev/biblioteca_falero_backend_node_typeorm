@@ -2,7 +2,6 @@ import {
   LoadSessionByTokenRepository,
   SaveSessionRepository,
   InvalidateSessionRepository,
-  InvalidateAllUserSessionsRepository,
   LoadUserBySessionRepository
 } from '@/application/protocols/db/session-repository'
 import { UserSessionModel } from '@/domain/models'
@@ -15,7 +14,6 @@ export class SessionTypeOrmRepository implements
   LoadSessionByTokenRepository,
   SaveSessionRepository,
   InvalidateSessionRepository,
-  InvalidateAllUserSessionsRepository,
   LoadUserBySessionRepository {
 
   async loadByToken(tokenHash: string): Promise<UserSessionModel | null> {
@@ -38,15 +36,8 @@ export class SessionTypeOrmRepository implements
     await repository.update({ id: sessionId }, { isValid: false })
   }
 
-  async invalidateAllByUserId(userId: string): Promise<void> {
-    const repository = TypeOrmHelper.getRepository(SessionTypeOrmEntity)
-    await repository.update({ userId, isValid: true }, { isValid: false })
-  }
-
   async loadUserBySessionId(sessionId: string): Promise<{ id: string; name: string; role: string } | null> {
     const dataSource = TypeOrmHelper.getRepository(SessionTypeOrmEntity)
-
-    // Single query with JOINs for better performance
     const result = await dataSource
       .createQueryBuilder('session')
       .innerJoin(UserTypeOrmEntity, 'user', 'user.id = session.userId')
@@ -59,7 +50,7 @@ export class SessionTypeOrmRepository implements
 
     return {
       id: result.user_id,
-      name: result.user_name ?? '',
+      name: result.user_name,
       role: result.login_role ?? 'MEMBER'
     }
   }

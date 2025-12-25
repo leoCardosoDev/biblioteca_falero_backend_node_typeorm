@@ -5,6 +5,7 @@ export type AuthenticationParams = {
 
 export type AuthenticationModel = {
   accessToken: string
+  refreshToken: string
   name: string
   role: string
 }

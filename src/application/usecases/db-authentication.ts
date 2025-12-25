@@ -17,7 +17,7 @@ export class DbAuthentication implements Authentication {
     private readonly updateAccessTokenRepository: UpdateAccessTokenRepository,
     private readonly saveSessionRepository: SaveSessionRepository,
     private readonly hasher: Hasher,
-    private readonly refreshTokenExpirationDays: number = 7
+    private readonly refreshTokenExpirationDays: number
   ) { }
 
   async auth(params: AuthenticationParams): Promise<AuthenticationModel | undefined> {
@@ -35,14 +35,10 @@ export class DbAuthentication implements Authentication {
     const accessToken = await this.encrypter.encrypt({ id: account.id, role })
     await this.updateAccessTokenRepository.updateAccessToken(account.id, accessToken)
 
-    // Generate refresh token
     const refreshToken = crypto.randomBytes(32).toString('hex')
     const refreshTokenHash = await this.hasher.hash(refreshToken)
-
-    // Calculate expiration date
     const expiresAt = ExpirationDate.fromDays(this.refreshTokenExpirationDays).toDate()
 
-    // Save session
     await this.saveSessionRepository.save({
       userId: account.userId,
       refreshTokenHash,
