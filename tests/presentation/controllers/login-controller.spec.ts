@@ -10,7 +10,8 @@ const makeAuthentication = (): Authentication => {
     async auth(_params: AuthenticationParams): Promise<AuthenticationModel | undefined> {
       return Promise.resolve({
         accessToken: 'any_token',
-        name: 'any_name'
+        name: 'any_name',
+        role: 'any_role'
       })
     }
   }
@@ -19,8 +20,8 @@ const makeAuthentication = (): Authentication => {
 
 const makeValidation = (): Validation => {
   class ValidationStub implements Validation {
-    validate(_input: unknown): Error | null {
-      return null
+    validate(_input: Record<string, unknown>): Error | undefined {
+      return undefined
     }
   }
   return new ValidationStub()
@@ -88,7 +89,8 @@ describe('Login Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(ok({
       accessToken: 'any_token',
-      name: 'any_name'
+      name: 'any_name',
+      role: 'any_role'
     }))
   })
 

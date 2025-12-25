@@ -40,7 +40,7 @@ describe('CreateUserLogin Routes', () => {
         method: 'POST',
         url: '/api/users/any_user_id/login',
         payload: {
-          password: '123'
+          password: 'Abcdefg1!'
         }
       })
       expect(response.statusCode).toBe(403)
@@ -53,7 +53,7 @@ describe('CreateUserLogin Routes', () => {
         url: '/api/users/any_user_id/login',
         headers: { authorization: `Bearer ${accessToken}` },
         payload: {
-          password: '123'
+          password: 'Abcdefg1!'
         }
       })
       expect(response.statusCode).toBe(200)
