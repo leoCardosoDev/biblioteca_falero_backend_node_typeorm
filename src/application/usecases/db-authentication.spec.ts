@@ -1,10 +1,12 @@
 import { Authentication, AuthenticationParams } from '@/domain/usecases/authentication'
 import { HashComparer } from '@/application/protocols/cryptography/hash-comparer'
+import { Hasher } from '@/application/protocols/cryptography/hasher'
 import { Encrypter } from '@/application/protocols/cryptography/encrypter'
 import { LoadAccountByEmailRepository } from '@/application/protocols/db/load-account-by-email-repository'
 import { UpdateAccessTokenRepository } from '@/application/protocols/db/update-access-token-repository'
+import { SaveSessionRepository } from '@/application/protocols/db/session-repository'
 import { LoginModel } from '@/domain/models/login'
-import { TokenPayload, Role } from '@/domain/models'
+import { TokenPayload, Role, UserSessionModel } from '@/domain/models'
 import { DbAuthentication } from './db-authentication'
 
 type SutTypes = {
@@ -13,6 +15,8 @@ type SutTypes = {
   hashComparerStub: HashComparer
   encrypterStub: Encrypter
   updateAccessTokenRepositoryStub: UpdateAccessTokenRepository
+  saveSessionRepositoryStub: SaveSessionRepository
+  hasherStub: Hasher
 }
 
 const makeFakeAccount = (): LoginModel => ({
@@ -27,6 +31,19 @@ const makeFakeAuthentication = (): AuthenticationParams => ({
   email: 'any_email@mail.com',
   password: 'any_password'
 })
+
+const makeFakeSession = (): UserSessionModel => {
+  const expiresAt = new Date()
+  expiresAt.setDate(expiresAt.getDate() + 7)
+  return {
+    id: 'any_session_id',
+    userId: 'any_id',
+    refreshTokenHash: 'hashed_refresh_token',
+    expiresAt,
+    isValid: true,
+    createdAt: new Date()
+  }
+}
 
 const makeLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
   class LoadAccountByEmailRepositoryStub implements LoadAccountByEmailRepository {
@@ -44,6 +61,15 @@ const makeHashComparer = (): HashComparer => {
     }
   }
   return new HashComparerStub()
+}
+
+const makeHasher = (): Hasher => {
+  class HasherStub implements Hasher {
+    async hash(_value: string): Promise<string> {
+      return await Promise.resolve('hashed_refresh_token')
+    }
+  }
+  return new HasherStub()
 }
 
 const makeEncrypter = (): Encrypter => {
@@ -64,23 +90,39 @@ const makeUpdateAccessTokenRepository = (): UpdateAccessTokenRepository => {
   return new UpdateAccessTokenRepositoryStub()
 }
 
+const makeSaveSessionRepository = (): SaveSessionRepository => {
+  class SaveSessionRepositoryStub implements SaveSessionRepository {
+    async save(_session: Omit<UserSessionModel, 'id' | 'createdAt'>): Promise<UserSessionModel> {
+      return await Promise.resolve(makeFakeSession())
+    }
+  }
+  return new SaveSessionRepositoryStub()
+}
+
 const makeSut = (): SutTypes => {
   const loadAccountByEmailRepositoryStub = makeLoadAccountByEmailRepository()
   const hashComparerStub = makeHashComparer()
   const encrypterStub = makeEncrypter()
   const updateAccessTokenRepositoryStub = makeUpdateAccessTokenRepository()
+  const saveSessionRepositoryStub = makeSaveSessionRepository()
+  const hasherStub = makeHasher()
   const sut = new DbAuthentication(
     loadAccountByEmailRepositoryStub,
     hashComparerStub,
     encrypterStub,
-    updateAccessTokenRepositoryStub
+    updateAccessTokenRepositoryStub,
+    saveSessionRepositoryStub,
+    hasherStub,
+    7
   )
   return {
     sut,
     loadAccountByEmailRepositoryStub,
     hashComparerStub,
     encrypterStub,
-    updateAccessTokenRepositoryStub
+    updateAccessTokenRepositoryStub,
+    saveSessionRepositoryStub,
+    hasherStub
   }
 }
 
@@ -155,14 +197,45 @@ describe('DbAuthentication UseCase', () => {
     await expect(promise).rejects.toThrow()
   })
 
-  test('Should return authentication data on success', async () => {
+  test('Should call Hasher with refresh token', async () => {
+    const { sut, hasherStub } = makeSut()
+    const hashSpy = jest.spyOn(hasherStub, 'hash')
+    await sut.auth(makeFakeAuthentication())
+    expect(hashSpy).toHaveBeenCalled()
+  })
+
+  test('Should throw if Hasher throws', async () => {
+    const { sut, hasherStub } = makeSut()
+    jest.spyOn(hasherStub, 'hash').mockRejectedValueOnce(new Error())
+    const promise = sut.auth(makeFakeAuthentication())
+    await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call SaveSessionRepository with correct values', async () => {
+    const { sut, saveSessionRepositoryStub } = makeSut()
+    const saveSpy = jest.spyOn(saveSessionRepositoryStub, 'save')
+    await sut.auth(makeFakeAuthentication())
+    expect(saveSpy).toHaveBeenCalled()
+    const savedSession = saveSpy.mock.calls[0][0]
+    expect(savedSession.userId).toBe('any_user_id')
+    expect(savedSession.refreshTokenHash).toBe('hashed_refresh_token')
+    expect(savedSession.isValid).toBe(true)
+  })
+
+  test('Should throw if SaveSessionRepository throws', async () => {
+    const { sut, saveSessionRepositoryStub } = makeSut()
+    jest.spyOn(saveSessionRepositoryStub, 'save').mockRejectedValueOnce(new Error())
+    const promise = sut.auth(makeFakeAuthentication())
+    await expect(promise).rejects.toThrow()
+  })
+
+  test('Should return authentication data with refreshToken on success', async () => {
     const { sut } = makeSut()
     const result = await sut.auth(makeFakeAuthentication())
-    expect(result).toEqual({
-      accessToken: 'any_token',
-      name: 'any_name',
-      role: Role.ADMIN
-    })
+    expect(result?.accessToken).toBe('any_token')
+    expect(result?.refreshToken).toBeDefined()
+    expect(result?.name).toBe('any_name')
+    expect(result?.role).toBe(Role.ADMIN)
   })
 
   test('Should default role to MEMBER if account.role is undefined', async () => {
@@ -186,6 +259,32 @@ describe('DbAuthentication UseCase', () => {
       password: 'hashed_password',
       role: 'ADMIN',
       name: undefined as unknown as string
+    })
+    const result = await sut.auth(makeFakeAuthentication())
+    expect(result?.name).toBe('any_user_id')
+  })
+
+  test('Should default role to MEMBER if account.role is null', async () => {
+    const { sut, loadAccountByEmailRepositoryStub } = makeSut()
+    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce({
+      id: 'any_id',
+      userId: 'any_user_id',
+      password: 'hashed_password',
+      role: null as unknown as string,
+      name: 'any_name'
+    })
+    const result = await sut.auth(makeFakeAuthentication())
+    expect(result?.role).toBe(Role.MEMBER)
+  })
+
+  test('Should use userId as name if account.name is null', async () => {
+    const { sut, loadAccountByEmailRepositoryStub } = makeSut()
+    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce({
+      id: 'any_id',
+      userId: 'any_user_id',
+      password: 'hashed_password',
+      role: 'ADMIN',
+      name: null as unknown as string
     })
     const result = await sut.auth(makeFakeAuthentication())
     expect(result?.name).toBe('any_user_id')

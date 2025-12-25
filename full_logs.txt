@@ -1,0 +1,154 @@
+
+> backend@1.0.0 start
+> node dist/main/server.js
+
+[DbAuthentication] Hasher instance: Sha256Adapter
+[DbAuthentication] HashComparer instance: BcryptAdapter
+Server running at http://localhost:5050
+[DEBUG] Server code updated at 2025-12-25T15:23:37.965Z
+[Sha256Adapter] Hashing [len=64]: 66e39ad7c77b468232379d2062f7966707488c21422d60286d4f0cb90614d408 -> fd6f3cd6fc36ba9ae252cf5e5810b648f2d767baaf56558e118bca62fa96b8cb
+[Sha256Adapter] Input Hex: 36366533396164376337376234363832333233373964323036326637393636373037343838633231343232643630323836643466306362393036313464343038
+[Routes] POST /refresh-token hit
+[Factory] Creating RefreshTokenController
+[DbRefreshToken] Hasher instance: Sha256Adapter
+[RefreshTokenController] Received body: {"refreshToken":"66e39ad7c77b468232379d2062f7966707488c21422d60286d4f0cb90614d408"}
+[DbRefreshToken] Refreshing with token [len=64]: 66e39ad7c77b468232379d2062f7966707488c21422d60286d4f0cb90614d408
+[Sha256Adapter] Hashing [len=64]: 66e39ad7c77b468232379d2062f7966707488c21422d60286d4f0cb90614d408 -> fd6f3cd6fc36ba9ae252cf5e5810b648f2d767baaf56558e118bca62fa96b8cb
+[Sha256Adapter] Input Hex: 36366533396164376337376234363832333233373964323036326637393636373037343838633231343232643630323836643466306362393036313464343038
+
+> backend@1.0.0 start
+> node dist/main/server.js
+
+[DbAuthentication] Hasher instance: Sha256Adapter
+[DbAuthentication] HashComparer instance: BcryptAdapter
+Server running at http://localhost:5050
+[DEBUG] Server code updated at 2025-12-25T15:24:25.626Z
+[Sha256Adapter] Hashing [len=64]: d60222fb410575432c6a0200eb21880dcc0519f4df483b488aa96a7fb8bb663f -> 5b11413cf4d5b9f31247397151431c7acfc15c29d01d5765356eff27f5f23138
+[Sha256Adapter] Input Hex: 64363032323266623431303537353433326336613032303065623231383830646363303531396634646634383362343838616139366137666238626236363366
+[Routes] POST /refresh-token hit
+[Factory] Creating RefreshTokenController
+[DbRefreshToken] Hasher instance: Sha256Adapter
+[RefreshTokenController] Received body: {"refreshToken":"d60222fb410575432c6a0200eb21880dcc0519f4df483b488aa96a7fb8bb663f"}
+[DbRefreshToken] Refreshing with token [len=64]: d60222fb410575432c6a0200eb21880dcc0519f4df483b488aa96a7fb8bb663f
+[Sha256Adapter] Hashing [len=64]: d60222fb410575432c6a0200eb21880dcc0519f4df483b488aa96a7fb8bb663f -> 5b11413cf4d5b9f31247397151431c7acfc15c29d01d5765356eff27f5f23138
+[Sha256Adapter] Input Hex: 64363032323266623431303537353433326336613032303065623231383830646363303531396634646634383362343838616139366137666238626236363366
+
+> backend@1.0.0 start
+> node dist/main/server.js
+
+[DbAuthentication] Hasher instance: Sha256Adapter
+[DbAuthentication] HashComparer instance: BcryptAdapter
+Server running at http://localhost:5050
+[DEBUG] Server code updated at 2025-12-25T15:25:16.281Z
+[Sha256Adapter] Hashing [len=64]: 4b46ca71e9514f406e35a0a5a8420dd2f760468c7d02247f497042b9baf1ee10 -> 7e1fc69b4cb186f4e2d6a834e2d85bac0990a0419bcb80b18c0d47ee1b1539d9
+[Sha256Adapter] Input Hex: 34623436636137316539353134663430366533356130613561383432306464326637363034363863376430323234376634393730343262396261663165653130
+[Routes] POST /refresh-token hit
+[Factory] Creating RefreshTokenController
+[DbRefreshToken] Hasher instance: Sha256Adapter
+[RefreshTokenController] Received body: {"refreshToken":"4b46ca71e9514f406e35a0a5a8420dd2f760468c7d02247f497042b9baf1ee10"}
+[DbRefreshToken] Refreshing with token [len=64]: 4b46ca71e9514f406e35a0a5a8420dd2f760468c7d02247f497042b9baf1ee10
+[Sha256Adapter] Hashing [len=64]: 4b46ca71e9514f406e35a0a5a8420dd2f760468c7d02247f497042b9baf1ee10 -> 7e1fc69b4cb186f4e2d6a834e2d85bac0990a0419bcb80b18c0d47ee1b1539d9
+[Sha256Adapter] Input Hex: 34623436636137316539353134663430366533356130613561383432306464326637363034363863376430323234376634393730343262396261663165653130
+
+> backend@1.0.0 start
+> node dist/main/server.js
+
+[DbAuthentication] Hasher instance: Sha256Adapter
+[DbAuthentication] HashComparer instance: BcryptAdapter
+Server running at http://localhost:5050
+[DEBUG] Server code updated at 2025-12-25T15:26:25.509Z
+[Sha256Adapter] Hashing [len=64]: bbb181b0771319d66f48c7b78300a27f75539675a26798a6849f9c4536c87d7b -> afed35dd59343c7e9b7e8f583901618cefc1c10cd51c650098cfe39eccfcc37a
+[Sha256Adapter] Input Hex: 62626231383162303737313331396436366634386337623738333030613237663735353339363735613236373938613638343966396334353336633837643762
+[Routes] POST /refresh-token hit
+[Factory] Creating RefreshTokenController
+[DbRefreshToken] Hasher instance: Sha256Adapter
+[RefreshTokenController] Received body: {"refreshToken":"bbb181b0771319d66f48c7b78300a27f75539675a26798a6849f9c4536c87d7b"}
+[DbRefreshToken] Refreshing with token [len=64]: bbb181b0771319d66f48c7b78300a27f75539675a26798a6849f9c4536c87d7b
+[Sha256Adapter] Hashing [len=64]: bbb181b0771319d66f48c7b78300a27f75539675a26798a6849f9c4536c87d7b -> afed35dd59343c7e9b7e8f583901618cefc1c10cd51c650098cfe39eccfcc37a
+[Sha256Adapter] Input Hex: 62626231383162303737313331396436366634386337623738333030613237663735353339363735613236373938613638343966396334353336633837643762
+[Sha256Adapter] Hashing [len=64]: 587d0ebd7ec8b7de6fbf6d141c4e7f3c4d4b7f93d4b473bf84b96b2626e93ad7 -> fbdd3262645f3aa17ae36f1a1f7635e4c4a0e11d02c7e48712c52028d36c846a
+[Sha256Adapter] Input Hex: 35383764306562643765633862376465366662663664313431633465376633633464346237663933643462343733626638346239366232363236653933616437
+[Routes] POST /refresh-token hit
+[Factory] Creating RefreshTokenController
+[DbRefreshToken] Hasher instance: Sha256Adapter
+[RefreshTokenController] Received body: {"refreshToken":"587d0ebd7ec8b7de6fbf6d141c4e7f3c4d4b7f93d4b473bf84b96b2626e93ad7"}
+[DbRefreshToken] Refreshing with token [len=64]: 587d0ebd7ec8b7de6fbf6d141c4e7f3c4d4b7f93d4b473bf84b96b2626e93ad7
+[Sha256Adapter] Hashing [len=64]: 587d0ebd7ec8b7de6fbf6d141c4e7f3c4d4b7f93d4b473bf84b96b2626e93ad7 -> fbdd3262645f3aa17ae36f1a1f7635e4c4a0e11d02c7e48712c52028d36c846a
+[Sha256Adapter] Input Hex: 35383764306562643765633862376465366662663664313431633465376633633464346237663933643462343733626638346239366232363236653933616437
+[Sha256Adapter] Hashing [len=64]: b62d389e128677338cc0c816555f8762313883afb03295d04c9d187a4c1dc5cd -> 4a6af407a2f0425339cbb11a76fbd4f7058a712f73454178ee08438d92f1a45a
+[Sha256Adapter] Input Hex: 62363264333839653132383637373333386363306338313635353566383736323331333838336166623033323935643034633964313837613463316463356364
+[Routes] POST /refresh-token hit
+[Factory] Creating RefreshTokenController
+[DbRefreshToken] Hasher instance: Sha256Adapter
+[RefreshTokenController] Received body: {"refreshToken":"b62d389e128677338cc0c816555f8762313883afb03295d04c9d187a4c1dc5cd"}
+[DbRefreshToken] Refreshing with token [len=64]: b62d389e128677338cc0c816555f8762313883afb03295d04c9d187a4c1dc5cd
+[Sha256Adapter] Hashing [len=64]: b62d389e128677338cc0c816555f8762313883afb03295d04c9d187a4c1dc5cd -> 4a6af407a2f0425339cbb11a76fbd4f7058a712f73454178ee08438d92f1a45a
+[Sha256Adapter] Input Hex: 62363264333839653132383637373333386363306338313635353566383736323331333838336166623033323935643034633964313837613463316463356364
+
+> backend@1.0.0 start
+> node dist/main/server.js
+
+[DbAuthentication] Hasher instance: Sha256Adapter
+[DbAuthentication] HashComparer instance: BcryptAdapter
+Server running at http://localhost:5050
+[DEBUG] Server code updated at 2025-12-25T15:30:44.191Z
+[Sha256Adapter] Hashing [len=64]: fd8e7087cd2b31d448db568b878fe8a11b702443a1efcd7c928d128d0f726443 -> b09913eb7ac9a7fe6f30b7d8e22035cb8ea45a77ee24516ad522c46c867c5a9d
+[Sha256Adapter] Input Hex: 66643865373038376364326233316434343864623536386238373866653861313162373032343433613165666364376339323864313238643066373236343433
+[Routes] POST /refresh-token hit
+[Factory] Creating RefreshTokenController
+[DbRefreshToken] Hasher instance: Sha256Adapter
+[RefreshTokenController] Received body: {"refreshToken":"fd8e7087cd2b31d448db568b878fe8a11b702443a1efcd7c928d128d0f726443"}
+[DbRefreshToken] Refreshing with token [len=64]: fd8e7087cd2b31d448db568b878fe8a11b702443a1efcd7c928d128d0f726443
+[Sha256Adapter] Hashing [len=64]: fd8e7087cd2b31d448db568b878fe8a11b702443a1efcd7c928d128d0f726443 -> b09913eb7ac9a7fe6f30b7d8e22035cb8ea45a77ee24516ad522c46c867c5a9d
+[Sha256Adapter] Input Hex: 66643865373038376364326233316434343864623536386238373866653861313162373032343433613165666364376339323864313238643066373236343433
+
+> backend@1.0.0 start
+> node dist/main/server.js
+
+[DbAuthentication] Hasher instance: Sha256Adapter
+[DbAuthentication] HashComparer instance: BcryptAdapter
+Server running at http://localhost:5050
+[DEBUG] Server code updated at 2025-12-25T15:31:29.639Z
+[Sha256Adapter] Hashing [len=64]: 7c7f4be1d4dfd484d99251df4b9788132e77da7ead199ca32792fc08e7104da0 -> 24d00c2b97ca7d309522a57aa0526a9ff49db6be94e84623771a062b2c6fa52a
+[Sha256Adapter] Input Hex: 37633766346265316434646664343834643939323531646634623937383831333265373764613765616431393963613332373932666330386537313034646130
+[Routes] POST /refresh-token hit
+[Factory] Creating RefreshTokenController
+[DbRefreshToken] Hasher instance: Sha256Adapter
+[RefreshTokenController] Received body: {"refreshToken":"7c7f4be1d4dfd484d99251df4b9788132e77da7ead199ca32792fc08e7104da0"}
+[DbRefreshToken] Refreshing with token [len=64]: 7c7f4be1d4dfd484d99251df4b9788132e77da7ead199ca32792fc08e7104da0
+[Sha256Adapter] Hashing [len=64]: 7c7f4be1d4dfd484d99251df4b9788132e77da7ead199ca32792fc08e7104da0 -> 24d00c2b97ca7d309522a57aa0526a9ff49db6be94e84623771a062b2c6fa52a
+[Sha256Adapter] Input Hex: 37633766346265316434646664343834643939323531646634623937383831333265373764613765616431393963613332373932666330386537313034646130
+
+> backend@1.0.0 start
+> node dist/main/server.js
+
+[DbAuthentication] Hasher instance: Sha256Adapter
+[DbAuthentication] HashComparer instance: BcryptAdapter
+Server running at http://localhost:5050
+[DEBUG] Server code updated at 2025-12-25T15:32:17.894Z
+[Sha256Adapter] Hashing [len=64]: 87f2fd8d0f1851016482dda4b0761504e4134c7e91c23e012ad0a929a9e4f804 -> 913b7e5a4758c381a86e6f689b40e3db0977a5b1b2d035e888f0d6c39e45b06e
+[Sha256Adapter] Input Hex: 38376632666438643066313835313031363438326464613462303736313530346534313334633765393163323365303132616430613932396139653466383034
+[Routes] POST /refresh-token hit
+[Factory] Creating RefreshTokenController
+[DbRefreshToken] Hasher instance: Sha256Adapter
+[RefreshTokenController] Received body: {"refreshToken":"87f2fd8d0f1851016482dda4b0761504e4134c7e91c23e012ad0a929a9e4f804"}
+[DbRefreshToken] Refreshing with token [len=64]: 87f2fd8d0f1851016482dda4b0761504e4134c7e91c23e012ad0a929a9e4f804
+[Sha256Adapter] Hashing [len=64]: 87f2fd8d0f1851016482dda4b0761504e4134c7e91c23e012ad0a929a9e4f804 -> 913b7e5a4758c381a86e6f689b40e3db0977a5b1b2d035e888f0d6c39e45b06e
+[Sha256Adapter] Input Hex: 38376632666438643066313835313031363438326464613462303736313530346534313334633765393163323365303132616430613932396139653466383034
+
+> backend@1.0.0 start
+> node dist/main/server.js
+
+[DbAuthentication] Hasher instance: Sha256Adapter
+[DbAuthentication] HashComparer instance: BcryptAdapter
+Server running at http://localhost:5050
+[DEBUG] Server code updated at 2025-12-25T15:34:09.546Z
+[Sha256Adapter] Hashing [len=64]: 284bac621523f60138e669e4567108ddfa84f434a4dffa4679e00c8e30e79512 -> 5df7dec36d11ca9c63355cc4bf48eb017a4b0d49f1df37c5a9d4d148c53a4922
+[Sha256Adapter] Input Hex: 32383462616336323135323366363031333865363639653435363731303864646661383466343334613464666661343637396530306338653330653739353132
+[Routes] POST /refresh-token hit
+[Factory] Creating RefreshTokenController
+[DbRefreshToken] Hasher instance: Sha256Adapter
+[RefreshTokenController] Received body: {"refreshToken":"284bac621523f60138e669e4567108ddfa84f434a4dffa4679e00c8e30e79512"}
+[DbRefreshToken] Refreshing with token [len=64]: 284bac621523f60138e669e4567108ddfa84f434a4dffa4679e00c8e30e79512
+[Sha256Adapter] Hashing [len=64]: 284bac621523f60138e669e4567108ddfa84f434a4dffa4679e00c8e30e79512 -> 5df7dec36d11ca9c63355cc4bf48eb017a4b0d49f1df37c5a9d4d148c53a4922
+[Sha256Adapter] Input Hex: 32383462616336323135323366363031333865363639653435363731303864646661383466343334613464666661343637396530306338653330653739353132

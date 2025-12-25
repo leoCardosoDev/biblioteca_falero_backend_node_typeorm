@@ -52,6 +52,14 @@ const makeSut = (): SutTypes => {
 }
 
 describe('LoadUsers Controller', () => {
+  beforeAll(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2025-12-25'))
+  })
+
+  afterAll(() => {
+    jest.useRealTimers()
+  })
+
   test('Should call LoadUsers', async () => {
     const { sut, loadUsersStub } = makeSut()
     const loadSpy = jest.spyOn(loadUsersStub, 'load')
