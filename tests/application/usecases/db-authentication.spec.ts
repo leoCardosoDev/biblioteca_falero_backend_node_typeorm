@@ -7,7 +7,8 @@ import { UpdateAccessTokenRepository } from '@/application/protocols/db/update-a
 import { SaveSessionRepository } from '@/application/protocols/db/session-repository'
 import { LoginModel } from '@/domain/models/login'
 import { TokenPayload, Role, UserSessionModel } from '@/domain/models'
-import { DbAuthentication } from './db-authentication'
+import { DbAuthentication } from '@/application/usecases/db-authentication'
+import { LoginId, UserId, SessionId } from '@/domain/models/ids'
 
 type SutTypes = {
   sut: Authentication
@@ -20,8 +21,8 @@ type SutTypes = {
 }
 
 const makeFakeAccount = (): LoginModel => ({
-  id: 'any_id',
-  userId: 'any_user_id',
+  id: 'any_id' as LoginId,
+  userId: 'any_user_id' as UserId,
   password: 'hashed_password',
   role: 'ADMIN',
   name: 'any_name'
@@ -36,8 +37,8 @@ const makeFakeSession = (): UserSessionModel => {
   const expiresAt = new Date()
   expiresAt.setDate(expiresAt.getDate() + 7)
   return {
-    id: 'any_session_id',
-    userId: 'any_id',
+    id: 'any_session_id' as SessionId,
+    userId: 'any_id' as UserId,
     refreshTokenHash: 'hashed_refresh_token',
     expiresAt,
     isValid: true,
@@ -241,8 +242,8 @@ describe('DbAuthentication UseCase', () => {
   test('Should default role to MEMBER if account.role is undefined', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut()
     jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce({
-      id: 'any_id',
-      userId: 'any_user_id',
+      id: 'any_id' as LoginId,
+      userId: 'any_user_id' as UserId,
       password: 'hashed_password',
       role: undefined as unknown as string,
       name: 'any_name'
@@ -254,8 +255,8 @@ describe('DbAuthentication UseCase', () => {
   test('Should use userId as name if account.name is undefined', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut()
     jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce({
-      id: 'any_id',
-      userId: 'any_user_id',
+      id: 'any_id' as LoginId,
+      userId: 'any_user_id' as UserId,
       password: 'hashed_password',
       role: 'ADMIN',
       name: undefined as unknown as string
@@ -267,8 +268,8 @@ describe('DbAuthentication UseCase', () => {
   test('Should default role to MEMBER if account.role is null', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut()
     jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce({
-      id: 'any_id',
-      userId: 'any_user_id',
+      id: 'any_id' as LoginId,
+      userId: 'any_user_id' as UserId,
       password: 'hashed_password',
       role: null as unknown as string,
       name: 'any_name'
@@ -280,8 +281,8 @@ describe('DbAuthentication UseCase', () => {
   test('Should use userId as name if account.name is null', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut()
     jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce({
-      id: 'any_id',
-      userId: 'any_user_id',
+      id: 'any_id' as LoginId,
+      userId: 'any_user_id' as UserId,
       password: 'hashed_password',
       role: 'ADMIN',
       name: null as unknown as string
