@@ -445,4 +445,40 @@ describe('UserTypeOrmRepository', () => {
     // Restore
     jest.restoreAllMocks()
   })
+
+  describe('loadById()', () => {
+    test('Should return a user on success', async () => {
+      const sut = makeSut()
+      const userData = makeUserData()
+      const savedUser = await sut.add(userData)
+      const user = await sut.loadById(savedUser.id.value)
+      expect(user).toBeTruthy()
+      expect(user?.id.value).toBe(savedUser.id.value)
+      expect(user?.name.value).toBe(userData.name.value)
+    })
+
+    test('Should return null if loadById finds no user', async () => {
+      const sut = makeSut()
+      const user = await sut.loadById('550e8400-e29b-41d4-a716-446655440099')
+      expect(user).toBeNull()
+    })
+
+    test('Should return null if user data is corrupt (defensive check)', async () => {
+      const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+      const corruptEntity = userRepo.create({
+        id: '550e8400-e29b-41d4-a716-446655440001',
+        name: 'A', // Invalid: too short
+        email: 'corrupt_loadbyid@mail.com',
+        rg: '111222333',
+        cpf: '71428793860',
+        birthDate: '1985-03-10'
+      })
+      await userRepo.save(corruptEntity)
+
+      const sut = makeSut()
+      const user = await sut.loadById('550e8400-e29b-41d4-a716-446655440001')
+
+      expect(user).toBeNull()
+    })
+  })
 })

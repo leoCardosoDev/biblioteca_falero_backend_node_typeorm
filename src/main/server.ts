@@ -1,5 +1,10 @@
-import 'module-alias/register'
-import 'reflect-metadata'
+import moduleAlias from 'module-alias';
+import path from 'path';
+
+const baseDir = __dirname.includes('dist') ? 'dist' : 'src';
+moduleAlias.addAlias('@', path.resolve(baseDir));
+
+import 'reflect-metadata';
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import env from '@/main/config/env'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'

@@ -2,6 +2,7 @@ import { AddUserRepository } from '@/application/protocols/add-user-repository'
 import { LoadUserByEmailRepository } from '@/application/protocols/db/load-user-by-email-repository'
 import { LoadUserByCpfRepository } from '@/application/protocols/db/load-user-by-cpf-repository'
 import { LoadUsersRepository } from '@/application/protocols/db/load-users-repository'
+import { LoadUserByIdRepository } from '@/application/protocols/db/load-user-by-id-repository'
 import { UpdateUserRepository } from '@/application/protocols/db/update-user-repository'
 import { DeleteUserRepository } from '@/application/protocols/db/delete-user-repository'
 import { AddUserParams } from '@/domain/usecases/add-user'
@@ -17,7 +18,7 @@ import { Rg } from '@/domain/value-objects/rg'
 import { BirthDate } from '@/domain/value-objects/birth-date'
 import { Address } from '@/domain/value-objects/address'
 
-export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmailRepository, LoadUserByCpfRepository, LoadUsersRepository, UpdateUserRepository, DeleteUserRepository {
+export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmailRepository, LoadUserByCpfRepository, LoadUsersRepository, LoadUserByIdRepository, UpdateUserRepository, DeleteUserRepository {
   private toUserModel(entity: UserTypeOrmEntity): UserModel | null {
     try {
       // Validate Name (returns Error on failure)
@@ -122,6 +123,13 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const users = await userRepo.find()
     return users.map(user => this.toUserModel(user)).filter((user): user is UserModel => user !== null)
+  }
+
+  async loadById(id: string): Promise<UserModel | null> {
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = await userRepo.findOne({ where: { id } })
+    if (!user) return null
+    return this.toUserModel(user)
   }
 
   async update(userData: UpdateUserParams): Promise<UserModel | null> {

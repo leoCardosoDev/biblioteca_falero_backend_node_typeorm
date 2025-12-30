@@ -5,6 +5,7 @@ import { adaptMiddleware } from '@/main/adapters/fastify-middleware-adapter'
 import { makeAddUserController } from '@/main/factories/add-user-controller-factory'
 import { makeAuthMiddleware, makeLibrarianOrAdmin, makeAdminOnly } from '@/main/factories/middlewares'
 import { makeLoadUsersController } from '@/main/factories/load-users-controller-factory'
+import { makeLoadUserByIdController } from '@/main/factories/load-user-by-id-controller-factory'
 import { makeUpdateUserController } from '@/main/factories/update-user-controller-factory'
 import { makeDeleteUserController } from '@/main/factories/delete-user-controller-factory'
 
@@ -52,6 +53,44 @@ const loadUsersSchema = {
       items: userSchema
     },
     403: { type: 'object', properties: { error: { type: 'string' } } }
+  }
+}
+
+const loadUserByIdSchema = {
+  tags: ['Users'],
+  summary: 'Load user by id',
+  description: 'Returns a user by id. Requires librarian or admin role.',
+  security: [{ bearerAuth: [] }],
+  params: {
+    type: 'object',
+    properties: {
+      id: { type: 'string', description: 'User ID' }
+    }
+  },
+  response: {
+    200: {
+      ...userSchema,
+      properties: {
+        ...userSchema.properties,
+        cpf: { type: 'string' },
+        rg: { type: 'string' },
+        birthDate: { type: 'string', format: 'date' },
+        address: {
+          type: 'object',
+          properties: {
+            street: { type: 'string' },
+            number: { type: 'string' },
+            complement: { type: 'string' },
+            neighborhood: { type: 'string' },
+            city: { type: 'string' },
+            state: { type: 'string' },
+            zipCode: { type: 'string' }
+          }
+        }
+      }
+    },
+    403: { type: 'object', properties: { error: { type: 'string' } } },
+    404: { type: 'object', properties: { error: { type: 'string' } } }
   }
 }
 
@@ -116,6 +155,14 @@ export default (router: FastifyInstance): void => {
       adaptMiddleware(makeLibrarianOrAdmin())
     ]
   }, adaptRoute(makeLoadUsersController()))
+
+  router.get('/users/:id', {
+    schema: loadUserByIdSchema,
+    preHandler: [
+      adaptMiddleware(makeAuthMiddleware()),
+      adaptMiddleware(makeLibrarianOrAdmin())
+    ]
+  }, adaptRoute(makeLoadUserByIdController()))
 
   router.put('/users/:id', {
     schema: updateUserSchema,
