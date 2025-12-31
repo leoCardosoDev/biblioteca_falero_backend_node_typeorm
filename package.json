@@ -20,7 +20,8 @@
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "prepare": "husky",
-    "seed:admin": "npm run up && node dist/main/seeds/admin-seed.js"
+    "seed:admin": "npm run up && node dist/main/seeds/admin-seed.js",
+    "seed:cities": "npm run up && node dist/main/seeds/city-seed.js"
   },
   "keywords": [],
   "author": "",
