@@ -10,9 +10,7 @@ export class CreateState1767220000000 implements MigrationInterface {
             name: 'id',
             type: 'varchar',
             length: '36',
-            isPrimary: true,
-            isGenerated: true,
-            generationStrategy: 'uuid'
+            isPrimary: true
           },
           {
             name: 'name',

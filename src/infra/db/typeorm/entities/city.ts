@@ -10,6 +10,9 @@ export class City {
   @Column({ length: 255 })
   name!: string
 
+  @Column()
+  state_id!: string
+
 
 
   @ManyToOne(() => State)
