@@ -22,7 +22,9 @@ const domainErrorCodeMap: Record<string, string> = {
   InvalidBirthDateError: 'INVALID_PARAM',
   InvalidAddressError: 'INVALID_PARAM',
   InvalidIdError: 'INVALID_PARAM',
-  InvalidPasswordError: 'INVALID_PARAM'
+  InvalidPasswordError: 'INVALID_PARAM',
+  InvalidUserRoleError: 'INVALID_PARAM',
+  InvalidUserStatusError: 'INVALID_PARAM'
 }
 
 const safeMessageMap: Record<string, string> = {
