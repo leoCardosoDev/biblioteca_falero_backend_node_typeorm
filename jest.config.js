@@ -5,7 +5,9 @@ module.exports = {
     '!<rootDir>/src/main/**',
     '!<rootDir>/src/**/index.ts',
     '!<rootDir>/src/infra/db/typeorm/migrations/**',
-    '!<rootDir>/src/infra/db/typeorm/entities/**'
+    '!<rootDir>/src/infra/db/typeorm/entities/**',
+    '!<rootDir>/src/infra/db/typeorm/data-source.ts',
+    '!<rootDir>/src/infra/db/typeorm/typeorm-helper.ts'
   ],
   coverageDirectory: 'coverage',
   testEnvironment: 'node',
