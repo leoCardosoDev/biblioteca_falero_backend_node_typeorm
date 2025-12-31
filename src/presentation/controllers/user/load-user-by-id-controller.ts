@@ -1,0 +1,43 @@
+import { Controller } from '@/presentation/protocols/controller'
+import { HttpRequest, HttpResponse } from '@/presentation/protocols/http'
+import { LoadUserById } from '@/domain/usecases/load-user-by-id'
+import { ok, notFound, serverError } from '@/presentation/helpers/http-helper'
+
+export class LoadUserByIdController implements Controller {
+  constructor(private readonly loadUserById: LoadUserById) { }
+
+  async handle(request: HttpRequest): Promise<HttpResponse> {
+    try {
+      const { id } = request.params as { id: string }
+      const user = await this.loadUserById.load(id)
+      if (!user) {
+        return notFound(new Error('User not found'))
+      }
+      const serializedUser = {
+        id: user.id.value,
+        name: user.name.value,
+        email: user.email.value,
+        rg: user.rg.value,
+        cpf: user.cpf.value,
+        birthDate: user.birthDate.value,
+        address: user.address ? {
+          street: user.address.street,
+          number: user.address.number,
+          complement: user.address.complement,
+          neighborhood: user.address.neighborhood,
+          city: user.address.city,
+          state: user.address.state,
+          zipCode: user.address.zipCode
+        } : undefined,
+        login: user.login ? {
+          role: user.login.role.value,
+          status: user.login.status.value
+        } : null
+      }
+
+      return ok(serializedUser)
+    } catch (error) {
+      return serverError(error as Error)
+    }
+  }
+}
