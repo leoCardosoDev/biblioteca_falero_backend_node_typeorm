@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm'
 
 @Entity('logins')
 export class LoginTypeOrmEntity {
@@ -9,6 +9,7 @@ export class LoginTypeOrmEntity {
   password!: string
 
 
+  @Index()
   @Column({ nullable: true })
   role?: string
 
@@ -18,6 +19,7 @@ export class LoginTypeOrmEntity {
   @Column({ nullable: true })
   accessToken?: string
 
+  @Index()
   @Column()
   userId!: string
 
