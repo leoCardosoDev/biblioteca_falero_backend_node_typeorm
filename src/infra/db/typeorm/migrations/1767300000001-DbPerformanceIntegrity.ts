@@ -5,7 +5,7 @@ export class DbPerformanceIntegrity1767300000001 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Optimistic Locking for User
-    await queryRunner.query(`ALTER TABLE \`users\` ADD \`version\` INT NOT NULL DEFAULT 1`);
+    await queryRunner.query(`ALTER TABLE \`users\` ADD \`version\` INT NOT NULL DEFAULT 0`);
 
     // Strategic Indexes for Login
     await queryRunner.query(`CREATE INDEX \`IDX_logins_userId\` ON \`logins\` (\`userId\`)`);
