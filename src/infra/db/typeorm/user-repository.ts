@@ -1,4 +1,5 @@
 import { AddUserRepository } from '@/application/protocols/add-user-repository'
+import { IsNull } from 'typeorm'
 import { LoadUserByEmailRepository } from '@/application/protocols/db/load-user-by-email-repository'
 import { LoadUserByCpfRepository } from '@/application/protocols/db/load-user-by-cpf-repository'
 import { LoadUsersRepository } from '@/application/protocols/db/load-users-repository'
@@ -7,7 +8,7 @@ import { UpdateUserRepository } from '@/application/protocols/db/update-user-rep
 import { DeleteUserRepository } from '@/application/protocols/db/delete-user-repository'
 import { UserWithLogin } from '@/domain/usecases/load-users'
 import { UserRole } from '@/domain/value-objects/user-role'
-import { UserStatus } from '@/domain/value-objects/user-status'
+import { UserStatus, UserStatusEnum } from '@/domain/value-objects/user-status'
 import { AddUserParams } from '@/domain/usecases/add-user'
 import { UpdateUserParams } from '@/domain/usecases/update-user'
 import { UserModel } from '@/domain/models/user'
@@ -70,7 +71,9 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
         cpf,
         gender: entity.gender,
         phone: entity.phone,
-        address
+        address,
+        status: entity.status,
+        deletedAt: entity.deletedAt
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error)
@@ -105,14 +108,14 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
 
   async loadByEmail(email: string): Promise<UserModel | undefined> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
-    const user = await userRepo.findOne({ where: { email } })
+    const user = await userRepo.findOne({ where: { email, deletedAt: IsNull() } })
     if (!user) return undefined
     return this.toUserModel(user) ?? undefined
   }
 
   async loadByCpf(cpf: string): Promise<UserModel | undefined> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
-    const user = await userRepo.findOne({ where: { cpf } })
+    const user = await userRepo.findOne({ where: { cpf, deletedAt: IsNull() } })
     if (!user) return undefined
     return this.toUserModel(user) ?? undefined
   }
@@ -120,7 +123,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
   async loadAll(): Promise<UserWithLogin[]> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
-    const users = await userRepo.find()
+    const users = await userRepo.find({ where: { deletedAt: IsNull() } })
     const usersWithLogin: UserWithLogin[] = []
 
     for (const user of users) {
@@ -142,7 +145,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
   async loadById(id: string): Promise<UserWithLogin | null> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
-    const userEntity = await userRepo.findOne({ where: { id } })
+    const userEntity = await userRepo.findOne({ where: { id, deletedAt: IsNull() } })
     if (!userEntity) return null
 
     const loginEntity = await loginRepo.findOne({ where: { userId: id } })
@@ -189,6 +192,6 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
 
   async delete(id: string): Promise<void> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
-    await userRepo.delete(id)
+    await userRepo.update(id, { deletedAt: new Date(), status: UserStatusEnum.INACTIVE })
   }
 }

@@ -21,6 +21,9 @@ export class LoginTypeOrmEntity {
   @Column()
   userId!: string
 
+  @Column({ type: 'datetime', nullable: true, name: 'deleted_at' })
+  deletedAt?: Date
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date
 

@@ -12,9 +12,6 @@ import { Id } from '@/domain/value-objects/id'
 
 describe('UserTypeOrmRepository', () => {
   beforeAll(async () => {
-    jest.useFakeTimers()
-    jest.setSystemTime(new Date('2024-01-10T12:00:00Z'))
-
     await TypeOrmHelper.connect({
       type: 'better-sqlite3',
       database: ':memory:',
@@ -26,12 +23,17 @@ describe('UserTypeOrmRepository', () => {
 
   afterAll(async () => {
     await TypeOrmHelper.disconnect()
-    jest.useRealTimers()
   })
 
   beforeEach(async () => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2024-01-10T12:00:00Z'))
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     await userRepo.clear()
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
   })
 
   const makeSut = (): UserTypeOrmRepository => {
@@ -153,7 +155,7 @@ describe('UserTypeOrmRepository', () => {
     expect(users.length).toBe(1)
     expect(users[0].login).toBeTruthy()
     expect(users[0].login?.role.value).toBe('ADMIN')
-    expect(users[0].login?.status.value).toBe('active')
+    expect(users[0].login?.status.value).toBe('ACTIVE')
   })
 
   test('Should return empty list if no users found', async () => {
@@ -176,12 +178,75 @@ describe('UserTypeOrmRepository', () => {
     expect(updatedUser!.rg.value).toBe('123456789')
   })
 
-  test('Should delete a user on success', async () => {
+  test('Should soft delete a user on success', async () => {
     const sut = makeSut()
     const user = await sut.add(makeUserData())
     await sut.delete(user.id.value)
+
+    // Verify soft delete in DB (row should exist with deletedAt)
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const dbUser = await userRepo.findOne({ where: { id: user.id.value } })
+    expect(dbUser).toBeTruthy()
+    expect(dbUser?.deletedAt).not.toBeNull()
+    expect(dbUser?.status).toBe('INACTIVE')
+
+    // Verify public API returns undefined
     const deletedUser = await sut.loadByEmail('any_email@mail.com')
     expect(deletedUser).toBeUndefined()
+  })
+
+  test('Should not load soft deleted user by loadByCpf', async () => {
+    const sut = makeSut()
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = userRepo.create({
+      name: 'deleted_user',
+      email: 'deleted@mail.com',
+      rg: 'any_rg',
+      cpf: '52998224725',
+      gender: 'male',
+      deletedAt: new Date(),
+      status: 'INACTIVE'
+    })
+    await userRepo.save(user)
+
+    const loaded = await sut.loadByCpf('52998224725')
+    expect(loaded).toBeUndefined()
+  })
+
+  test('Should not load soft deleted user by loadById', async () => {
+    const sut = makeSut()
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = userRepo.create({
+      name: 'deleted_by_id',
+      email: 'deleted_id@mail.com',
+      rg: 'any_rg_id',
+      cpf: 'any_cpf_id',
+      gender: 'male',
+      deletedAt: new Date(),
+      status: 'INACTIVE'
+    })
+    await userRepo.save(user)
+
+    const loaded = await sut.loadById(user.id)
+    expect(loaded).toBeNull()
+  })
+
+  test('Should not load soft deleted user by loadAll', async () => {
+    const sut = makeSut()
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = userRepo.create({
+      name: 'deleted_all',
+      email: 'deleted_all@mail.com',
+      rg: 'any_rg_all',
+      cpf: 'any_cpf_all',
+      gender: 'male',
+      deletedAt: new Date(),
+      status: 'INACTIVE'
+    })
+    await userRepo.save(user)
+
+    const users = await sut.loadAll()
+    expect(users.length).toBe(0)
   })
 
   test('Should add a user with address on success', async () => {

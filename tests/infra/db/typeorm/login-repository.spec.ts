@@ -165,6 +165,57 @@ describe('LoginTypeOrmRepository', () => {
     const result = await sut.loadByEmail('default_values@mail.com')
     expect(result).toBeTruthy()
     expect(result?.role.value).toBe('MEMBER')
-    expect(result?.status.value).toBe('active')
+    expect(result?.status.value).toBe('ACTIVE')
+  })
+
+  test('Should return undefined if loadByEmail finds user but is soft deleted', async () => {
+    const sut = makeSut()
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = userRepo.create({
+      name: 'deleted_user',
+      email: 'deleted@mail.com',
+      rg: 'any_rg',
+      cpf: 'any_cpf',
+      gender: 'male',
+      deletedAt: new Date(),
+      status: 'INACTIVE'
+    })
+    await userRepo.save(user)
+
+    const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+    await loginRepo.save({
+      userId: user.id,
+      password: 'any_password',
+      role: 'member',
+      status: 'active'
+    })
+
+    const account = await sut.loadByEmail('deleted@mail.com')
+    expect(account).toBeUndefined()
+  })
+
+  test('Should return undefined if loadByEmail finds user but status is INACTIVE', async () => {
+    const sut = makeSut()
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = userRepo.create({
+      name: 'inactive_user',
+      email: 'inactive@mail.com',
+      rg: 'any_rg',
+      cpf: 'any_cpf',
+      gender: 'male',
+      status: 'INACTIVE'
+    })
+    await userRepo.save(user)
+
+    const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+    await loginRepo.save({
+      userId: user.id,
+      password: 'any_password',
+      role: 'member',
+      status: 'active'
+    })
+
+    const account = await sut.loadByEmail('inactive@mail.com')
+    expect(account).toBeUndefined()
   })
 })

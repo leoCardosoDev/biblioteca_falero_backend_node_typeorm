@@ -56,4 +56,10 @@ export class UserTypeOrmEntity {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt!: Date
+
+  @Column({ type: 'datetime', nullable: true, name: 'deleted_at' })
+  deletedAt?: Date
+
+  @Column({ type: 'varchar', length: 20, default: 'ACTIVE' })
+  status!: string
 }
