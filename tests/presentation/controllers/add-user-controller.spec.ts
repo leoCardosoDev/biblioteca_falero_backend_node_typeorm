@@ -2,29 +2,40 @@ import { AddUserController } from '@/presentation/controllers/add-user-controlle
 import { AddUser, AddUserParams } from '@/domain/usecases/add-user'
 import { UserModel } from '@/domain/models/user'
 import { Validation } from '@/presentation/protocols/validation'
-import { MissingParamError } from '@/presentation/errors'
-import { EmailInUseError, CpfInUseError } from '@/domain/errors'
+import { HttpRequest } from '@/presentation/protocols'
+import { ok } from '@/presentation/helpers/http-helper'
+import { UserAlreadyExistsError } from '@/presentation/errors/user-already-exists-error'
 import { Id } from '@/domain/value-objects/id'
-import { Email } from '@/domain/value-objects/email'
-import { Cpf } from '@/domain/value-objects/cpf'
-import { Name } from '@/domain/value-objects/name'
-import { Rg } from '@/domain/value-objects/rg'
-import { BirthDate } from '@/domain/value-objects/birth-date'
-import { Address } from '@/domain/value-objects/address'
+import { Name, Email, Rg, Cpf, Address } from '@/domain/value-objects'
 
-const makeFakeUser = (): UserModel => ({
-  id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
-  name: Name.create('valid_name') as Name,
-  email: Email.create('valid_email@mail.com'),
-  rg: Rg.create('123456789') as Rg,
-  cpf: Cpf.create('529.982.247-25'),
-  birthDate: BirthDate.create('1990-01-15') as BirthDate
-})
+type ErrorBody = {
+  error: {
+    code: string
+    message: string
+    timestamp: string
+  }
+}
 
 const makeAddUser = (): AddUser => {
   class AddUserStub implements AddUser {
-    async add(_data: AddUserParams): Promise<UserModel | Error> {
-      return Promise.resolve(makeFakeUser())
+    async add(_user: AddUserParams): Promise<UserModel | Error> {
+      return Promise.resolve({
+        id: Id.create('11111111-1111-1111-1111-111111111111'),
+        name: Name.create('Any Name') as Name,
+        email: Email.create('any_email@mail.com') as Email,
+        rg: Rg.create('123456789') as Rg,
+        cpf: Cpf.create('00000000191') as Cpf,
+        gender: 'any_gender',
+        phone: '123456789',
+        address: Address.create({
+          street: 'Any Street',
+          number: '123',
+          complement: 'Apt 1',
+          neighborhoodId: 'any_neighborhood_id',
+          cityId: 'any_city_id',
+          zipCode: '12345678'
+        }) as Address
+      })
     }
   }
   return new AddUserStub()
@@ -56,13 +67,22 @@ const makeSut = (): SutTypes => {
   }
 }
 
-const makeFakeRequest = () => ({
+const makeFakeRequest = (): HttpRequest => ({
   body: {
-    name: 'any_name',
+    name: 'Any Name',
     email: 'any_email@mail.com',
+    cpf: '00000000191',
     rg: '123456789',
-    cpf: '529.982.247-25',
-    birthDate: '1990-01-15'
+    gender: 'any_gender',
+    phone: '123456789',
+    address: {
+      street: 'Any Street',
+      number: '123',
+      complement: 'Apt 1',
+      neighborhoodId: 'any_neighborhood_id',
+      cityId: 'any_city_id',
+      zipCode: '12345678'
+    }
   }
 })
 
@@ -77,202 +97,141 @@ describe('AddUser Controller', () => {
 
   test('Should return 400 if Validation returns an error', async () => {
     const { sut, validationStub } = makeSut()
-    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new MissingParamError('any_field'))
-    const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body.error.code).toBe('MISSING_PARAM')
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error())
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(expect.objectContaining({
+      statusCode: 400,
+      body: expect.objectContaining({
+        error: expect.objectContaining({
+          message: 'Invalid request',
+          code: 'BAD_REQUEST',
+          timestamp: expect.any(String)
+        })
+      })
+    }))
   })
 
   test('Should call AddUser with correct values', async () => {
     const { sut, addUserStub } = makeSut()
     const addSpy = jest.spyOn(addUserStub, 'add')
     await sut.handle(makeFakeRequest())
-    expect(addSpy).toHaveBeenCalled()
+    expect(addSpy).toHaveBeenCalledWith({
+      name: Name.create('Any Name') as Name,
+      email: Email.create('any_email@mail.com'),
+      cpf: Cpf.create('00000000191'),
+      rg: Rg.create('123456789') as Rg,
+      gender: 'any_gender',
+      phone: '123456789',
+      address: Address.create({
+        street: 'Any Street',
+        number: '123',
+        complement: 'Apt 1',
+        neighborhoodId: 'any_neighborhood_id',
+        cityId: 'any_city_id',
+        zipCode: '12345678'
+      }) as Address
+    })
+  })
+
+  test('Should return 403 if AddUser returns UserAlreadyExistsError', async () => {
+    const { sut, addUserStub } = makeSut()
+    jest.spyOn(addUserStub, 'add').mockReturnValueOnce(Promise.resolve(new UserAlreadyExistsError()))
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(expect.objectContaining({
+      statusCode: 403,
+      body: expect.objectContaining({
+        error: expect.objectContaining({
+          code: 'FORBIDDEN',
+          message: 'Access denied',
+          timestamp: expect.any(String)
+        })
+      })
+    }))
   })
 
   test('Should return 500 if AddUser throws', async () => {
     const { sut, addUserStub } = makeSut()
-    jest.spyOn(addUserStub, 'add').mockImplementationOnce(async () => {
-      return Promise.reject(new Error())
-    })
-    const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
+    jest.spyOn(addUserStub, 'add').mockImplementationOnce(() => { throw new Error() })
+    const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body.error.code).toBe('INTERNAL_ERROR')
+    expect((httpResponse.body as ErrorBody).error.code).toBe('INTERNAL_ERROR')
   })
 
-  test('Should return 200 if valid data is provided', async () => {
+  test('Should return 200 on success', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toEqual({
-      id: '550e8400-e29b-41d4-a716-446655440000',
-      name: 'valid_name',
-      email: 'valid_email@mail.com',
+    expect(httpResponse).toEqual(ok({
+      id: '11111111-1111-1111-1111-111111111111',
+      name: 'Any Name',
+      email: 'any_email@mail.com',
       rg: '123456789',
-      cpf: '52998224725',
-      birthDate: '1990-01-15'
-    })
-  })
-
-  test('Should return 500 with empty stack if error has no stack', async () => {
-    const { sut, addUserStub } = makeSut()
-    const errorWithoutStack = new Error()
-    errorWithoutStack.stack = undefined
-    jest.spyOn(addUserStub, 'add').mockRejectedValueOnce(errorWithoutStack)
-    const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
-    expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body.error.code).toBe('INTERNAL_ERROR')
-  })
-
-  test('Should return 403 if AddUser returns EmailInUseError', async () => {
-    const { sut, addUserStub } = makeSut()
-    jest.spyOn(addUserStub, 'add').mockReturnValueOnce(Promise.resolve(new EmailInUseError()))
-    const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
-    expect(httpResponse.statusCode).toBe(403)
-    expect(httpResponse.body.error.code).toBe('CONFLICT')
-  })
-
-  test('Should return 403 if AddUser returns CpfInUseError', async () => {
-    const { sut, addUserStub } = makeSut()
-    jest.spyOn(addUserStub, 'add').mockReturnValueOnce(Promise.resolve(new CpfInUseError()))
-    const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
-    expect(httpResponse.statusCode).toBe(403)
-    expect(httpResponse.body.error.code).toBe('CONFLICT')
-  })
-
-  test('Should return 400 if Email.create throws InvalidEmailError', async () => {
-    const { sut } = makeSut()
-    const httpResponse = await sut.handle({
-      body: {
-        name: 'any_name',
-        email: 'invalid-email',
-        rg: '123456789',
-        cpf: '529.982.247-25',
-        birthDate: '1990-01-15'
-      }
-    })
-    expect(httpResponse.statusCode).toBe(400)
-  })
-
-  test('Should return 400 if Cpf.create throws InvalidCpfError', async () => {
-    const { sut } = makeSut()
-    const httpResponse = await sut.handle({
-      body: {
-        name: 'any_name',
-        email: 'valid_email@mail.com',
-        rg: '123456789',
-        cpf: '00000000000',
-        birthDate: '1990-01-15'
-      }
-    })
-    expect(httpResponse.statusCode).toBe(400)
-  })
-
-  test('Should return 400 if Address.create returns error', async () => {
-    const { sut } = makeSut()
-    const httpResponse = await sut.handle({
-      body: {
-        name: 'any_name',
-        email: 'valid_email@mail.com',
-        rg: '123456789',
-        cpf: '529.982.247-25',
-        birthDate: '1990-01-15',
-        address: {
-          street: '',
-          number: '',
-          neighborhood: '',
-          city: '',
-          state: '',
-          zipCode: ''
-        }
-      }
-    })
-    expect(httpResponse.statusCode).toBe(400)
-  })
-
-  test('Should return 200 with address if valid address is provided', async () => {
-    const { sut, addUserStub } = makeSut()
-    const userWithAddress = {
-      ...makeFakeUser(),
-      address: Address.create({
-        street: 'returned_street',
-        number: '789',
-        neighborhood: 'returned_neighborhood',
-        city: 'returned_city',
-        state: 'SP',
+      cpf: '00000000191',
+      gender: 'any_gender',
+      phone: '123456789',
+      address: {
+        street: 'Any Street',
+        number: '123',
+        complement: 'Apt 1',
+        neighborhoodId: 'any_neighborhood_id',
+        cityId: 'any_city_id',
         zipCode: '12345678'
-      }) as Address
+      }
+    }))
+  })
+
+  test('Should return 400 if Email.create throws', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+    const body = httpRequest.body as Record<string, unknown>
+    body.email = 'invalid-email'
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect((httpResponse.body as ErrorBody).error.code).toBe('INVALID_PARAM')
+  })
+
+  test('Should return 400 if Cpf.create throws', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+    const body = httpRequest.body as Record<string, unknown>
+    body.cpf = 'invalid-cpf'
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect((httpResponse.body as ErrorBody).error.code).toBe('INVALID_PARAM')
+  })
+
+  test('Should return 400 if Name.create returns an error', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+    const body = httpRequest.body as Record<string, unknown>
+    body.name = 'A' // Invalid name (too short)
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect((httpResponse.body as ErrorBody).error.code).toBe('INVALID_PARAM')
+  })
+
+  test('Should return 400 if Rg.create returns an error', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+    const body = httpRequest.body as Record<string, unknown>
+    body.rg = '' // Invalid RG
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect((httpResponse.body as ErrorBody).error.code).toBe('INVALID_PARAM')
+  })
+
+  test('Should return 400 if Address.create returns an error', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+    const body = httpRequest.body as Record<string, unknown>
+    body.address = {
+      street: '', // Invalid address
+      number: '123',
+      neighborhoodId: 'any',
+      cityId: 'any',
+      zipCode: '12345'
     }
-    jest.spyOn(addUserStub, 'add').mockResolvedValueOnce(userWithAddress)
-    const httpResponse = await sut.handle({
-      body: {
-        name: 'any_name',
-        email: 'any_email@mail.com',
-        rg: '123456789',
-        cpf: '529.982.247-25',
-        birthDate: '1990-01-15',
-        address: {
-          street: 'any_street',
-          number: '123',
-          neighborhood: 'any_neighborhood',
-          city: 'any_city',
-          state: 'SP',
-          zipCode: '12345678'
-        }
-      }
-    }) as { statusCode: number; body: { address: unknown } }
-    expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body.address).toEqual({
-
-      street: 'returned_street',
-      number: '789',
-      complement: undefined,
-      neighborhood: 'returned_neighborhood',
-      city: 'returned_city',
-      state: 'SP',
-      zipCode: '12345678'
-    })
-  })
-
-  test('Should return 400 if Name.create returns error', async () => {
-    const { sut } = makeSut()
-    const httpResponse = await sut.handle({
-      body: {
-        name: 'a', // Invalid name (too short)
-        email: 'valid_email@mail.com',
-        rg: '123456789',
-        cpf: '529.982.247-25',
-        birthDate: '1990-01-15'
-      }
-    })
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-  })
-
-  test('Should return 400 if Rg.create returns error', async () => {
-    const { sut } = makeSut()
-    const httpResponse = await sut.handle({
-      body: {
-        name: 'any_name',
-        email: 'valid_email@mail.com',
-        rg: '', // Invalid Rg (empty)
-        cpf: '529.982.247-25',
-        birthDate: '1990-01-15'
-      }
-    })
-    expect(httpResponse.statusCode).toBe(400)
-  })
-
-  test('Should return 400 if BirthDate.create returns error', async () => {
-    const { sut } = makeSut()
-    const httpResponse = await sut.handle({
-      body: {
-        name: 'any_name',
-        email: 'valid_email@mail.com',
-        rg: '123456789',
-        cpf: '529.982.247-25',
-        birthDate: 'invalid-date' // Invalid BirthDate
-      }
-    })
-    expect(httpResponse.statusCode).toBe(400)
+    expect((httpResponse.body as ErrorBody).error.code).toBe('INVALID_PARAM')
   })
 })
