@@ -4,6 +4,7 @@ import app, { setupApp } from '@/main/config/app'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
 import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
+import { DomainEventTypeOrmEntity } from '@/infra/db/typeorm/entities/domain-event-entity'
 import { DataSource } from 'typeorm'
 import { Role } from '@/domain/models'
 
@@ -20,7 +21,7 @@ describe('User Routes', () => {
       database: ':memory:',
       dropSchema: true,
       synchronize: true,
-      entities: [UserTypeOrmEntity, LoginTypeOrmEntity]
+      entities: [UserTypeOrmEntity, LoginTypeOrmEntity, DomainEventTypeOrmEntity]
     })
     await setupApp()
     await app.ready()

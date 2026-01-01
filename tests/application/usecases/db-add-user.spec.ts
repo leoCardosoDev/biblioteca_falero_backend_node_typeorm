@@ -10,6 +10,8 @@ import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
+import { UserStatus } from '@/domain/value-objects/user-status'
+import { DomainEvents, SaveDomainEventRepository } from '@/domain/events/domain-events'
 
 const makeFakeUser = (): UserModel => ({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
@@ -17,7 +19,9 @@ const makeFakeUser = (): UserModel => ({
   email: Email.create('valid_email@mail.com'),
   rg: Rg.create('123456789') as Rg,
   cpf: Cpf.create('529.982.247-25'),
-  gender: 'any_gender'
+  gender: 'any_gender',
+  version: 1,
+  status: UserStatus.create('ACTIVE') as UserStatus
 })
 
 const makeLoadUserByEmailRepository = (): LoadUserByEmailRepository => {
@@ -47,23 +51,40 @@ const makeAddUserRepository = (): AddUserRepository => {
   return new AddUserRepositoryStub()
 }
 
+const makeSaveDomainEventRepository = (): SaveDomainEventRepository => {
+  class SaveDomainEventRepositoryStub implements SaveDomainEventRepository {
+    async save(_event: unknown): Promise<void> {
+      return Promise.resolve()
+    }
+  }
+  return new SaveDomainEventRepositoryStub()
+}
+
 interface SutTypes {
   sut: DbAddUser
   addUserRepositoryStub: AddUserRepository
   loadUserByEmailRepositoryStub: LoadUserByEmailRepository
   loadUserByCpfRepositoryStub: LoadUserByCpfRepository
+  saveDomainEventRepositoryStub: SaveDomainEventRepository
 }
 
 const makeSut = (): SutTypes => {
   const addUserRepositoryStub = makeAddUserRepository()
   const loadUserByEmailRepositoryStub = makeLoadUserByEmailRepository()
   const loadUserByCpfRepositoryStub = makeLoadUserByCpfRepository()
-  const sut = new DbAddUser(addUserRepositoryStub, loadUserByEmailRepositoryStub, loadUserByCpfRepositoryStub)
+  const saveDomainEventRepositoryStub = makeSaveDomainEventRepository()
+  const sut = new DbAddUser(
+    addUserRepositoryStub,
+    loadUserByEmailRepositoryStub,
+    loadUserByCpfRepositoryStub,
+    saveDomainEventRepositoryStub
+  )
   return {
     sut,
     addUserRepositoryStub,
     loadUserByEmailRepositoryStub,
-    loadUserByCpfRepositoryStub
+    loadUserByCpfRepositoryStub,
+    saveDomainEventRepositoryStub
   }
 }
 
@@ -72,7 +93,8 @@ const makeFakeUserData = (): AddUserParams => ({
   email: Email.create('valid_email@mail.com'),
   rg: Rg.create('123456789') as Rg,
   cpf: Cpf.create('529.982.247-25'),
-  gender: 'any_gender'
+  gender: 'any_gender',
+  status: UserStatus.create('ACTIVE') as UserStatus
 })
 
 describe('DbAddUser UseCase', () => {
@@ -117,6 +139,24 @@ describe('DbAddUser UseCase', () => {
     jest.spyOn(addUserRepositoryStub, 'add').mockReturnValueOnce(Promise.reject(new Error()))
     const promise = sut.add(makeFakeUserData())
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call DomainEvents with correct values', async () => {
+    const { sut, saveDomainEventRepositoryStub } = makeSut()
+    const markSpy = jest.spyOn(DomainEvents, 'markAggregateForDispatch')
+    const dispatchSpy = jest.spyOn(DomainEvents, 'dispatchEventsForAggregate')
+    const userData = makeFakeUserData()
+    const fakeUser = makeFakeUser()
+    await sut.add(userData)
+    expect(markSpy).toHaveBeenCalledWith(fakeUser.id.value, expect.objectContaining({
+      aggregateId: fakeUser.id.value,
+      type: 'UserCreated',
+      payload: {
+        userId: fakeUser.id.value,
+        email: fakeUser.email.value
+      }
+    }))
+    expect(dispatchSpy).toHaveBeenCalledWith(fakeUser.id.value, saveDomainEventRepositoryStub)
   })
 
   test('Should return an account on success', async () => {
