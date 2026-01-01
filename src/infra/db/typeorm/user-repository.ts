@@ -46,8 +46,6 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
       // Validate Cpf (throws on failure)
       const cpf = Cpf.create(entity.cpf)
 
-      // Address is optional, handle gracefully
-      // Address is optional, handle gracefully
       let address: Address | undefined
       if (entity.addressStreet && entity.addressNumber && entity.addressNeighborhoodId && entity.addressCityId && entity.addressZipCode) {
         const addressResult = Address.create({
@@ -63,6 +61,12 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
         }
       }
 
+      const statusOrError = UserStatus.create(entity.status)
+      if (statusOrError instanceof Error) {
+        console.error(`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: Invalid Status - "${entity.status}"`)
+        return null
+      }
+
       return {
         id: Id.create(entity.id),
         name: nameOrError,
@@ -72,8 +76,9 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
         gender: entity.gender,
         phone: entity.phone,
         address,
-        status: entity.status,
-        deletedAt: entity.deletedAt
+        status: statusOrError,
+        deletedAt: entity.deletedAt,
+        version: 1 // Assuming versioning logic or default
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error)
@@ -96,7 +101,8 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
       addressComplement: data.address?.complement,
       addressNeighborhoodId: data.address?.neighborhoodId,
       addressCityId: data.address?.cityId,
-      addressZipCode: data.address?.zipCode
+      addressZipCode: data.address?.zipCode,
+      status: data.status.value // Ensure status is saved as string
     })
     await userRepo.save(user)
     const result = this.toUserModel(user)
@@ -122,20 +128,36 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
 
   async loadAll(): Promise<UserWithLogin[]> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
-    const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
-    const users = await userRepo.find({ where: { deletedAt: IsNull() } })
+
+    const users = await userRepo.createQueryBuilder('user')
+      .leftJoinAndMapOne('user.tempLogin', LoginTypeOrmEntity, 'login', 'login.userId = user.id')
+      .where('user.deletedAt IS NULL')
+      .getMany()
+
     const usersWithLogin: UserWithLogin[] = []
 
     for (const user of users) {
       const userModel = this.toUserModel(user)
       if (userModel) {
-        const loginEntity = await loginRepo.findOne({ where: { userId: user.id } })
+        const loginEntity = (user as unknown as Record<string, unknown>).tempLogin as LoginTypeOrmEntity | undefined
+
+        let loginVO: { role: UserRole, status: UserStatus } | undefined
+
+        if (loginEntity && loginEntity.role && loginEntity.status) {
+          const roleOrError = UserRole.create(loginEntity.role)
+          const statusOrError = UserStatus.create(loginEntity.status)
+
+          if (!(roleOrError instanceof Error) && !(statusOrError instanceof Error)) {
+            loginVO = {
+              role: roleOrError,
+              status: statusOrError
+            }
+          }
+        }
+
         usersWithLogin.push({
           ...userModel,
-          login: loginEntity ? {
-            role: UserRole.create(loginEntity.role!) as UserRole,
-            status: UserStatus.create(loginEntity.status!) as UserStatus
-          } : undefined
+          login: loginVO
         })
       }
     }

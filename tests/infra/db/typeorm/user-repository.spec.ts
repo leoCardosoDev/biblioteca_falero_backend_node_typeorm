@@ -9,6 +9,8 @@ import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { Address } from '@/domain/value-objects/address'
 import { Id } from '@/domain/value-objects/id'
+import { UserStatus, UserStatusEnum } from '@/domain/value-objects/user-status'
+import { UserRoleTypes } from '@/domain/value-objects/user-role'
 
 describe('UserTypeOrmRepository', () => {
   beforeAll(async () => {
@@ -45,7 +47,8 @@ describe('UserTypeOrmRepository', () => {
     email: Email.create('any_email@mail.com'),
     rg: Rg.create('123456789') as Rg,
     cpf: Cpf.create('529.982.247-25'),
-    gender: 'any_gender'
+    gender: 'any_gender',
+    status: UserStatus.create('ACTIVE') as UserStatus
   })
 
   test('Should return a user on success', async () => {
@@ -68,7 +71,8 @@ describe('UserTypeOrmRepository', () => {
       email: Email.create('any_email@mail.com'),
       rg: Rg.create('987654321') as Rg,
       cpf: Cpf.create('71428793860'),
-      gender: 'any_gender'
+      gender: 'any_gender',
+      status: UserStatus.create('ACTIVE') as UserStatus
     })
     await expect(promise).rejects.toThrow()
   })
@@ -81,7 +85,8 @@ describe('UserTypeOrmRepository', () => {
       email: Email.create('other@mail.com'),
       rg: Rg.create('987654321') as Rg,
       cpf: Cpf.create('529.982.247-25'),
-      gender: 'any_gender'
+      gender: 'any_gender',
+      status: UserStatus.create('ACTIVE') as UserStatus
     })
     await expect(promise).rejects.toThrow()
   })
@@ -132,7 +137,8 @@ describe('UserTypeOrmRepository', () => {
       email: Email.create('user2@mail.com'),
       rg: Rg.create('987654321') as Rg,
       cpf: Cpf.create('71428793860'),
-      gender: 'male'
+      gender: 'male',
+      status: UserStatus.create('ACTIVE') as UserStatus
     })
     const users = await sut.loadAll()
     expect(users.length).toBe(2)
@@ -577,5 +583,39 @@ describe('UserTypeOrmRepository', () => {
     })
     expect(updatedUser).toBeTruthy()
     expect(updatedUser!.phone).toBe('11999999999')
+  })
+
+  test('Should return null from toUserModel if UserStatus is invalid in DB', async () => {
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const entity = userRepo.create({
+      name: 'Valid Name',
+      email: 'invalid_status@mail.com',
+      rg: '111222333',
+      cpf: '71428793860',
+      gender: 'any_gender',
+      status: 'INVALID_STATUS' as unknown as UserStatusEnum
+    })
+    await userRepo.save(entity)
+
+    const sut = makeSut()
+    const user = await sut.loadByEmail('invalid_status@mail.com')
+    expect(user).toBeUndefined()
+  })
+
+  test('Should skip login data in loadAll if UserRole or UserStatus in login is invalid', async () => {
+    const sut = makeSut()
+    const user = await sut.add(makeUserData())
+
+    const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+    await loginRepo.save(loginRepo.create({
+      userId: user.id.value,
+      password: 'any_password',
+      role: 'INVALID_ROLE' as unknown as UserRoleTypes,
+      status: 'active'
+    }))
+
+    const users = await sut.loadAll()
+    expect(users.length).toBe(1)
+    expect(users[0].login).toBeUndefined()
   })
 })

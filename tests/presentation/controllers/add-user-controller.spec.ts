@@ -6,7 +6,7 @@ import { HttpRequest } from '@/presentation/protocols'
 import { ok } from '@/presentation/helpers/http-helper'
 import { UserAlreadyExistsError } from '@/presentation/errors/user-already-exists-error'
 import { Id } from '@/domain/value-objects/id'
-import { Name, Email, Rg, Cpf, Address } from '@/domain/value-objects'
+import { Name, Email, Rg, Cpf, Address, UserStatus } from '@/domain/value-objects'
 
 type ErrorBody = {
   error: {
@@ -26,7 +26,9 @@ const makeAddUser = (): AddUser => {
         rg: Rg.create('123456789') as Rg,
         cpf: Cpf.create('00000000191') as Cpf,
         gender: 'any_gender',
+        version: 1,
         phone: '123456789',
+        status: UserStatus.create('ACTIVE') as UserStatus,
         address: Address.create({
           street: 'Any Street',
           number: '123',
@@ -122,6 +124,7 @@ describe('AddUser Controller', () => {
       rg: Rg.create('123456789') as Rg,
       gender: 'any_gender',
       phone: '123456789',
+      status: UserStatus.create('ACTIVE') as UserStatus,
       address: Address.create({
         street: 'Any Street',
         number: '123',
@@ -168,6 +171,7 @@ describe('AddUser Controller', () => {
       cpf: '00000000191',
       gender: 'any_gender',
       phone: '123456789',
+      status: 'ACTIVE',
       address: {
         street: 'Any Street',
         number: '123',

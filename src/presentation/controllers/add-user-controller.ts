@@ -6,6 +6,7 @@ import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { Address, AddressProps } from '@/domain/value-objects/address'
+import { UserStatus } from '@/domain/value-objects/user-status'
 
 export class AddUserController implements Controller {
   constructor(
@@ -58,6 +59,8 @@ export class AddUserController implements Controller {
         addressVO = addressResult
       }
 
+      const statusVO = UserStatus.create('ACTIVE') as UserStatus
+
       const userOrError = await this.addUser.add({
         name: nameVO,
         email: emailVO,
@@ -65,7 +68,8 @@ export class AddUserController implements Controller {
         cpf: cpfVO,
         gender,
         phone,
-        address: addressVO
+        address: addressVO,
+        status: statusVO
       })
       if (userOrError instanceof Error) {
         return forbidden(userOrError)
@@ -78,6 +82,7 @@ export class AddUserController implements Controller {
         cpf: userOrError.cpf.value,
         gender: userOrError.gender,
         phone: userOrError.phone,
+        status: userOrError.status.value,
         address: userOrError.address ? {
           street: userOrError.address.street,
           number: userOrError.address.number,
