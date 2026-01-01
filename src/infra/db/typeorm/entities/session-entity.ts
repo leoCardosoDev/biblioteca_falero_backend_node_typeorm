@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 
 @Entity('user_sessions')
 export class SessionTypeOrmEntity {
@@ -25,4 +25,7 @@ export class SessionTypeOrmEntity {
 
   @CreateDateColumn()
   createdAt!: Date
+
+  @UpdateDateColumn()
+  updatedAt!: Date
 }

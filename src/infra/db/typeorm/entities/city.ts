@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Unique } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Unique, CreateDateColumn } from 'typeorm'
 import { State } from './state'
 
 @Entity('city')
@@ -18,4 +18,7 @@ export class City {
   @ManyToOne(() => State)
   @JoinColumn({ name: 'state_id' })
   state!: State
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt!: Date
 }

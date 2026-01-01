@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 
 export const dateTransformer = {
   to: (value: string) => value,
@@ -50,4 +50,10 @@ export class UserTypeOrmEntity {
 
   @Column({ name: 'address_zip_code', nullable: true })
   addressZipCode?: string
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt!: Date
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt!: Date
 }
