@@ -14,4 +14,6 @@ export interface UserModel {
   gender: string
   phone?: string
   address?: Address
+  status: string
+  deletedAt?: Date
 }
