@@ -78,7 +78,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
         address,
         status: statusOrError,
         deletedAt: entity.deletedAt,
-        version: 1 // Assuming versioning logic or default
+        version: entity.version
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error)
@@ -188,6 +188,10 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
     const user = await userRepo.findOne({ where: { id: userData.id.value } })
     if (!user) {
       return null
+    }
+    // Manual version check before saving (Fallback for when save() doesn't throw in specific driver configurations)
+    if (userData.version !== undefined && user.version !== userData.version) {
+      throw new Error('OptimisticLockError: version mismatch')
     }
     if (userData.name) user.name = userData.name.value
     if (userData.email) user.email = userData.email.value

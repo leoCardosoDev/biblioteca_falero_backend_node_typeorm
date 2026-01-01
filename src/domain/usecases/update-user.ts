@@ -15,6 +15,7 @@ export type UpdateUserParams = {
   gender?: string
   phone?: string
   address?: Address
+  version?: number
 }
 
 export interface UpdateUser {

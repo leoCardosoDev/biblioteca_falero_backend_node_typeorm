@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, VersionColumn } from 'typeorm'
 
 export const dateTransformer = {
   to: (value: string) => value,
@@ -62,4 +62,7 @@ export class UserTypeOrmEntity {
 
   @Column({ type: 'varchar', length: 20, default: 'ACTIVE' })
   status!: string
+
+  @VersionColumn()
+  version!: number
 }
