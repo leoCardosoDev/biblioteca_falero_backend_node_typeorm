@@ -10,6 +10,7 @@ import { Rg } from '@/domain/value-objects/rg'
 import { Address } from '@/domain/value-objects/address'
 import { notFound } from '@/presentation/helpers/http-helper'
 import { NotFoundError } from '@/domain/errors'
+import { UserStatus } from '@/domain/value-objects/user-status'
 
 const makeFakeUser = (): UserModel => ({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
@@ -17,7 +18,9 @@ const makeFakeUser = (): UserModel => ({
   email: Email.create('any_email@mail.com'),
   rg: Rg.create('123456789') as Rg,
   cpf: Cpf.create('529.982.247-25'),
-  gender: 'male'
+  gender: 'male',
+  status: UserStatus.create('ACTIVE') as UserStatus,
+  version: 1
 })
 
 const makeUpdateUser = (): UpdateUser => {
@@ -44,6 +47,14 @@ const makeSut = (): SutTypes => {
 }
 
 describe('UpdateUser Controller', () => {
+  beforeAll(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-01-01'))
+  })
+
+  afterAll(() => {
+    jest.useRealTimers()
+  })
+
   test('Should return 400 if no id is provided', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle({
@@ -116,7 +127,9 @@ describe('UpdateUser Controller', () => {
       email: 'any_email@mail.com',
       rg: '123456789',
       cpf: '52998224725',
-      gender: 'male'
+      gender: 'male',
+      status: 'ACTIVE',
+      version: 1
     })
   })
 
