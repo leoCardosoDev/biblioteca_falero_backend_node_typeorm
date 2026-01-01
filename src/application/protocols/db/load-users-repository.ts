@@ -1,5 +1,5 @@
-import { UserModel } from '@/domain/models/user'
+import { UserWithLogin } from '@/domain/usecases/load-users'
 
 export interface LoadUsersRepository {
-  loadAll: () => Promise<UserModel[]>
+  loadAll: () => Promise<UserWithLogin[]>
 }

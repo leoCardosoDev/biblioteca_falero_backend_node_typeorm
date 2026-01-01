@@ -26,13 +26,14 @@ const addUserSchema = {
   security: [{ bearerAuth: [] }],
   body: {
     type: 'object',
-    required: ['name', 'email', 'cpf', 'birthDate'],
+    required: ['name', 'email', 'cpf', 'gender'],
     properties: {
       name: { type: 'string', description: 'User full name' },
       email: { type: 'string', format: 'email', description: 'User email address' },
       rg: { type: 'string', description: 'User RG document' },
       cpf: { type: 'string', description: 'User CPF document' },
-      birthDate: { type: 'string', format: 'date', description: 'User birth date (YYYY-MM-DD)' }
+      gender: { type: 'string', description: 'User gender' },
+      phone: { type: 'string', description: 'User phone number' }
     }
   },
   response: {
@@ -74,16 +75,16 @@ const loadUserByIdSchema = {
         ...userSchema.properties,
         cpf: { type: 'string' },
         rg: { type: 'string' },
-        birthDate: { type: 'string', format: 'date' },
+        gender: { type: 'string' },
+        phone: { type: 'string' },
         address: {
           type: 'object',
           properties: {
             street: { type: 'string' },
             number: { type: 'string' },
             complement: { type: 'string' },
-            neighborhood: { type: 'string' },
-            city: { type: 'string' },
-            state: { type: 'string' },
+            neighborhoodId: { type: 'string' },
+            cityId: { type: 'string' },
             zipCode: { type: 'string' }
           }
         }
@@ -110,7 +111,9 @@ const updateUserSchema = {
     properties: {
       name: { type: 'string', description: 'User full name' },
       email: { type: 'string', format: 'email', description: 'User email address' },
-      role: { type: 'string', enum: ['admin', 'librarian', 'user'], description: 'User role' }
+      role: { type: 'string', enum: ['admin', 'librarian', 'user'], description: 'User role' },
+      gender: { type: 'string', description: 'User gender' },
+      phone: { type: 'string', description: 'User phone number' }
     }
   },
   response: {

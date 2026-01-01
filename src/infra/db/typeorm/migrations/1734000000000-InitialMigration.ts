@@ -12,7 +12,7 @@ export class InitialMigration1734000000000 implements MigrationInterface {
           { name: 'email', type: 'varchar', length: '255', isUnique: true, isNullable: false },
           { name: 'rg', type: 'varchar', length: '255', isNullable: false },
           { name: 'cpf', type: 'varchar', length: '255', isUnique: true, isNullable: false },
-          { name: 'birth_date', type: 'date', isNullable: false },
+
           { name: 'address_street', type: 'varchar', length: '255', isNullable: true },
           { name: 'address_number', type: 'varchar', length: '255', isNullable: true },
           { name: 'address_complement', type: 'varchar', length: '255', isNullable: true },

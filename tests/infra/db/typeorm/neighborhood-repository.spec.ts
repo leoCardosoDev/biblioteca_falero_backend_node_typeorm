@@ -59,9 +59,9 @@ describe('NeighborhoodTypeOrmRepository', () => {
     const neighborhood = await sut.add('Any Neighborhood', city.id)
 
     expect(neighborhood).toBeTruthy()
-    expect(neighborhood.id).toBeTruthy()
+    expect(neighborhood.id.value).toBeTruthy()
     expect(neighborhood.name).toBe('Any Neighborhood')
-    expect(neighborhood.city_id).toBe(city.id)
+    expect(neighborhood.cityId.value).toBe(city.id)
   })
 
   test('Should return a neighborhood on findByNameAndCity success', async () => {
@@ -74,7 +74,7 @@ describe('NeighborhoodTypeOrmRepository', () => {
 
     expect(neighborhood).toBeTruthy()
     expect(neighborhood?.name).toBe('Any Neighborhood')
-    expect(neighborhood?.city_id).toBe(city.id)
+    expect(neighborhood?.cityId.value).toBe(city.id)
   })
 
   test('Should return undefined if findByNameAndCity finds nothing', async () => {

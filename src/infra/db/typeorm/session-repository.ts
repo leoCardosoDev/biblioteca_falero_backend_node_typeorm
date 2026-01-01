@@ -1,16 +1,15 @@
 import {
-  LoadSessionByTokenRepository,
+  LoadUserBySessionRepository,
   SaveSessionRepository,
   InvalidateSessionRepository,
-  LoadUserBySessionRepository
+  LoadSessionByTokenRepository
 } from '@/application/protocols/db/session-repository'
-import { UserSessionModel, UserId } from '@/domain/models'
-import { SessionId } from '@/domain/models/ids'
+import { UserSessionModel } from '@/domain/models'
 import { SessionTypeOrmEntity } from './entities/session-entity'
-import { DeepPartial } from 'typeorm'
 import { UserTypeOrmEntity } from './entities/user-entity'
 import { LoginTypeOrmEntity } from './entities/login-entity'
 import { TypeOrmHelper } from './typeorm-helper'
+import { Id } from '@/domain/value-objects/id'
 
 export class SessionTypeOrmRepository implements
   LoadSessionByTokenRepository,
@@ -23,22 +22,29 @@ export class SessionTypeOrmRepository implements
     const session = await repository.findOne({
       where: { refreshTokenHash: tokenHash, isValid: true }
     })
-    return (session as unknown as UserSessionModel) ?? null
+    return session ? this.toDomain(session) : null
   }
 
   async save(session: Omit<UserSessionModel, 'id' | 'createdAt'>): Promise<UserSessionModel> {
     const repository = TypeOrmHelper.getRepository(SessionTypeOrmEntity)
-    const entity = repository.create(session as unknown as DeepPartial<SessionTypeOrmEntity>)
+    const entity = repository.create({
+      userId: session.userId.value,
+      refreshTokenHash: session.refreshTokenHash,
+      expiresAt: session.expiresAt,
+      ipAddress: session.ipAddress,
+      userAgent: session.userAgent,
+      isValid: session.isValid
+    })
     const saved = await repository.save(entity)
-    return saved as unknown as UserSessionModel
+    return this.toDomain(saved)
   }
 
-  async invalidate(sessionId: SessionId): Promise<void> {
+  async invalidate(sessionId: string): Promise<void> {
     const repository = TypeOrmHelper.getRepository(SessionTypeOrmEntity)
     await repository.update({ id: sessionId }, { isValid: false })
   }
 
-  async loadUserBySessionId(sessionId: SessionId): Promise<{ id: UserId; name: string; role: string } | null> {
+  async loadUserBySessionId(sessionId: string): Promise<{ id: Id; name: string; role: string } | null> {
     const dataSource = TypeOrmHelper.getRepository(SessionTypeOrmEntity)
     const result = await dataSource
       .createQueryBuilder('session')
@@ -51,10 +57,22 @@ export class SessionTypeOrmRepository implements
     if (!result) return null
 
     return {
-      id: result.user_id as UserId,
+      id: Id.create(result.user_id) as Id,
       name: result.user_name,
       role: result.login_role ?? 'MEMBER'
     }
   }
 
+  private toDomain(entity: SessionTypeOrmEntity): UserSessionModel {
+    return {
+      id: Id.create(entity.id) as Id,
+      userId: Id.create(entity.userId) as Id,
+      refreshTokenHash: entity.refreshTokenHash,
+      expiresAt: entity.expiresAt,
+      ipAddress: entity.ipAddress,
+      userAgent: entity.userAgent,
+      isValid: entity.isValid,
+      createdAt: entity.createdAt
+    }
+  }
 }

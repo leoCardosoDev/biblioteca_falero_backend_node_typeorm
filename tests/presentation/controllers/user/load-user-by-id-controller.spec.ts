@@ -7,7 +7,7 @@ import { Name } from '@/domain/value-objects/name'
 import { Email } from '@/domain/value-objects/email'
 import { Rg } from '@/domain/value-objects/rg'
 import { Cpf } from '@/domain/value-objects/cpf'
-import { BirthDate } from '@/domain/value-objects/birth-date'
+// removed BirthDate import
 import { UserRole } from '@/domain/value-objects/user-role'
 import { UserStatus } from '@/domain/value-objects/user-status'
 import { UserWithLogin } from '@/domain/usecases/load-users'
@@ -18,7 +18,7 @@ const makeFakeUser = (): UserModel => ({
   email: Email.create('any_email@mail.com'),
   rg: Rg.create('123456789') as Rg,
   cpf: Cpf.create('529.982.247-25'),
-  birthDate: BirthDate.create('1990-01-15') as BirthDate
+  gender: 'male'
 })
 
 const fakeUserById = makeFakeUser()
@@ -87,7 +87,7 @@ describe('LoadUserById Controller', () => {
       email: 'any_email@mail.com',
       rg: '123456789',
       cpf: '52998224725',
-      birthDate: '1990-01-15',
+      gender: 'male',
       address: undefined,
       login: null
     })
@@ -101,9 +101,8 @@ describe('LoadUserById Controller', () => {
         street: 'any_street',
         number: 'any_number',
         complement: 'any_complement',
-        neighborhood: 'any_neighborhood',
-        city: 'any_city',
-        state: 'any_state',
+        neighborhoodId: 'any_neighborhood',
+        cityId: 'any_city',
         zipCode: 'any_zipCode'
       }
     }
@@ -116,14 +115,13 @@ describe('LoadUserById Controller', () => {
       email: 'any_email@mail.com',
       rg: '123456789',
       cpf: '52998224725',
-      birthDate: '1990-01-15',
+      gender: 'male',
       address: {
         street: 'any_street',
         number: 'any_number',
         complement: 'any_complement',
-        neighborhood: 'any_neighborhood',
-        city: 'any_city',
-        state: 'any_state',
+        neighborhoodId: 'any_neighborhood',
+        cityId: 'any_city',
         zipCode: 'any_zipCode'
       },
       login: null
@@ -135,9 +133,6 @@ describe('LoadUserById Controller', () => {
     const userWithLogin: UserWithLogin = {
       ...makeFakeUser(),
       login: {
-        id: Id.create('550e8400-e29b-41d4-a716-446655440001') as Id,
-        userId: Id.create('550e8400-e29b-41d4-a716-446655440000') as Id,
-        password: 'any_password',
         role: UserRole.create('LIBRARIAN') as UserRole,
         status: UserStatus.create('active') as UserStatus
       }
@@ -151,7 +146,7 @@ describe('LoadUserById Controller', () => {
       email: 'any_email@mail.com',
       rg: '123456789',
       cpf: '52998224725',
-      birthDate: '1990-01-15',
+      gender: 'male',
       address: undefined,
       login: {
         role: 'LIBRARIAN',

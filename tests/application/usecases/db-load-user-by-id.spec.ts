@@ -6,7 +6,7 @@ import { Name } from '@/domain/value-objects/name'
 import { Email } from '@/domain/value-objects/email'
 import { Rg } from '@/domain/value-objects/rg'
 import { Cpf } from '@/domain/value-objects/cpf'
-import { BirthDate } from '@/domain/value-objects/birth-date'
+// removed BirthDate import
 
 const makeFakeUser = (): UserModel => ({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
@@ -14,7 +14,7 @@ const makeFakeUser = (): UserModel => ({
   email: Email.create('any_email@mail.com'),
   rg: Rg.create('123456789') as Rg,
   cpf: Cpf.create('529.982.247-25'),
-  birthDate: BirthDate.create('1990-01-15') as BirthDate
+  gender: 'male'
 })
 
 const fakeUserById = makeFakeUser()

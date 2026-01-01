@@ -27,12 +27,11 @@ export class UserTypeOrmEntity {
   @Column({ unique: true })
   cpf!: string
 
-  @Column({
-    name: 'birth_date',
-    type: 'date',
-    transformer: dateTransformer
-  })
-  birthDate!: string
+  @Column()
+  gender!: string
+
+  @Column({ nullable: true })
+  phone?: string
 
   @Column({ name: 'address_street', nullable: true })
   addressStreet?: string
@@ -43,14 +42,11 @@ export class UserTypeOrmEntity {
   @Column({ name: 'address_complement', nullable: true })
   addressComplement?: string
 
-  @Column({ name: 'address_neighborhood', nullable: true })
-  addressNeighborhood?: string
+  @Column({ name: 'address_neighborhood_id', nullable: true })
+  addressNeighborhoodId?: string
 
-  @Column({ name: 'address_city', nullable: true })
-  addressCity?: string
-
-  @Column({ name: 'address_state', nullable: true })
-  addressState?: string
+  @Column({ name: 'address_city_id', nullable: true })
+  addressCityId?: string
 
   @Column({ name: 'address_zip_code', nullable: true })
   addressZipCode?: string

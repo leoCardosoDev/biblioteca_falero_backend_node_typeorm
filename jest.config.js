@@ -10,6 +10,7 @@ module.exports = {
     '!<rootDir>/src/infra/db/typeorm/typeorm-helper.ts'
   ],
   coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'json-summary'],
   testEnvironment: 'node',
   transform: {
     '.+\\.ts$': ['ts-jest', {

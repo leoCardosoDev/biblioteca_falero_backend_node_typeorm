@@ -1,8 +1,9 @@
-import { SessionTypeOrmRepository } from './session-repository'
-import { SessionTypeOrmEntity } from './entities/session-entity'
-import { UserTypeOrmEntity } from './entities/user-entity'
-import { LoginTypeOrmEntity } from './entities/login-entity'
-import { TypeOrmHelper } from './typeorm-helper'
+import { SessionTypeOrmRepository } from '@/infra/db/typeorm/session-repository'
+import { SessionTypeOrmEntity } from '@/infra/db/typeorm/entities/session-entity'
+import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
+import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
+import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
+import { Id } from '@/domain/value-objects/id'
 import { DataSource } from 'typeorm'
 
 describe('SessionTypeOrmRepository', () => {
@@ -35,7 +36,7 @@ describe('SessionTypeOrmRepository', () => {
       email: 'any_email@mail.com',
       rg: 'any_rg',
       cpf: 'any_cpf',
-      birthDate: '2020-01-01'
+      gender: 'male'
     })
     return await repo.save(user)
   }
@@ -54,7 +55,7 @@ describe('SessionTypeOrmRepository', () => {
     test('Should save a session', async () => {
       const user = await makeUser()
       const session = await sut.save({
-        userId: user.id,
+        userId: Id.create(user.id) as Id,
         refreshTokenHash: 'any_hash',
         expiresAt: new Date(),
         ipAddress: 'any_ip',
@@ -71,7 +72,7 @@ describe('SessionTypeOrmRepository', () => {
     test('Should load a session by token', async () => {
       const user = await makeUser()
       await sut.save({
-        userId: user.id,
+        userId: Id.create(user.id) as Id,
         refreshTokenHash: 'any_hash',
         expiresAt: new Date(),
         ipAddress: 'any_ip',
@@ -93,14 +94,14 @@ describe('SessionTypeOrmRepository', () => {
     test('Should invalidate a session', async () => {
       const user = await makeUser()
       const session = await sut.save({
-        userId: user.id,
+        userId: Id.create(user.id) as Id,
         refreshTokenHash: 'any_hash',
         expiresAt: new Date(),
         ipAddress: 'any_ip',
         userAgent: 'any_agent',
         isValid: true
       })
-      await sut.invalidate(session.id)
+      await sut.invalidate(session.id.value)
       const invalidSession = await sut.loadByToken('any_hash')
       expect(invalidSession).toBeNull() // because loadByToken filters by isValid: true
     })
@@ -113,15 +114,15 @@ describe('SessionTypeOrmRepository', () => {
       const user = await makeUser()
       await makeLogin(user.id, 'ADMIN')
       const session = await sut.save({
-        userId: user.id,
+        userId: Id.create(user.id) as Id,
         refreshTokenHash: 'any_hash',
         expiresAt: new Date(),
         isValid: true
       })
 
-      const loadedUser = await sut.loadUserBySessionId(session.id)
+      const loadedUser = await sut.loadUserBySessionId(session.id.value)
       expect(loadedUser).toBeTruthy()
-      expect(loadedUser?.id).toBe(user.id)
+      expect(loadedUser?.id.value).toBe(user.id)
       expect(loadedUser?.name).toBe(user.name)
       expect(loadedUser?.role).toBe('ADMIN')
     })
@@ -134,15 +135,15 @@ describe('SessionTypeOrmRepository', () => {
     test('Should return user info with default role MEMBER if no login found', async () => {
       const user = await makeUser()
       const session = await sut.save({
-        userId: user.id,
+        userId: Id.create(user.id) as Id,
         refreshTokenHash: 'any_hash',
         expiresAt: new Date(),
         isValid: true
       })
 
-      const loadedUser = await sut.loadUserBySessionId(session.id)
+      const loadedUser = await sut.loadUserBySessionId(session.id.value)
       expect(loadedUser).toBeTruthy()
-      expect(loadedUser?.id).toBe(user.id)
+      expect(loadedUser?.id.value).toBe(user.id)
       expect(loadedUser?.name).toBe(user.name)
       expect(loadedUser?.role).toBe('MEMBER')
     })

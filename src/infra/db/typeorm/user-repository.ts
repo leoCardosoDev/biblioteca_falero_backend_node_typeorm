@@ -5,17 +5,20 @@ import { LoadUsersRepository } from '@/application/protocols/db/load-users-repos
 import { LoadUserByIdRepository } from '@/application/protocols/db/load-user-by-id-repository'
 import { UpdateUserRepository } from '@/application/protocols/db/update-user-repository'
 import { DeleteUserRepository } from '@/application/protocols/db/delete-user-repository'
+import { UserWithLogin } from '@/domain/usecases/load-users'
+import { UserRole } from '@/domain/value-objects/user-role'
+import { UserStatus } from '@/domain/value-objects/user-status'
 import { AddUserParams } from '@/domain/usecases/add-user'
 import { UpdateUserParams } from '@/domain/usecases/update-user'
 import { UserModel } from '@/domain/models/user'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
+import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
 import { Id } from '@/domain/value-objects/id'
 import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
-import { BirthDate } from '@/domain/value-objects/birth-date'
 import { Address } from '@/domain/value-objects/address'
 
 export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmailRepository, LoadUserByCpfRepository, LoadUsersRepository, LoadUserByIdRepository, UpdateUserRepository, DeleteUserRepository {
@@ -35,12 +38,6 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
         return null
       }
 
-      // Validate BirthDate (returns Error on failure)
-      const birthDateOrError = BirthDate.create(entity.birthDate)
-      if (!(birthDateOrError instanceof BirthDate)) {
-        console.error(`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: Invalid BirthDate - "${entity.birthDate}"`)
-        return null
-      }
 
       // Validate Email (throws on failure)
       const email = Email.create(entity.email)
@@ -49,15 +46,15 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
       const cpf = Cpf.create(entity.cpf)
 
       // Address is optional, handle gracefully
+      // Address is optional, handle gracefully
       let address: Address | undefined
-      if (entity.addressStreet && entity.addressNumber && entity.addressNeighborhood && entity.addressCity && entity.addressState && entity.addressZipCode) {
+      if (entity.addressStreet && entity.addressNumber && entity.addressNeighborhoodId && entity.addressCityId && entity.addressZipCode) {
         const addressResult = Address.create({
           street: entity.addressStreet,
           number: entity.addressNumber,
           complement: entity.addressComplement,
-          neighborhood: entity.addressNeighborhood,
-          city: entity.addressCity,
-          state: entity.addressState,
+          neighborhoodId: entity.addressNeighborhoodId,
+          cityId: entity.addressCityId,
           zipCode: entity.addressZipCode
         })
         if (addressResult instanceof Address) {
@@ -71,7 +68,8 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
         email,
         rg: rgOrError,
         cpf,
-        birthDate: birthDateOrError,
+        gender: entity.gender,
+        phone: entity.phone,
         address
       }
     } catch (error) {
@@ -88,13 +86,13 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
       email: data.email.value,
       rg: data.rg.value,
       cpf: data.cpf.value,
-      birthDate: data.birthDate.value,
+      gender: data.gender,
+      phone: data.phone,
       addressStreet: data.address?.street,
       addressNumber: data.address?.number,
       addressComplement: data.address?.complement,
-      addressNeighborhood: data.address?.neighborhood,
-      addressCity: data.address?.city,
-      addressState: data.address?.state,
+      addressNeighborhoodId: data.address?.neighborhoodId,
+      addressCityId: data.address?.cityId,
       addressZipCode: data.address?.zipCode
     })
     await userRepo.save(user)
@@ -119,17 +117,45 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
     return this.toUserModel(user) ?? undefined
   }
 
-  async loadAll(): Promise<UserModel[]> {
+  async loadAll(): Promise<UserWithLogin[]> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
     const users = await userRepo.find()
-    return users.map(user => this.toUserModel(user)).filter((user): user is UserModel => user !== null)
+    const usersWithLogin: UserWithLogin[] = []
+
+    for (const user of users) {
+      const userModel = this.toUserModel(user)
+      if (userModel) {
+        const loginEntity = await loginRepo.findOne({ where: { userId: user.id } })
+        usersWithLogin.push({
+          ...userModel,
+          login: loginEntity ? {
+            role: UserRole.create(loginEntity.role!) as UserRole,
+            status: UserStatus.create(loginEntity.status!) as UserStatus
+          } : undefined
+        })
+      }
+    }
+    return usersWithLogin
   }
 
-  async loadById(id: string): Promise<UserModel | null> {
+  async loadById(id: string): Promise<UserWithLogin | null> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
-    const user = await userRepo.findOne({ where: { id } })
-    if (!user) return null
-    return this.toUserModel(user)
+    const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+    const userEntity = await userRepo.findOne({ where: { id } })
+    if (!userEntity) return null
+
+    const loginEntity = await loginRepo.findOne({ where: { userId: id } })
+    const userModel = this.toUserModel(userEntity)
+    if (!userModel) return null
+
+    return {
+      ...userModel,
+      login: loginEntity ? {
+        role: UserRole.create(loginEntity.role!) as UserRole,
+        status: UserStatus.create(loginEntity.status!) as UserStatus
+      } : undefined
+    }
   }
 
   async update(userData: UpdateUserParams): Promise<UserModel | null> {
@@ -142,14 +168,14 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
     if (userData.email) user.email = userData.email.value
     if (userData.rg) user.rg = userData.rg.value
     if (userData.cpf) user.cpf = userData.cpf.value
-    if (userData.birthDate) user.birthDate = userData.birthDate.value
+    if (userData.gender) user.gender = userData.gender
+    if (userData.phone) user.phone = userData.phone
     if (userData.address) {
       user.addressStreet = userData.address.street
       user.addressNumber = userData.address.number
       user.addressComplement = userData.address.complement
-      user.addressNeighborhood = userData.address.neighborhood
-      user.addressCity = userData.address.city
-      user.addressState = userData.address.state
+      user.addressNeighborhoodId = userData.address.neighborhoodId
+      user.addressCityId = userData.address.cityId
       user.addressZipCode = userData.address.zipCode
     }
 

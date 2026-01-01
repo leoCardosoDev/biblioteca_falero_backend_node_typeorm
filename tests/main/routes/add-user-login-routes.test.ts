@@ -56,7 +56,7 @@ describe('CreateUserLogin Routes', () => {
         email: 'john@mail.com',
         rg: '123456789',
         cpf: '52998224725',
-        birthDate: '1990-01-15'
+        gender: 'male'
       }))
 
       const accessToken = makeAccessToken(Role.ADMIN)

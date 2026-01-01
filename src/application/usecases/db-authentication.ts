@@ -31,9 +31,9 @@ export class DbAuthentication implements Authentication {
       return undefined
     }
 
-    const role = (account.role as Role) ?? Role.MEMBER
-    const accessToken = await this.encrypter.encrypt({ id: account.id, role })
-    await this.updateAccessTokenRepository.updateAccessToken(account.id, accessToken)
+    const role = (account.role?.value as unknown as Role) ?? Role.MEMBER
+    const accessToken = await this.encrypter.encrypt({ id: account.id.value, role })
+    await this.updateAccessTokenRepository.updateAccessToken(account.id.value, accessToken)
 
     const refreshToken = crypto.randomBytes(32).toString('hex')
     const refreshTokenHash = await this.hasher.hash(refreshToken)
@@ -49,7 +49,7 @@ export class DbAuthentication implements Authentication {
     return {
       accessToken,
       refreshToken,
-      name: account.name ?? account.userId,
+      name: account.name ?? account.userId.value,
       role
     }
   }

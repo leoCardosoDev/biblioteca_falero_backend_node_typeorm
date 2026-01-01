@@ -13,6 +13,9 @@ export class LoginTypeOrmEntity {
   role?: string
 
   @Column({ nullable: true })
+  status?: string
+
+  @Column({ nullable: true })
   accessToken?: string
 
   @Column()

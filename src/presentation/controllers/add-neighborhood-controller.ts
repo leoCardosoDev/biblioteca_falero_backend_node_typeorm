@@ -27,7 +27,7 @@ export class AddNeighborhoodController implements Controller {
 
       return ok(neighborhood)
     } catch (error) {
-      return serverError(error)
+      return serverError(error as Error)
     }
   }
 }

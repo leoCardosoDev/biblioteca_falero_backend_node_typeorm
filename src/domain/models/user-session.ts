@@ -1,8 +1,8 @@
-import { SessionId, UserId } from './ids'
+import { Id } from '../value-objects/id'
 
 export type UserSessionModel = {
-  id: SessionId
-  userId: UserId
+  id: Id
+  userId: Id
   refreshTokenHash: string
   expiresAt: Date
   ipAddress?: string

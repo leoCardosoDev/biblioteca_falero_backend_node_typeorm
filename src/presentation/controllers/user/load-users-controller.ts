@@ -15,16 +15,20 @@ export class LoadUsersController implements Controller {
         email: user.email.value,
         rg: user.rg.value,
         cpf: user.cpf.value,
-        birthDate: user.birthDate.value,
+        gender: user.gender,
+        phone: user.phone,
         address: user.address ? {
           street: user.address.street,
           number: user.address.number,
           complement: user.address.complement,
-          neighborhood: user.address.neighborhood,
-          city: user.address.city,
-          state: user.address.state,
+          neighborhoodId: user.address.neighborhoodId,
+          cityId: user.address.cityId,
           zipCode: user.address.zipCode
-        } : undefined
+        } : undefined,
+        login: user.login ? {
+          role: user.login.role.value,
+          status: user.login.status.value
+        } : null
       }))
       return ok(serializedUsers)
     } catch (error) {

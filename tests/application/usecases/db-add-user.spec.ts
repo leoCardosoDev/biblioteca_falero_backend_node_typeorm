@@ -10,7 +10,6 @@ import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
-import { BirthDate } from '@/domain/value-objects/birth-date'
 
 const makeFakeUser = (): UserModel => ({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
@@ -18,7 +17,7 @@ const makeFakeUser = (): UserModel => ({
   email: Email.create('valid_email@mail.com'),
   rg: Rg.create('123456789') as Rg,
   cpf: Cpf.create('529.982.247-25'),
-  birthDate: BirthDate.create('1990-01-15') as BirthDate
+  gender: 'any_gender'
 })
 
 const makeLoadUserByEmailRepository = (): LoadUserByEmailRepository => {
@@ -73,7 +72,7 @@ const makeFakeUserData = (): AddUserParams => ({
   email: Email.create('valid_email@mail.com'),
   rg: Rg.create('123456789') as Rg,
   cpf: Cpf.create('529.982.247-25'),
-  birthDate: BirthDate.create('1990-01-15') as BirthDate
+  gender: 'any_gender'
 })
 
 describe('DbAddUser UseCase', () => {

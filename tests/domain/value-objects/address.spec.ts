@@ -5,9 +5,8 @@ describe('Address Value Object', () => {
   const validAddressProps = {
     street: 'Rua das Flores',
     number: '123',
-    neighborhood: 'Centro',
-    city: 'São Paulo',
-    state: 'SP',
+    neighborhoodId: 'Centro_ID',
+    cityId: 'Sao_Paulo_ID',
     zipCode: '01234567'
   }
 
@@ -21,18 +20,13 @@ describe('Address Value Object', () => {
     expect(sut).toBeInstanceOf(InvalidAddressError)
   })
 
-  test('Should return InvalidAddressError if neighborhood is empty', () => {
-    const sut = Address.create({ ...validAddressProps, neighborhood: '' })
+  test('Should return InvalidAddressError if neighborhoodId is empty', () => {
+    const sut = Address.create({ ...validAddressProps, neighborhoodId: '' })
     expect(sut).toBeInstanceOf(InvalidAddressError)
   })
 
-  test('Should return InvalidAddressError if city is empty', () => {
-    const sut = Address.create({ ...validAddressProps, city: '' })
-    expect(sut).toBeInstanceOf(InvalidAddressError)
-  })
-
-  test('Should return InvalidAddressError if state is not 2 chars', () => {
-    const sut = Address.create({ ...validAddressProps, state: 'SPX' })
+  test('Should return InvalidAddressError if cityId is empty', () => {
+    const sut = Address.create({ ...validAddressProps, cityId: '' })
     expect(sut).toBeInstanceOf(InvalidAddressError)
   })
 
@@ -46,9 +40,8 @@ describe('Address Value Object', () => {
     expect(sut).toBeInstanceOf(Address)
     expect((sut as Address).street).toBe('Rua das Flores')
     expect((sut as Address).number).toBe('123')
-    expect((sut as Address).neighborhood).toBe('Centro')
-    expect((sut as Address).city).toBe('São Paulo')
-    expect((sut as Address).state).toBe('SP')
+    expect((sut as Address).neighborhoodId).toBe('Centro_ID')
+    expect((sut as Address).cityId).toBe('Sao_Paulo_ID')
     expect((sut as Address).zipCode).toBe('01234567')
   })
 

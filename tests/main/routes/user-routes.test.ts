@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import app, { setupApp } from '@/main/config/app'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
+import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
 import { DataSource } from 'typeorm'
 import { Role } from '@/domain/models'
 
@@ -19,7 +20,7 @@ describe('User Routes', () => {
       database: ':memory:',
       dropSchema: true,
       synchronize: true,
-      entities: [UserTypeOrmEntity]
+      entities: [UserTypeOrmEntity, LoginTypeOrmEntity]
     })
     await setupApp()
     await app.ready()
@@ -44,7 +45,7 @@ describe('User Routes', () => {
           email: 'leocardosodev@gmail.com',
           rg: '123456789',
           cpf: '529.982.247-25',
-          birthDate: '1990-01-15'
+          gender: 'male'
         }
       })
       expect(response.statusCode).toBe(403)
@@ -61,7 +62,7 @@ describe('User Routes', () => {
           email: 'leocardosodev@gmail.com',
           rg: '123456789',
           cpf: '529.982.247-25',
-          birthDate: '1990-01-15'
+          gender: 'male'
         }
       })
       expect(response.statusCode).toBe(403)
@@ -78,7 +79,7 @@ describe('User Routes', () => {
           email: 'leocardosodev@gmail.com',
           rg: '123456789',
           cpf: '529.982.247-25',
-          birthDate: '1990-01-15'
+          gender: 'male'
         }
       })
       expect(response.statusCode).toBe(200)
@@ -111,7 +112,7 @@ describe('User Routes', () => {
         email: 'user1@mail.com',
         rg: '123456789',
         cpf: '52998224725',
-        birthDate: '1990-01-15'
+        gender: 'male'
       }))
       const accessToken = makeAccessToken(Role.LIBRARIAN)
       const response = await app.inject({
@@ -155,7 +156,7 @@ describe('User Routes', () => {
         email: 'update@mail.com',
         rg: '234567890',
         cpf: '52998224725',
-        birthDate: '1990-01-15'
+        gender: 'male'
       }))
       const accessToken = makeAccessToken(Role.ADMIN)
       const response = await app.inject({
@@ -187,7 +188,7 @@ describe('User Routes', () => {
         email: 'delete@mail.com',
         rg: '345678901',
         cpf: '71428793860',
-        birthDate: '1990-01-15'
+        gender: 'male'
       }))
       const accessToken = makeAccessToken(Role.ADMIN)
       const response = await app.inject({

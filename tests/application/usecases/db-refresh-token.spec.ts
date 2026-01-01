@@ -9,6 +9,7 @@ import {
 import { Hasher } from '@/application/protocols/cryptography/hasher'
 import { Encrypter } from '@/application/protocols/cryptography/encrypter'
 import { DbRefreshToken } from '@/application/usecases/db-refresh-token'
+import { Id } from '@/domain/value-objects/id'
 
 type SutTypes = {
   sut: RefreshToken
@@ -20,12 +21,15 @@ type SutTypes = {
   encrypterStub: Encrypter
 }
 
+const VALID_ID = '550e8400-e29b-41d4-a716-446655440000'
+const SESSION_ID = '63237524-27fb-4461-b2a5-f2609fcda713'
+
 const makeFakeSession = (): UserSessionModel => {
   const expiresAt = new Date()
   expiresAt.setDate(expiresAt.getDate() + 7)
   return {
-    id: 'any_session_id',
-    userId: 'any_user_id',
+    id: Id.create(SESSION_ID),
+    userId: Id.create(VALID_ID),
     refreshTokenHash: 'hashed_token',
     expiresAt,
     ipAddress: '127.0.0.1',
@@ -35,8 +39,8 @@ const makeFakeSession = (): UserSessionModel => {
   }
 }
 
-const makeFakeUser = (): { id: string; name: string; role: string } => ({
-  id: 'any_user_id',
+const makeFakeUser = (): { id: Id; name: string; role: string } => ({
+  id: Id.create(VALID_ID),
   name: 'any_name',
   role: 'ADMIN'
 })
@@ -58,7 +62,7 @@ const makeLoadSessionByTokenRepository = (): LoadSessionByTokenRepository => {
 
 const makeLoadUserBySessionRepository = (): LoadUserBySessionRepository => {
   class LoadUserBySessionRepositoryStub implements LoadUserBySessionRepository {
-    async loadUserBySessionId(_sessionId: string): Promise<{ id: string; name: string; role: string } | null> {
+    async loadUserBySessionId(_sessionId: string): Promise<{ id: Id; name: string; role: string } | null> {
       return await Promise.resolve(makeFakeUser())
     }
   }
@@ -186,7 +190,7 @@ describe('DbRefreshToken UseCase', () => {
     const { sut, loadUserBySessionRepositoryStub } = makeSut()
     const loadSpy = jest.spyOn(loadUserBySessionRepositoryStub, 'loadUserBySessionId')
     await sut.refresh(makeFakeRefreshTokenParams())
-    expect(loadSpy).toHaveBeenCalledWith('any_session_id')
+    expect(loadSpy).toHaveBeenCalledWith(SESSION_ID)
   })
 
   test('Should throw if LoadUserBySessionRepository throws', async () => {
@@ -207,7 +211,7 @@ describe('DbRefreshToken UseCase', () => {
     const { sut, invalidateSessionRepositoryStub } = makeSut()
     const invalidateSpy = jest.spyOn(invalidateSessionRepositoryStub, 'invalidate')
     await sut.refresh(makeFakeRefreshTokenParams())
-    expect(invalidateSpy).toHaveBeenCalledWith('any_session_id')
+    expect(invalidateSpy).toHaveBeenCalledWith(SESSION_ID)
   })
 
   test('Should throw if InvalidateSessionRepository throws', async () => {
@@ -223,7 +227,7 @@ describe('DbRefreshToken UseCase', () => {
     await sut.refresh(makeFakeRefreshTokenParams())
     expect(saveSpy).toHaveBeenCalled()
     const savedSession = saveSpy.mock.calls[0][0]
-    expect(savedSession.userId).toBe('any_user_id')
+    expect(savedSession.userId.value).toBe(VALID_ID)
     expect(savedSession.isValid).toBe(true)
     expect(savedSession.ipAddress).toBe('127.0.0.1')
     expect(savedSession.userAgent).toBe('any_user_agent')
@@ -240,7 +244,7 @@ describe('DbRefreshToken UseCase', () => {
     const { sut, encrypterStub } = makeSut()
     const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
     await sut.refresh(makeFakeRefreshTokenParams())
-    expect(encryptSpy).toHaveBeenCalledWith({ id: 'any_user_id', role: Role.ADMIN })
+    expect(encryptSpy).toHaveBeenCalledWith({ id: VALID_ID, role: Role.ADMIN })
   })
 
   test('Should throw if Encrypter throws', async () => {
@@ -264,12 +268,12 @@ describe('DbRefreshToken UseCase', () => {
   test('Should default role to MEMBER if user.role is undefined', async () => {
     const { sut, loadUserBySessionRepositoryStub, encrypterStub } = makeSut()
     jest.spyOn(loadUserBySessionRepositoryStub, 'loadUserBySessionId').mockResolvedValueOnce({
-      id: 'any_user_id',
+      id: Id.create(VALID_ID),
       name: 'any_name',
       role: undefined as unknown as string
     })
     const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
     await sut.refresh(makeFakeRefreshTokenParams())
-    expect(encryptSpy).toHaveBeenCalledWith({ id: 'any_user_id', role: Role.MEMBER })
+    expect(encryptSpy).toHaveBeenCalledWith({ id: VALID_ID, role: Role.MEMBER })
   })
 })

@@ -5,7 +5,6 @@ import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
-import { BirthDate } from '@/domain/value-objects/birth-date'
 import { Address, AddressProps } from '@/domain/value-objects/address'
 
 export class AddUserController implements Controller {
@@ -20,12 +19,13 @@ export class AddUserController implements Controller {
       if (error) {
         return badRequest(error)
       }
-      const { name, email, rg, cpf, birthDate, address } = httpRequest.body as {
+      const { name, email, rg, cpf, gender, phone, address } = httpRequest.body as {
         name: string
         email: string
         rg: string
         cpf: string
-        birthDate: string
+        gender: string
+        phone?: string
         address?: AddressProps
       }
 
@@ -49,8 +49,7 @@ export class AddUserController implements Controller {
         return badRequest(e as Error)
       }
 
-      const birthDateVO = BirthDate.create(birthDate)
-      if (birthDateVO instanceof Error) return badRequest(birthDateVO)
+
 
       let addressVO: Address | undefined
       if (address) {
@@ -64,7 +63,8 @@ export class AddUserController implements Controller {
         email: emailVO,
         rg: rgVO,
         cpf: cpfVO,
-        birthDate: birthDateVO,
+        gender,
+        phone,
         address: addressVO
       })
       if (userOrError instanceof Error) {
@@ -76,14 +76,14 @@ export class AddUserController implements Controller {
         email: userOrError.email.value,
         rg: userOrError.rg.value,
         cpf: userOrError.cpf.value,
-        birthDate: userOrError.birthDate.value,
+        gender: userOrError.gender,
+        phone: userOrError.phone,
         address: userOrError.address ? {
           street: userOrError.address.street,
           number: userOrError.address.number,
           complement: userOrError.address.complement,
-          neighborhood: userOrError.address.neighborhood,
-          city: userOrError.address.city,
-          state: userOrError.address.state,
+          neighborhoodId: userOrError.address.neighborhoodId,
+          cityId: userOrError.address.cityId,
           zipCode: userOrError.address.zipCode
         } : undefined
       })

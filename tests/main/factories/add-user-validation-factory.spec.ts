@@ -8,7 +8,7 @@ describe('AddUserValidation Factory', () => {
   test('Should call ValidationComposite with all validations', () => {
     makeAddUserValidation()
     const validations: Validation[] = []
-    for (const field of ['name', 'email', 'rg', 'cpf', 'birthDate']) {
+    for (const field of ['name', 'email', 'rg', 'cpf', 'gender']) {
       validations.push(new RequiredFieldValidation(field))
     }
     expect(ValidationComposite).toHaveBeenCalledWith(validations)

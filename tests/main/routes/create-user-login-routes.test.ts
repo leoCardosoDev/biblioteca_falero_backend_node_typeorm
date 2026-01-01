@@ -39,7 +39,7 @@ describe('CreateUserLogin Routes', () => {
     test('Should return 403 if no access token is provided', async () => {
       const response = await app.inject({
         method: 'POST',
-        url: '/api/users/any_user_id/login',
+        url: '/api/users/550e8400-e29b-41d4-a716-446655440001/login',
         payload: {
           password: 'Abcdefg1!'
         }
@@ -51,7 +51,7 @@ describe('CreateUserLogin Routes', () => {
       const accessToken = makeAccessToken(Role.LIBRARIAN)
       const response = await app.inject({
         method: 'POST',
-        url: '/api/users/any_user_id/login',
+        url: '/api/users/550e8400-e29b-41d4-a716-446655440001/login',
         headers: { authorization: `Bearer ${accessToken}` },
         payload: {
           password: 'Abcdefg1!'
@@ -64,7 +64,7 @@ describe('CreateUserLogin Routes', () => {
       const accessToken = makeAccessToken(Role.LIBRARIAN)
       const response = await app.inject({
         method: 'POST',
-        url: '/api/users/any_user_id/login',
+        url: '/api/users/550e8400-e29b-41d4-a716-446655440001/login',
         headers: { authorization: `Bearer ${accessToken}` },
         payload: {}
       })

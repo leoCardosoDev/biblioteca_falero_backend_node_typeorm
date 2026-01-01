@@ -29,12 +29,12 @@ export class DbRefreshToken implements RefreshToken {
       return null
     }
 
-    const user = await this.loadUserBySessionRepository.loadUserBySessionId(session.id)
+    const user = await this.loadUserBySessionRepository.loadUserBySessionId(session.id.value)
     if (!user) {
       return null
     }
 
-    await this.invalidateSessionRepository.invalidate(session.id)
+    await this.invalidateSessionRepository.invalidate(session.id.value)
 
     const newRefreshToken = crypto.randomBytes(32).toString('hex')
     const newRefreshTokenHash = await this.hasher.hash(newRefreshToken)
@@ -50,7 +50,7 @@ export class DbRefreshToken implements RefreshToken {
     })
 
     const role = (user.role as Role) ?? Role.MEMBER
-    const accessToken = await this.encrypter.encrypt({ id: user.id, role })
+    const accessToken = await this.encrypter.encrypt({ id: user.id.value, role })
 
     return {
       accessToken,
