@@ -19,7 +19,8 @@ describe('UserTypeOrmRepository', () => {
       database: ':memory:',
       dropSchema: true,
       entities: [UserTypeOrmEntity, LoginTypeOrmEntity],
-      synchronize: true
+      synchronize: true,
+      logging: true
     })
   })
 
@@ -572,6 +573,26 @@ describe('UserTypeOrmRepository', () => {
       expect(result?.login).toBeTruthy()
       expect(result?.login?.role.value).toBe('LIBRARIAN')
     })
+  })
+
+  test('Should throw OptimisticLockError on concurrent updates', async () => {
+    const sut = makeSut()
+    const userData = makeUserData()
+    const user = await sut.add(userData)
+
+    // Load user twice
+    const userInstance1 = await sut.loadById(user.id.value)
+    const userInstance2 = await sut.loadById(user.id.value)
+
+    // Update first instance
+    userInstance1!.name = Name.create('updated_name_1') as Name
+    await sut.update(userInstance1!)
+
+    // Update second instance (outdated version)
+    userInstance2!.name = Name.create('updated_name_2') as Name
+    const promise = sut.update(userInstance2!)
+
+    await expect(promise).rejects.toThrow()
   })
 
   test('Should update phone on success', async () => {
