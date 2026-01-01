@@ -18,7 +18,9 @@ const makeFakeUser = (): UserModel => ({
   email: Email.create('any_email@mail.com'),
   rg: Rg.create('123456789') as Rg,
   cpf: Cpf.create('529.982.247-25'),
-  gender: 'male'
+  gender: 'male',
+  status: UserStatus.create('ACTIVE') as UserStatus,
+  version: 1
 })
 
 const fakeUserById = makeFakeUser()
@@ -88,6 +90,9 @@ describe('LoadUserById Controller', () => {
       rg: '123456789',
       cpf: '52998224725',
       gender: 'male',
+      phone: undefined,
+      status: 'ACTIVE',
+      version: 1,
       address: undefined,
       login: null
     })
@@ -116,6 +121,9 @@ describe('LoadUserById Controller', () => {
       rg: '123456789',
       cpf: '52998224725',
       gender: 'male',
+      phone: undefined,
+      status: 'ACTIVE',
+      version: 1,
       address: {
         street: 'any_street',
         number: 'any_number',
@@ -147,10 +155,13 @@ describe('LoadUserById Controller', () => {
       rg: '123456789',
       cpf: '52998224725',
       gender: 'male',
+      phone: undefined,
+      status: 'ACTIVE',
+      version: 1,
       address: undefined,
       login: {
         role: 'LIBRARIAN',
-        status: 'active'
+        status: 'ACTIVE'
       }
     })
   })

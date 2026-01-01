@@ -17,14 +17,18 @@ const makeFakeUsers = (): UserWithLogin[] => {
     email: Email.create('any_email@mail.com'),
     rg: Rg.create('123456789') as Rg,
     cpf: Cpf.create('529.982.247-25'),
-    gender: 'male'
+    gender: 'male',
+    status: UserStatus.create('ACTIVE') as UserStatus,
+    version: 1
   }, {
     id: Id.create('550e8400-e29b-41d4-a716-446655440001'),
     name: Name.create('other_name') as Name,
     email: Email.create('other_email@mail.com'),
     rg: Rg.create('987654321') as Rg,
     cpf: Cpf.create('71428793860'),
-    gender: 'female'
+    gender: 'female',
+    status: UserStatus.create('ACTIVE') as UserStatus,
+    version: 1
   }]
 }
 
@@ -79,6 +83,9 @@ describe('LoadUsers Controller', () => {
         rg: '123456789',
         cpf: '52998224725',
         gender: 'male',
+        phone: undefined,
+        status: 'ACTIVE',
+        version: 1,
         login: null
       },
       {
@@ -88,6 +95,9 @@ describe('LoadUsers Controller', () => {
         rg: '987654321',
         cpf: '71428793860',
         gender: 'female',
+        phone: undefined,
+        status: 'ACTIVE',
+        version: 1,
         login: null
       }
     ])
@@ -109,6 +119,8 @@ describe('LoadUsers Controller', () => {
       rg: Rg.create('999888777') as Rg,
       cpf: Cpf.create('529.982.247-25'),
       gender: 'male',
+      status: UserStatus.create('ACTIVE') as UserStatus,
+      version: 1,
       address: Address.create({
         street: 'any_street',
         number: '123',
@@ -144,7 +156,7 @@ describe('LoadUsers Controller', () => {
     expect(httpResponse.statusCode).toBe(200)
     expect((httpResponse.body as Array<{ login: unknown }>)[0].login).toEqual({
       role: 'ADMIN',
-      status: 'active'
+      status: 'ACTIVE'
     })
   })
 })

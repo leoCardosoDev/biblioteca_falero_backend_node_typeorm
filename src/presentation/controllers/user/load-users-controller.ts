@@ -17,6 +17,8 @@ export class LoadUsersController implements Controller {
         cpf: user.cpf.value,
         gender: user.gender,
         phone: user.phone,
+        status: user.status.value,
+        version: user.version,
         address: user.address ? {
           street: user.address.street,
           number: user.address.number,

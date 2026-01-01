@@ -103,6 +103,6 @@ describe('DbAddUserLogin UseCase', () => {
     expect(login.id.value).toBe(validLoginId)
     expect(login.userId.value).toBe(validUserId)
     expect(login.role.value).toBe('ADMIN')
-    expect(login.status.value).toBe('active')
+    expect(login.status.value).toBe('ACTIVE')
   })
 })

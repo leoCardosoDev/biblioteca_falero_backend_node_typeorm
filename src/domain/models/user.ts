@@ -4,6 +4,7 @@ import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { Address } from '@/domain/value-objects/address'
+import { UserStatus } from '@/domain/value-objects/user-status'
 
 export interface UserModel {
   id: Id
@@ -12,8 +13,9 @@ export interface UserModel {
   rg: Rg
   cpf: Cpf
   gender: string
+  version: number
   phone?: string
   address?: Address
-  status: string
+  status: UserStatus
   deletedAt?: Date
 }
