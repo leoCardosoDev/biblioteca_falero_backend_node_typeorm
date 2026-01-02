@@ -2,8 +2,9 @@
 import { Controller, HttpRequest, HttpResponse, Validation } from '@/presentation/protocols'
 import { BlockUser } from '@/domain/usecases/block-user'
 import { PromoteUser } from '@/domain/usecases/promote-user'
-import { badRequest, noContent, serverError } from '@/presentation/helpers/http-helper'
+import { badRequest, noContent, serverError, forbidden } from '@/presentation/helpers/http-helper'
 import { InvalidParamError, MissingParamError } from '@/presentation/errors'
+import { AccessDeniedError } from '@/domain/errors/access-denied-error'
 
 export class UpdateUserStatusController implements Controller {
   constructor(
@@ -33,7 +34,11 @@ export class UpdateUserStatusController implements Controller {
 
       const result = await this.blockUser.block(actorId, id)
       if (result.isLeft()) {
-        return badRequest(result.value)
+        const error = result.value
+        if (error instanceof AccessDeniedError) {
+          return forbidden(error)
+        }
+        return badRequest(error)
       }
 
       return noContent()
@@ -66,7 +71,11 @@ export class UpdateUserRoleController implements Controller {
 
       const result = await this.promoteUser.promote(actorId, id, roleId)
       if (result.isLeft()) {
-        return badRequest(result.value)
+        const error = result.value
+        if (error instanceof AccessDeniedError) {
+          return forbidden(error)
+        }
+        return badRequest(error)
       }
 
       return noContent()
