@@ -14,9 +14,7 @@ export const adaptMiddleware = (middleware: Middleware) => {
       const body = httpResponse.body as { userId?: string, role?: string }
       Object.assign(req, body)
     } else {
-      await reply.status(httpResponse.statusCode).send({
-        error: (httpResponse.body as Error).message
-      })
+      await reply.status(httpResponse.statusCode).send(httpResponse.body)
     }
   }
 }

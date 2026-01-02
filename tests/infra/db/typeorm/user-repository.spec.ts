@@ -2,36 +2,51 @@ import 'reflect-metadata'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { UserTypeOrmRepository } from '@/infra/db/typeorm/user-repository'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
+import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
+import { RoleTypeOrmEntity } from '@/infra/db/typeorm/entities/role-entity'
+import { PermissionTypeOrmEntity } from '@/infra/db/typeorm/entities/permission-entity'
+import { DataSource } from 'typeorm'
 import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
-import { BirthDate } from '@/domain/value-objects/birth-date'
 import { Address } from '@/domain/value-objects/address'
 import { Id } from '@/domain/value-objects/id'
+import { UserStatus, UserStatusEnum } from '@/domain/value-objects/user-status'
 
 describe('UserTypeOrmRepository', () => {
-  beforeAll(async () => {
-    jest.useFakeTimers()
-    jest.setSystemTime(new Date('2024-01-10T12:00:00Z'))
+  let dataSource: DataSource
 
-    await TypeOrmHelper.connect({
+  beforeAll(async () => {
+    dataSource = await TypeOrmHelper.connect({
       type: 'better-sqlite3',
       database: ':memory:',
       dropSchema: true,
-      entities: [UserTypeOrmEntity],
-      synchronize: true
+      entities: [UserTypeOrmEntity, LoginTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity],
+      synchronize: true,
+      logging: false
     })
   })
 
   afterAll(async () => {
     await TypeOrmHelper.disconnect()
-    jest.useRealTimers()
   })
 
   beforeEach(async () => {
-    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
-    await userRepo.clear()
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2024-01-10T12:00:00Z'))
+    await dataSource.synchronize(true)
+
+    // Seed roles
+    const roleRepo = TypeOrmHelper.getRepository(RoleTypeOrmEntity)
+    await roleRepo.save([
+      { id: '550e8400-e29b-41d4-a716-446655440001', slug: 'ADMIN', description: 'Admin' },
+      { id: '550e8400-e29b-41d4-a716-446655440002', slug: 'librarian', description: 'Librarian' }
+    ])
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
   })
 
   const makeSut = (): UserTypeOrmRepository => {
@@ -43,7 +58,8 @@ describe('UserTypeOrmRepository', () => {
     email: Email.create('any_email@mail.com'),
     rg: Rg.create('123456789') as Rg,
     cpf: Cpf.create('529.982.247-25'),
-    birthDate: BirthDate.create('1990-01-15') as BirthDate
+    gender: 'any_gender',
+    status: UserStatus.create('ACTIVE') as UserStatus
   })
 
   test('Should return a user on success', async () => {
@@ -55,7 +71,7 @@ describe('UserTypeOrmRepository', () => {
     expect(user.email.value).toBe('any_email@mail.com')
     expect(user.rg.value).toBe('123456789')
     expect(user.cpf.value).toBe('52998224725')
-    expect(user.birthDate.value).toBe('1990-01-15')
+    expect(user.gender).toBe('any_gender')
   })
 
   test('Should throw when adding user with duplicate email', async () => {
@@ -66,7 +82,8 @@ describe('UserTypeOrmRepository', () => {
       email: Email.create('any_email@mail.com'),
       rg: Rg.create('987654321') as Rg,
       cpf: Cpf.create('71428793860'),
-      birthDate: BirthDate.create('1990-01-15') as BirthDate
+      gender: 'any_gender',
+      status: UserStatus.create('ACTIVE') as UserStatus
     })
     await expect(promise).rejects.toThrow()
   })
@@ -79,7 +96,8 @@ describe('UserTypeOrmRepository', () => {
       email: Email.create('other@mail.com'),
       rg: Rg.create('987654321') as Rg,
       cpf: Cpf.create('529.982.247-25'),
-      birthDate: BirthDate.create('1990-01-15') as BirthDate
+      gender: 'any_gender',
+      status: UserStatus.create('ACTIVE') as UserStatus
     })
     await expect(promise).rejects.toThrow()
   })
@@ -94,7 +112,7 @@ describe('UserTypeOrmRepository', () => {
     expect(user?.email.value).toBe('any_email@mail.com')
     expect(user?.rg.value).toBe('123456789')
     expect(user?.cpf.value).toBe('52998224725')
-    expect(user?.birthDate.value).toBe('1990-01-15')
+    expect(user?.gender).toBe('any_gender')
   })
 
   test('Should return undefined if loadByEmail finds no user', async () => {
@@ -113,7 +131,7 @@ describe('UserTypeOrmRepository', () => {
     expect(user?.email.value).toBe('any_email@mail.com')
     expect(user?.rg.value).toBe('123456789')
     expect(user?.cpf.value).toBe('52998224725')
-    expect(user?.birthDate.value).toBe('1990-01-15')
+    expect(user?.gender).toBe('any_gender')
   })
 
   test('Should return undefined if loadByCpf finds no user', async () => {
@@ -130,12 +148,31 @@ describe('UserTypeOrmRepository', () => {
       email: Email.create('user2@mail.com'),
       rg: Rg.create('987654321') as Rg,
       cpf: Cpf.create('71428793860'),
-      birthDate: BirthDate.create('1985-05-20') as BirthDate
+      gender: 'male',
+      status: UserStatus.create('ACTIVE') as UserStatus
     })
     const users = await sut.loadAll()
     expect(users.length).toBe(2)
     expect(users[0].name.value).toBe('any_name')
     expect(users[1].name.value).toBe('User 2')
+  })
+
+  test('Should return all users with login data on loadAll success', async () => {
+    const sut = makeSut()
+    const user = await sut.add(makeUserData())
+    const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+    await loginRepo.save(loginRepo.create({
+      userId: user.id.value,
+      password: 'any_password',
+      roleId: '550e8400-e29b-41d4-a716-446655440001', // Admin role
+      status: 'active'
+    }))
+
+    const users = await sut.loadAll()
+    expect(users.length).toBe(1)
+    expect(users[0].login).toBeTruthy()
+    expect(users[0].login?.role.value).toBe('ADMIN')
+    expect(users[0].login?.status.value).toBe('ACTIVE')
   })
 
   test('Should return empty list if no users found', async () => {
@@ -158,12 +195,75 @@ describe('UserTypeOrmRepository', () => {
     expect(updatedUser!.rg.value).toBe('123456789')
   })
 
-  test('Should delete a user on success', async () => {
+  test('Should soft delete a user on success', async () => {
     const sut = makeSut()
     const user = await sut.add(makeUserData())
     await sut.delete(user.id.value)
+
+    // Verify soft delete in DB (row should exist with deletedAt)
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const dbUser = await userRepo.findOne({ where: { id: user.id.value } })
+    expect(dbUser).toBeTruthy()
+    expect(dbUser?.deletedAt).not.toBeNull()
+    expect(dbUser?.status).toBe('INACTIVE')
+
+    // Verify public API returns undefined
     const deletedUser = await sut.loadByEmail('any_email@mail.com')
     expect(deletedUser).toBeUndefined()
+  })
+
+  test('Should not load soft deleted user by loadByCpf', async () => {
+    const sut = makeSut()
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = userRepo.create({
+      name: 'deleted_user',
+      email: 'deleted@mail.com',
+      rg: 'any_rg',
+      cpf: '52998224725',
+      gender: 'male',
+      deletedAt: new Date(),
+      status: 'INACTIVE'
+    })
+    await userRepo.save(user)
+
+    const loaded = await sut.loadByCpf('52998224725')
+    expect(loaded).toBeUndefined()
+  })
+
+  test('Should not load soft deleted user by loadById', async () => {
+    const sut = makeSut()
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = userRepo.create({
+      name: 'deleted_by_id',
+      email: 'deleted_id@mail.com',
+      rg: 'any_rg_id',
+      cpf: 'any_cpf_id',
+      gender: 'male',
+      deletedAt: new Date(),
+      status: 'INACTIVE'
+    })
+    await userRepo.save(user)
+
+    const loaded = await sut.loadById(user.id)
+    expect(loaded).toBeNull()
+  })
+
+  test('Should not load soft deleted user by loadAll', async () => {
+    const sut = makeSut()
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = userRepo.create({
+      name: 'deleted_all',
+      email: 'deleted_all@mail.com',
+      rg: 'any_rg_all',
+      cpf: 'any_cpf_all',
+      gender: 'male',
+      deletedAt: new Date(),
+      status: 'INACTIVE'
+    })
+    await userRepo.save(user)
+
+    const users = await sut.loadAll()
+    expect(users.length).toBe(0)
   })
 
   test('Should add a user with address on success', async () => {
@@ -174,9 +274,8 @@ describe('UserTypeOrmRepository', () => {
         street: 'any_street',
         number: '123',
         complement: 'apt 1',
-        neighborhood: 'any_neighborhood',
-        city: 'any_city',
-        state: 'SP',
+        neighborhoodId: 'any_neighborhood_id',
+        cityId: 'any_city_id',
         zipCode: '12345678'
       }) as Address
     }
@@ -184,7 +283,7 @@ describe('UserTypeOrmRepository', () => {
     expect(user.address).toBeTruthy()
     expect(user.address?.street).toBe('any_street')
     expect(user.address?.number).toBe('123')
-    expect(user.address?.city).toBe('any_city')
+    expect(user.address?.cityId).toBe('any_city_id')
   })
 
   test('Should update a user with address on success', async () => {
@@ -195,16 +294,15 @@ describe('UserTypeOrmRepository', () => {
       address: Address.create({
         street: 'updated_street',
         number: '456',
-        neighborhood: 'updated_neighborhood',
-        city: 'updated_city',
-        state: 'RJ',
+        neighborhoodId: 'updated_neighborhood_id',
+        cityId: 'updated_city_id',
         zipCode: '87654321'
       }) as Address
     })
     expect(updatedUser).toBeTruthy()
     expect(updatedUser!.address).toBeTruthy()
     expect(updatedUser!.address?.street).toBe('updated_street')
-    expect(updatedUser!.address?.city).toBe('updated_city')
+    expect(updatedUser!.address?.cityId).toBe('updated_city_id')
   })
 
   test('Should return null if update is called with non-existent id', async () => {
@@ -238,15 +336,15 @@ describe('UserTypeOrmRepository', () => {
     expect(updatedUser!.cpf.value).toBe('71428793860')
   })
 
-  test('Should update birthDate on success', async () => {
+  test('Should update gender on success', async () => {
     const sut = makeSut()
     const user = await sut.add(makeUserData())
     const updatedUser = await sut.update({
       id: user.id,
-      birthDate: BirthDate.create('1985-05-20') as BirthDate
+      gender: 'female'
     })
     expect(updatedUser).toBeTruthy()
-    expect(updatedUser!.birthDate.value).toBe('1985-05-20')
+    expect(updatedUser!.gender).toBe('female')
   })
 
   test('Should return user with undefined address if DB has invalid address data (defensive check)', async () => {
@@ -257,14 +355,13 @@ describe('UserTypeOrmRepository', () => {
       email: 'corrupt_test@mail.com',
       rg: '123456789',
       cpf: '52998224725',
-      birthDate: '1990-01-15',
-      // Invalid address: state has wrong length (should be 2 chars)
+      gender: 'any_gender',
+      // Invalid address: zipCode has wrong length
       addressStreet: 'any_street',
       addressNumber: '123',
-      addressNeighborhood: 'any_neighborhood',
-      addressCity: 'any_city',
-      addressState: 'INVALID_STATE', // Invalid: more than 2 chars
-      addressZipCode: '12345678'
+      addressNeighborhoodId: 'any_neighborhood_id',
+      addressCityId: 'any_city_id',
+      addressZipCode: 'invalid_zip'
     })
     await userRepo.save(entity)
 
@@ -287,7 +384,7 @@ describe('UserTypeOrmRepository', () => {
       email: 'invalid-email-no-at-symbol', // Invalid: no '@'
       rg: '111222333',
       cpf: '71428793860',
-      birthDate: '1985-03-10'
+      gender: 'any_gender'
     })
     await userRepo.save(corruptEntity)
 
@@ -309,7 +406,7 @@ describe('UserTypeOrmRepository', () => {
       email: 'invalid_name_user@mail.com',
       rg: '111222333',
       cpf: '71428793860',
-      birthDate: '1985-03-10'
+      gender: 'any_gender'
     })
     await userRepo.save(corruptEntity)
 
@@ -329,27 +426,7 @@ describe('UserTypeOrmRepository', () => {
       email: 'invalid_rg_user@mail.com',
       rg: '', // Invalid: empty RG
       cpf: '71428793860',
-      birthDate: '1985-03-10'
-    })
-    await userRepo.save(corruptEntity)
-
-    const users = await sut.loadAll()
-
-    expect(users.length).toBe(1)
-    expect(users[0].email.value).toBe('any_email@mail.com')
-  })
-
-  test('Should exclude users with invalid BirthDate from loadAll results', async () => {
-    const sut = makeSut()
-    await sut.add(makeUserData())
-
-    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
-    const corruptEntity = userRepo.create({
-      name: 'Valid Name',
-      email: 'invalid_birthdate_user@mail.com',
-      rg: '111222333',
-      cpf: '71428793860',
-      birthDate: 'not-a-valid-date' // Invalid: unparseable date
+      gender: 'any_gender'
     })
     await userRepo.save(corruptEntity)
 
@@ -366,7 +443,7 @@ describe('UserTypeOrmRepository', () => {
       email: 'corrupt_loadbyemail@mail.com',
       rg: '', // Invalid: empty RG
       cpf: '71428793860',
-      birthDate: '1985-03-10'
+      gender: 'any_gender'
     })
     await userRepo.save(corruptEntity)
 
@@ -383,7 +460,7 @@ describe('UserTypeOrmRepository', () => {
       email: 'corrupt_loadbycpf@mail.com',
       rg: '111222333',
       cpf: '71428793860',
-      birthDate: '1985-03-10'
+      gender: 'any_gender'
     })
     await userRepo.save(corruptEntity)
 
@@ -426,7 +503,7 @@ describe('UserTypeOrmRepository', () => {
       email: 'test_string_error@mail.com',
       rg: '111222333',
       cpf: '71428793860',
-      birthDate: '1985-03-10'
+      gender: 'any_gender'
     })
     await userRepo.save(entityWithValidData)
 
@@ -471,7 +548,7 @@ describe('UserTypeOrmRepository', () => {
         email: 'corrupt_loadbyid@mail.com',
         rg: '111222333',
         cpf: '71428793860',
-        birthDate: '1985-03-10'
+        gender: 'any_gender'
       })
       await userRepo.save(corruptEntity)
 
@@ -480,5 +557,100 @@ describe('UserTypeOrmRepository', () => {
 
       expect(user).toBeNull()
     })
+
+    test('Should return user without login if login data does not exist', async () => {
+      const sut = makeSut()
+      const userData = makeUserData()
+      const savedUser = await sut.add(userData)
+      const user = await sut.loadById(savedUser.id.value)
+      expect(user).toBeTruthy()
+      expect(user?.login).toBeUndefined()
+    })
+
+    test('Should return user with login data if it exists', async () => {
+      const sut = makeSut()
+      const user = await sut.add(makeUserData())
+      const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+      await loginRepo.save(loginRepo.create({
+        userId: user.id.value,
+        password: 'any_password',
+        roleId: '550e8400-e29b-41d4-a716-446655440002', // Librarian role
+        status: 'active'
+      }))
+
+      const result = await sut.loadById(user.id.value)
+      expect(result).toBeTruthy()
+      expect(result?.login).toBeTruthy()
+      expect(result?.login?.role.value).toBe('LIBRARIAN')
+    })
+  })
+
+  test('Should throw OptimisticLockError on concurrent updates', async () => {
+    const sut = makeSut()
+    const userData = makeUserData()
+    const user = await sut.add(userData)
+
+    // Load user twice
+    const userInstance1 = await sut.loadById(user.id.value)
+    const userInstance2 = await sut.loadById(user.id.value)
+
+    // Update first instance
+    userInstance1!.name = Name.create('updated_name_1') as Name
+    await sut.update(userInstance1!)
+
+    // Update second instance (outdated version)
+    userInstance2!.name = Name.create('updated_name_2') as Name
+    const promise = sut.update(userInstance2!)
+
+    await expect(promise).rejects.toThrow()
+  })
+
+  test('Should update phone on success', async () => {
+    const sut = makeSut()
+    const user = await sut.add(makeUserData())
+    const updatedUser = await sut.update({
+      id: user.id,
+      phone: '11999999999'
+    })
+    expect(updatedUser).toBeTruthy()
+    expect(updatedUser!.phone).toBe('11999999999')
+  })
+
+  test('Should return null from toUserModel if UserStatus is invalid in DB', async () => {
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const entity = userRepo.create({
+      name: 'Valid Name',
+      email: 'invalid_status@mail.com',
+      rg: '111222333',
+      cpf: '71428793860',
+      gender: 'any_gender',
+      status: 'INVALID_STATUS' as unknown as UserStatusEnum
+    })
+    await userRepo.save(entity)
+
+    const sut = makeSut()
+    const user = await sut.loadByEmail('invalid_status@mail.com')
+    expect(user).toBeUndefined()
+  })
+
+  test('Should skip login data in loadAll if UserRole or UserStatus in login is invalid', async () => {
+    const sut = makeSut()
+    const user = await sut.add(makeUserData())
+
+    const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+    // Seed invalid role
+    const roleRepo = TypeOrmHelper.getRepository(RoleTypeOrmEntity)
+    await roleRepo.save({ id: '550e8400-e29b-41d4-a716-446655440003', slug: 'invalid_role', description: 'Invalid' })
+
+    await loginRepo.save(loginRepo.create({
+      userId: user.id.value,
+      password: 'any_password',
+      roleId: '550e8400-e29b-41d4-a716-446655440003',
+      status: 'active'
+    }) as unknown as LoginTypeOrmEntity)
+
+    const users = await sut.loadAll()
+    expect(users.length).toBe(1)
+    expect(users[0].login).toBeUndefined()
   })
 })

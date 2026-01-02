@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 
 import { Encrypter } from '@/application/protocols/cryptography/encrypter'
 import { Decrypter } from '@/application/protocols/cryptography/decrypter'
-import { TokenPayload, Role } from '@/domain/models'
+import { TokenPayload } from '@/domain/models'
 
 export class JwtAdapter implements Encrypter, Decrypter {
   constructor(private readonly secret: string) { }
@@ -19,7 +19,7 @@ export class JwtAdapter implements Encrypter, Decrypter {
     }
     return {
       id: decoded.id,
-      role: (decoded.role as Role) ?? Role.MEMBER
+      role: decoded.role ?? 'MEMBER'
     }
   }
 }

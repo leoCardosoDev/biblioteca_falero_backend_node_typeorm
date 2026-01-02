@@ -1,4 +1,4 @@
-import { LoginController } from './login-controller'
+import { LoginController } from '@/presentation/controllers/login/login-controller'
 import { HttpRequest } from '@/presentation/protocols/http'
 import { Validation } from '@/presentation/protocols/validation'
 import { Authentication, AuthenticationParams, AuthenticationModel } from '@/domain/usecases/authentication'
@@ -20,6 +20,7 @@ const makeAuthentication = (): Authentication => {
       return await Promise.resolve({
         accessToken: 'any_token',
         name: 'any_name',
+        refreshToken: 'any_refresh_token',
         role: 'any_role'
       })
     }
@@ -102,9 +103,11 @@ describe('Login Controller', () => {
   test('Should return 200 if valid credentials are provided', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
+
     expect(httpResponse).toEqual(ok({
       accessToken: 'any_token',
       name: 'any_name',
+      refreshToken: 'any_refresh_token',
       role: 'any_role'
     }))
   })

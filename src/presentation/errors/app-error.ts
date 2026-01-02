@@ -6,6 +6,6 @@ export class AppError extends Error {
     super(message)
     this.code = code
     this.details = details
-    this.name = 'AppError'
+    this.name = this.constructor.name
   }
 }

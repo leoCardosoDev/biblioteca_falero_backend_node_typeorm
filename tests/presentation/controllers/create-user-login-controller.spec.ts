@@ -1,20 +1,25 @@
 import { CreateUserLoginController } from '@/presentation/controllers/create-user-login-controller'
-import { MissingParamError } from '@/presentation/errors'
+import { InvalidParamError, MissingParamError, ServerError } from '@/presentation/errors'
 import { Validation } from '@/presentation/protocols'
 import { CreateUserLogin, CreateUserLoginParams } from '@/domain/usecases/create-user-login'
-import { LoginModel } from '@/domain/models/login'
+import { Login, LoginModel } from '@/domain/models/login'
 import { HttpRequest } from '@/presentation/protocols'
+import { Id } from '@/domain/value-objects/id'
+import { UserRole } from '@/domain/value-objects/user-role'
+import { UserStatus } from '@/domain/value-objects/user-status'
+import { Email } from '@/domain/value-objects/email'
 
 const makeCreateUserLogin = (): CreateUserLogin => {
   class CreateUserLoginStub implements CreateUserLogin {
     async create(_params: CreateUserLoginParams): Promise<LoginModel> {
-      return Promise.resolve({
-        id: 'valid_id',
-        userId: 'valid_user_id',
-        password: 'valid_password',
-        role: 'valid_role',
-        accessToken: 'valid_token'
-      })
+      return Promise.resolve(Login.create({
+        id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
+        userId: Id.create('550e8400-e29b-41d4-a716-446655440001'),
+        roleId: Id.create('550e8400-e29b-41d4-a716-446655440002'),
+        email: Email.create('any_email@mail.com') as Email,
+        passwordHash: 'hashed_password',
+        isActive: true
+      }))
     }
   }
   return new CreateUserLoginStub()
@@ -31,7 +36,7 @@ const makeValidation = (): Validation => {
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
-    userId: 'any_user_id',
+    userId: '550e8400-e29b-41d4-a716-446655440001',
     password: 'Abcdefg1!'
   }
 })
@@ -59,8 +64,10 @@ describe('CreateUserLogin Controller', () => {
     const createSpy = jest.spyOn(createUserLoginStub, 'create')
     await sut.handle(makeFakeRequest())
     expect(createSpy).toHaveBeenCalledWith({
-      userId: 'any_user_id',
-      password: 'Abcdefg1!'
+      userId: Id.create('550e8400-e29b-41d4-a716-446655440001'),
+      password: 'Abcdefg1!',
+      role: UserRole.create('MEMBER'),
+      status: UserStatus.create('ACTIVE')
     })
   })
 
@@ -71,7 +78,7 @@ describe('CreateUserLogin Controller', () => {
     })
     const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body.error.code).toBe('INTERNAL_ERROR')
+    expect(httpResponse.body).toBeInstanceOf(ServerError)
   })
 
   test('Should return 200 if valid data is provided', async () => {
@@ -79,11 +86,9 @@ describe('CreateUserLogin Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: unknown }
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({
-      id: 'valid_id',
-      userId: 'valid_user_id',
-      password: 'valid_password',
-      role: 'valid_role',
-      accessToken: 'valid_token'
+      id: '550e8400-e29b-41d4-a716-446655440000',
+      userId: '550e8400-e29b-41d4-a716-446655440001',
+      email: 'any_email@mail.com'
     })
   })
 
@@ -100,19 +105,29 @@ describe('CreateUserLogin Controller', () => {
     jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new MissingParamError('any_field'))
     const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body.error.code).toBe('MISSING_PARAM')
+    expect(httpResponse.body).toEqual(new MissingParamError('any_field'))
   })
 
   test('Should return 400 if password does not meet policy requirements', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
-        userId: 'any_user_id',
+        userId: '550e8400-e29b-41d4-a716-446655440001',
         password: 'weak'
       }
     }
     const httpResponse = await sut.handle(httpRequest) as { statusCode: number; body: { error: { message: string } } }
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body.error.message).toContain('Password')
+    expect(httpResponse.body).toBeInstanceOf(InvalidParamError)
   })
+
+  test('Should return 400 if ID.create throws', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+    httpRequest.params = { userId: 'invalid-id' }
+    const httpResponse = await sut.handle(httpRequest) as { statusCode: number; body: { error: { code: string } } }
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toBeInstanceOf(InvalidParamError)
+  })
+
 })

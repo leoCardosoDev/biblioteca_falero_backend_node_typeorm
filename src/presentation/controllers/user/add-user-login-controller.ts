@@ -6,6 +6,8 @@ import { badRequest, ok, serverError } from '@/presentation/helpers/http-helper'
 import { Id } from '@/domain/value-objects/id'
 import { UserRole } from '@/domain/value-objects/user-role'
 import { UserStatus } from '@/domain/value-objects/user-status'
+import { Email } from '@/domain/value-objects/email'
+import { InvalidParamError } from '@/presentation/errors'
 
 export class AddUserLoginController implements Controller {
   constructor(
@@ -21,27 +23,35 @@ export class AddUserLoginController implements Controller {
       }
 
       const { id } = httpRequest.params as { id: string }
-      const { password, role, status } = httpRequest.body as { password: string, role: string, status: string }
+      const { email, password, role, status } = httpRequest.body as { email: string, password: string, role: string, status: string }
 
       let userIdOrError: Id
       try {
         userIdOrError = Id.create(id)
-      } catch (error) {
-        return badRequest(error as Error)
+      } catch (_error) {
+        return badRequest(new InvalidParamError('id'))
       }
 
       const roleOrError = UserRole.create(role)
       if (roleOrError instanceof Error) {
-        return badRequest(roleOrError)
+        return badRequest(new InvalidParamError('role'))
       }
 
       const statusOrError = UserStatus.create(status)
       if (statusOrError instanceof Error) {
-        return badRequest(statusOrError)
+        return badRequest(new InvalidParamError('status'))
+      }
+
+      let emailVO: Email
+      try {
+        emailVO = Email.create(email)
+      } catch (_error) {
+        return badRequest(new InvalidParamError('email'))
       }
 
       const login = await this.addUserLogin.add({
         userId: userIdOrError,
+        email: emailVO,
         password,
         role: roleOrError,
         status: statusOrError
@@ -50,8 +60,8 @@ export class AddUserLoginController implements Controller {
       return ok({
         id: login.id.value,
         userId: login.userId.value,
-        role: login.role.value,
-        status: login.status.value
+        roleId: login.roleId.value,
+        status: login.isActive ? 'ACTIVE' : 'INACTIVE'
       })
     } catch (error) {
       return serverError(error as Error)

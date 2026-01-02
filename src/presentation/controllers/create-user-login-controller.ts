@@ -1,7 +1,8 @@
 import { Controller, HttpRequest, HttpResponse, Validation } from '@/presentation/protocols'
 import { badRequest, serverError, ok } from '@/presentation/helpers'
-import { CreateUserLogin, CreateUserLoginParams } from '@/domain/usecases/create-user-login'
-import { Password } from '@/domain/value-objects/password'
+import { CreateUserLogin } from '@/domain/usecases/create-user-login'
+import { Password, UserRole, UserStatus, Id } from '@/domain/value-objects'
+import { InvalidParamError } from '@/presentation/errors'
 
 export class CreateUserLoginController implements Controller {
   constructor(
@@ -21,13 +22,30 @@ export class CreateUserLoginController implements Controller {
       }
 
       const { userId, password } = requestData as { userId: string; password: string }
-      const passwordVO = Password.create(password)
-      if (passwordVO instanceof Error) {
-        return badRequest(passwordVO)
+
+      const passwordOrError = Password.create(password)
+      if (passwordOrError.isLeft()) {
+        return badRequest(new InvalidParamError('password'))
       }
 
-      const login = await this.createUserLogin.create({ userId, password } as CreateUserLoginParams)
-      return ok(login)
+      let idVO: Id
+      try {
+        idVO = Id.create(userId)
+      } catch (_error) {
+        return badRequest(new InvalidParamError('userId'))
+      }
+
+      const login = await this.createUserLogin.create({
+        userId: idVO,
+        password,
+        role: UserRole.create('MEMBER') as UserRole,
+        status: UserStatus.create('ACTIVE') as UserStatus
+      })
+      return ok({
+        id: login.id.value,
+        userId: login.userId.value,
+        email: login.email.value
+      })
     } catch (error) {
       return serverError(error as Error)
     }

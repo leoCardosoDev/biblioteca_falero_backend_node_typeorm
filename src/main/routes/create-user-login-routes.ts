@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify'
 
 import { adaptRoute } from '@/main/adapters/fastify-route-adapter'
 import { adaptMiddleware } from '@/main/adapters/fastify-middleware-adapter'
+import { errorSchema } from '@/main/config/error-schema'
 import { makeCreateUserLoginController } from '@/main/factories/create-user-login-controller-factory'
 import { makeAuthMiddleware, makeLibrarianOrAdmin } from '@/main/factories/middlewares'
 
@@ -20,7 +21,6 @@ const createUserLoginSchema = {
     type: 'object',
     required: ['password'],
     properties: {
-      username: { type: 'string', description: 'Login username (optional)' },
       password: { type: 'string', description: 'Login password (min 8 chars, requires uppercase, lowercase, number, special char)' }
     }
   },
@@ -30,11 +30,11 @@ const createUserLoginSchema = {
       properties: {
         id: { type: 'string' },
         userId: { type: 'string' },
-        username: { type: 'string' }
+        email: { type: 'string' }
       }
     },
-    400: { type: 'object', properties: { error: { type: 'string' } } },
-    403: { type: 'object', properties: { error: { type: 'string' } } }
+    400: errorSchema,
+    403: errorSchema
   }
 }
 

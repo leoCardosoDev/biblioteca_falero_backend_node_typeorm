@@ -5,7 +5,7 @@
 Todas as rotas (exceto `/login`) exigem autenticação via **Bearer Token**.
 
 ### Como obter o token:
-1. Execute o **Seed Admin** (ver seção abaixo)
+1. Execute o **Seed de Usuários** (ver seção abaixo)
 2. Faça login com o Admin
 3. Use o token retornado no header: `Authorization: Bearer <token>`
 
@@ -26,31 +26,31 @@ Para limpar completamente o banco de dados e recriar o ambiente:
    npm run up
    ```
 
-3. Recrie o usuário admin:
+3. Recrie os usuários padrão:
    ```bash
-   npm run seed:admin
+   npm run seed:users
    ```
 
 ---
 
-## 0. Seed Admin (Primeiro Acesso)
+## 0. Seed de Usuários (Configuração Inicial)
 
-Execute o comando para criar o usuário Admin padrão:
+Execute o comando para criar os usuários padrão (ADMIN, LIBRARIAN, MEMBER):
 
 ```bash
-npm run seed:admin
+npm run seed:users
 ```
 
 **Usuário Admin criado:**
 ```json
 {
-  "name": "Leo Cardoso",
-  "email": "leocardosodev@gmail.com",
-  "rg": "12345678",
-  "cpf": "12345678901",
-  "birthDate": "1990-05-20",
-  "role": "ADMIN",
-  "password": "any_password"
+    "name": "Leo Cardoso",
+    "email": "admin@falero.com",
+    "rg": "12345678",
+    "cpf": "20073296031",
+    "gender": "MALE",
+    "role": "ADMIN",
+    "password": "_Falero@admin2025"
 }
 ```
 
@@ -64,17 +64,22 @@ npm run seed:admin
 **Body (JSON)**:
 ```json
 {
-  "email": "leocardosodev@gmail.com",
-  "password": "any_password"
+  "email": "admin@falero.com",
+  "password": "_Falero@admin2025"
 }
 ```
 
-**Response (200 OK)**:
+**Retorno Esperado (200 OK):**
 ```json
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "name": "Leo Cardoso",
-  "role": "ADMIN"
+  "accessToken": "ey...",
+  "user": {
+    "id": "...",
+    "name": "Admin User",
+    "email": "admin@falero.com",
+    "status": "ACTIVE",
+    "version": 0
+  }
 }
 ```
 
@@ -101,8 +106,8 @@ Authorization: Bearer <accessToken>
   "name": "Maria Silva",
   "email": "maria.silva@example.com",
   "rg": "123456789",
-  "cpf": "123.456.789-00",
-  "birthDate": "1990-05-20"
+  "cpf": "12345678900",
+  "gender": "FEMALE"
 }
 ```
 **Expected Response:** `200 OK`
@@ -155,6 +160,36 @@ Sem token ou com role MEMBER.
 
 ---
 
+## 4. List Users (LoadUsers)
+
+**Endpoint**: `GET http://localhost:5050/api/users`
+
+**Headers**:
+```
+Authorization: Bearer <accessToken>
+```
+
+### 4.1 Success (200 OK)
+**Response**:
+```json
+[
+  {
+    "id": "any_id",
+    "name": "Maria Silva",
+    "email": "maria.silva@example.com",
+    "rg": "123456789",
+    "cpf": "123.456.789-00",
+    "birthDate": "1990-05-20",
+    "status": "ACTIVE"
+  }
+]
+```
+
+### 4.2 Error: Access Denied (403 Forbidden)
+Sem token ou com role MEMBER.
+
+---
+
 ## 5. Update User (🔒 ADMIN Only)
 
 **Endpoint**: `PUT http://localhost:5050/api/users/:id`
@@ -181,9 +216,11 @@ If trying to update to an email that belongs to another user.
 
 ---
 
-## 6. Delete User (🔒 ADMIN Only)
+## 6. Delete User (🔒 ADMIN Only) - **SOFT DELETE**
 
 **Endpoint**: `DELETE http://localhost:5050/api/users/:id`
+
+> ❗ Este endpoint realiza um **Soft Delete**. O registro permanece no banco com `deleted_at` preenchido e deixa de aparecer em listagens padrão.
 
 **Headers**:
 ```
@@ -208,32 +245,3 @@ Requires ADMIN role.
 | `/api/users/:userId/login` | POST | 🔒 LIBRARIAN, ADMIN |
 | `/api/users/:id` | PUT | 🔒 ADMIN |
 | `/api/users/:id` | DELETE | 🔒 ADMIN |
-
----
-
-## 4. List Users (LoadUsers)
-
-**Endpoint**: `GET http://localhost:5050/api/users`
-
-**Headers**:
-```
-Authorization: Bearer <accessToken>
-```
-
-### 4.1 Success (200 OK)
-**Response**:
-```json
-[
-  {
-    "id": "any_id",
-    "name": "Maria Silva",
-    "email": "maria.silva@example.com",
-    "rg": "123456789",
-    "cpf": "123.456.789-00",
-    "birthDate": "1990-05-20"
-  }
-]
-```
-
-### 4.2 Error: Access Denied (403 Forbidden)
-Sem token ou com role MEMBER.

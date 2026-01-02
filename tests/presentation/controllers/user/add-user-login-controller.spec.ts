@@ -7,22 +7,27 @@ import { ok } from '@/presentation/helpers/http-helper'
 import { Id } from '@/domain/value-objects/id'
 import { UserRole } from '@/domain/value-objects/user-role'
 import { UserStatus } from '@/domain/value-objects/user-status'
+import { Email } from '@/domain/value-objects/email'
+import { InvalidParamError } from '@/presentation/errors/invalid-param-error'
+import { ServerError } from '@/presentation/errors/server-error'
 
 const makeFakeRequest = (): HttpRequest => ({
   params: { id: '550e8400-e29b-41d4-a716-446655440000' },
   body: {
+    email: 'any_email@mail.com',
     password: 'any_password',
     role: 'ADMIN',
-    status: 'active'
+    status: 'ACTIVE'
   }
 })
 
 const makeFakeLogin = (): LoginModel => ({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000') as Id,
   userId: Id.create('550e8400-e29b-41d4-a716-446655440001') as Id,
-  password: 'any_password',
-  role: UserRole.create('ADMIN') as UserRole,
-  status: UserStatus.create('active') as UserStatus
+  email: Email.create('any_email@mail.com') as Email,
+  passwordHash: 'any_hash',
+  roleId: Id.create('550e8400-e29b-41d4-a716-446655440002') as Id,
+  isActive: true
 })
 
 const makeAddUserLogin = (): AddUserLogin => {
@@ -80,17 +85,10 @@ describe('AddUserLogin Controller', () => {
 
   test('Should return 400 if Validation returns an error', async () => {
     const { sut, validationStub } = makeSut()
-    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error())
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error('any_error'))
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual({
-      error: {
-        code: 'BAD_REQUEST',
-        message: 'Invalid request',
-        details: undefined,
-        timestamp: '2025-12-31T15:00:00.000Z'
-      }
-    })
+    expect(httpResponse.body).toEqual(new Error('any_error'))
   })
 
   test('Should return 400 if invalid Id is provided', async () => {
@@ -99,14 +97,7 @@ describe('AddUserLogin Controller', () => {
       ; (httpRequest.params as { id: string }).id = 'invalid_id'
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual({
-      error: {
-        code: 'INVALID_PARAM',
-        message: 'Invalid ID format',
-        details: undefined,
-        timestamp: '2025-12-31T15:00:00.000Z'
-      }
-    })
+    expect(httpResponse.body).toEqual(new InvalidParamError('id'))
   })
 
   test('Should return 400 if invalid role is provided', async () => {
@@ -115,14 +106,7 @@ describe('AddUserLogin Controller', () => {
       ; (httpRequest.body as { role: string }).role = 'invalid_role'
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual({
-      error: {
-        code: 'INVALID_PARAM',
-        message: 'Invalid User Role',
-        details: undefined,
-        timestamp: '2025-12-31T15:00:00.000Z'
-      }
-    })
+    expect(httpResponse.body).toEqual(new InvalidParamError('role'))
   })
 
   test('Should return 400 if invalid status is provided', async () => {
@@ -131,14 +115,16 @@ describe('AddUserLogin Controller', () => {
       ; (httpRequest.body as { status: string }).status = 'invalid_status'
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual({
-      error: {
-        code: 'INVALID_PARAM',
-        message: 'Invalid User Status',
-        details: undefined,
-        timestamp: '2025-12-31T15:00:00.000Z'
-      }
-    })
+    expect(httpResponse.body).toEqual(new InvalidParamError('status'))
+  })
+
+  test('Should return 400 if invalid email is provided', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+      ; (httpRequest.body as { email: string }).email = 'invalid_email'
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new InvalidParamError('email'))
   })
 
   test('Should call AddUserLogin with correct values', async () => {
@@ -147,6 +133,7 @@ describe('AddUserLogin Controller', () => {
     await sut.handle(makeFakeRequest())
     expect(addSpy).toHaveBeenCalledWith({
       userId: expect.any(Id),
+      email: expect.any(Email),
       password: 'any_password',
       role: expect.any(UserRole),
       status: expect.any(UserStatus)
@@ -160,11 +147,7 @@ describe('AddUserLogin Controller', () => {
     })
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse.statusCode).toBe(500)
-    expect((httpResponse.body as { error: { code: string, message: string, timestamp: string } }).error).toMatchObject({
-      code: 'INTERNAL_ERROR',
-      message: 'Internal server error',
-      timestamp: '2025-12-31T15:00:00.000Z'
-    })
+    expect(httpResponse.body).toBeInstanceOf(ServerError)
   })
 
   test('Should return 200 if valid data is provided', async () => {
@@ -173,8 +156,23 @@ describe('AddUserLogin Controller', () => {
     expect(httpResponse).toEqual(ok({
       id: '550e8400-e29b-41d4-a716-446655440000',
       userId: '550e8400-e29b-41d4-a716-446655440001',
-      role: 'ADMIN',
-      status: 'active'
+      roleId: '550e8400-e29b-41d4-a716-446655440002',
+      status: 'ACTIVE'
+    }))
+  })
+
+  test('Should return 200 with status INACTIVE if login is inactive', async () => {
+    const { sut, addUserLoginStub } = makeSut()
+    jest.spyOn(addUserLoginStub, 'add').mockResolvedValueOnce({
+      ...makeFakeLogin(),
+      isActive: false
+    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(ok({
+      id: '550e8400-e29b-41d4-a716-446655440000',
+      userId: '550e8400-e29b-41d4-a716-446655440001',
+      roleId: '550e8400-e29b-41d4-a716-446655440002',
+      status: 'INACTIVE'
     }))
   })
 })

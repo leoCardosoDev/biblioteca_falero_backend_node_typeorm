@@ -1,21 +1,23 @@
 import { UserStatus } from '@/domain/value-objects/user-status'
 
 describe('UserStatus Value Object', () => {
-  test('Should create a valid UserStatus', () => {
-    const status = UserStatus.create('active')
-    expect(status).toBeInstanceOf(UserStatus)
-    expect((status as UserStatus).value).toBe('active')
+  test('Should return correct values', () => {
+    const active = UserStatus.create('ACTIVE') as UserStatus
+    const inactive = UserStatus.create('INACTIVE') as UserStatus
+    const blocked = UserStatus.create('BLOCKED') as UserStatus
+
+    expect(active.value).toBe('ACTIVE')
+    expect(inactive.value).toBe('INACTIVE')
+    expect(blocked.value).toBe('BLOCKED')
   })
 
-  test('Should normalize status to lowercase', () => {
-    const status = UserStatus.create('ACTIVE')
-    expect(status).toBeInstanceOf(UserStatus)
-    expect((status as UserStatus).value).toBe('active')
+  test('Should normalize to uppercase', () => {
+    const status = UserStatus.create('active') as UserStatus
+    expect(status.value).toBe('ACTIVE')
   })
 
   test('Should return an error if status is invalid', () => {
-    const status = UserStatus.create('invalid_status')
-    expect(status).toBeInstanceOf(Error)
-    expect((status as Error).message).toBe('Invalid User Status')
+    const error = UserStatus.create('invalid_status')
+    expect(error).toBeInstanceOf(Error)
   })
 })

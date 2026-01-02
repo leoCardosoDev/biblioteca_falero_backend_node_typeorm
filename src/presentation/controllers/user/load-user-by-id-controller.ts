@@ -3,6 +3,8 @@ import { HttpRequest, HttpResponse } from '@/presentation/protocols/http'
 import { LoadUserById } from '@/domain/usecases/load-user-by-id'
 import { ok, notFound, serverError } from '@/presentation/helpers/http-helper'
 
+import { NotFoundError } from '@/presentation/errors/not-found-error'
+
 export class LoadUserByIdController implements Controller {
   constructor(private readonly loadUserById: LoadUserById) { }
 
@@ -11,7 +13,7 @@ export class LoadUserByIdController implements Controller {
       const { id } = request.params as { id: string }
       const user = await this.loadUserById.load(id)
       if (!user) {
-        return notFound(new Error('User not found'))
+        return notFound(new NotFoundError('User'))
       }
       const serializedUser = {
         id: user.id.value,
@@ -19,14 +21,16 @@ export class LoadUserByIdController implements Controller {
         email: user.email.value,
         rg: user.rg.value,
         cpf: user.cpf.value,
-        birthDate: user.birthDate.value,
+        gender: user.gender,
+        phone: user.phone,
+        status: user.status.value,
+        version: user.version,
         address: user.address ? {
           street: user.address.street,
           number: user.address.number,
           complement: user.address.complement,
-          neighborhood: user.address.neighborhood,
-          city: user.address.city,
-          state: user.address.state,
+          neighborhoodId: user.address.neighborhoodId,
+          cityId: user.address.cityId,
           zipCode: user.address.zipCode
         } : undefined,
         login: user.login ? {

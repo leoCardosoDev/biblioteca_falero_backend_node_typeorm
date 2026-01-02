@@ -6,10 +6,12 @@ import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
-import { BirthDate } from '@/domain/value-objects/birth-date'
+// removed BirthDate import
 import { Address } from '@/domain/value-objects/address'
 import { notFound } from '@/presentation/helpers/http-helper'
 import { NotFoundError } from '@/domain/errors'
+import { MissingParamError, ServerError } from '@/presentation/errors'
+import { UserStatus } from '@/domain/value-objects/user-status'
 
 const makeFakeUser = (): UserModel => ({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
@@ -17,7 +19,9 @@ const makeFakeUser = (): UserModel => ({
   email: Email.create('any_email@mail.com'),
   rg: Rg.create('123456789') as Rg,
   cpf: Cpf.create('529.982.247-25'),
-  birthDate: BirthDate.create('1990-01-15') as BirthDate
+  gender: 'male',
+  status: UserStatus.create('ACTIVE') as UserStatus,
+  version: 1
 })
 
 const makeUpdateUser = (): UpdateUser => {
@@ -44,13 +48,21 @@ const makeSut = (): SutTypes => {
 }
 
 describe('UpdateUser Controller', () => {
+  beforeAll(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-01-01'))
+  })
+
+  afterAll(() => {
+    jest.useRealTimers()
+  })
+
   test('Should return 400 if no id is provided', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle({
       body: { name: 'any_name' }
     }) as { statusCode: number; body: { error: { code: string } } }
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body.error.code).toBe('MISSING_PARAM')
+    expect(httpResponse.body).toEqual(new MissingParamError('id'))
   })
 
   test('Should call UpdateUser with correct values', async () => {
@@ -63,13 +75,11 @@ describe('UpdateUser Controller', () => {
         email: 'updated_email@mail.com',
         rg: '987654321', // Valid Rg
         cpf: '714.287.938-60', // Valid CPF
-        birthDate: '1985-05-20', // Valid BirthDate
         address: { // Valid Address
           street: 'updated_street',
           number: '456',
-          neighborhood: 'updated_neighborhood',
-          city: 'updated_city',
-          state: 'RJ',
+          neighborhoodId: 'updated_neighborhood',
+          cityId: 'updated_city',
           zipCode: '87654321'
         }
       }
@@ -81,16 +91,27 @@ describe('UpdateUser Controller', () => {
       email: Email.create('updated_email@mail.com'),
       rg: Rg.create('987654321'),
       cpf: Cpf.create('714.287.938-60'),
-      birthDate: BirthDate.create('1985-05-20'),
       address: Address.create({
         street: 'updated_street',
         number: '456',
-        neighborhood: 'updated_neighborhood',
-        city: 'updated_city',
-        state: 'RJ',
+        neighborhoodId: 'updated_neighborhood',
+        cityId: 'updated_city',
         zipCode: '87654321'
       })
     })
+  })
+
+  test('Should call UpdateUser with gender and phone', async () => {
+    const { sut, updateUserStub } = makeSut()
+    const updateSpy = jest.spyOn(updateUserStub, 'update')
+    await sut.handle({
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { gender: 'female', phone: '11999999999' }
+    })
+    expect(updateSpy).toHaveBeenCalledWith(expect.objectContaining({
+      gender: 'female',
+      phone: '11999999999'
+    }))
   })
 
   test('Should return 200 on success', async () => {
@@ -107,7 +128,9 @@ describe('UpdateUser Controller', () => {
       email: 'any_email@mail.com',
       rg: '123456789',
       cpf: '52998224725',
-      birthDate: '1990-01-15'
+      gender: 'male',
+      status: 'ACTIVE',
+      version: 1
     })
   })
 
@@ -120,7 +143,7 @@ describe('UpdateUser Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest) as { statusCode: number; body: { error: { code: string } } }
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body.error.code).toBe('INTERNAL_ERROR')
+    expect(httpResponse.body).toBeInstanceOf(ServerError)
   })
 
   test('Should return 400 if id is invalid', async () => {
@@ -179,14 +202,7 @@ describe('UpdateUser Controller', () => {
     expect(httpResponse.statusCode).toBe(400)
   })
 
-  test('Should return 400 if birthDate is invalid', async () => {
-    const { sut } = makeSut()
-    const httpResponse = await sut.handle({
-      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
-      body: { birthDate: '2099-01-01' }
-    })
-    expect(httpResponse.statusCode).toBe(400)
-  })
+  // removed test('Should return 400 if birthDate is invalid')
 
   test('Should return 400 if address is invalid', async () => {
     const { sut } = makeSut()
@@ -196,9 +212,8 @@ describe('UpdateUser Controller', () => {
         address: {
           street: '',
           number: '',
-          neighborhood: '',
-          city: '',
-          state: '',
+          neighborhoodId: '',
+          cityId: '',
           zipCode: ''
         }
       }
@@ -213,9 +228,8 @@ describe('UpdateUser Controller', () => {
       address: Address.create({
         street: 'updated_street',
         number: '456',
-        neighborhood: 'updated_neighborhood',
-        city: 'updated_city',
-        state: 'RJ',
+        neighborhoodId: 'updated_neighborhood',
+        cityId: 'updated_city',
         zipCode: '87654321'
       }) as Address
     }
@@ -230,9 +244,8 @@ describe('UpdateUser Controller', () => {
       street: 'updated_street',
       number: '456',
       complement: undefined,
-      neighborhood: 'updated_neighborhood',
-      city: 'updated_city',
-      state: 'RJ',
+      neighborhoodId: 'updated_neighborhood',
+      cityId: 'updated_city',
       zipCode: '87654321'
     })
   })

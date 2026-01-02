@@ -7,9 +7,6 @@ moduleAlias.addAlias('@', path.resolve(baseDir));
 import 'reflect-metadata';
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import env from '@/main/config/env'
-import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
-import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
-import { SessionTypeOrmEntity } from '@/infra/db/typeorm/entities/session-entity'
 
 TypeOrmHelper.connect({
   type: 'mysql',
@@ -18,7 +15,7 @@ TypeOrmHelper.connect({
   username: env.mysqlUser,
   password: env.mysqlPassword,
   database: env.mysqlDb,
-  entities: [UserTypeOrmEntity, LoginTypeOrmEntity, SessionTypeOrmEntity],
+  entities: [path.join(__dirname, '../infra/db/typeorm/entities/*.{ts,js}')],
   synchronize: true
 })
   .then(async () => {

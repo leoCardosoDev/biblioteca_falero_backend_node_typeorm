@@ -3,8 +3,9 @@ import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
-import { BirthDate } from '@/domain/value-objects/birth-date'
 import { Address } from '@/domain/value-objects/address'
+import { UserStatus } from '@/domain/value-objects/user-status'
+import { UserRole } from '@/domain/value-objects/user-role'
 
 export interface UserModel {
   id: Id
@@ -12,6 +13,14 @@ export interface UserModel {
   email: Email
   rg: Rg
   cpf: Cpf
-  birthDate: BirthDate
+  gender: string
+  version: number
+  phone?: string
   address?: Address
+  status: UserStatus
+  deletedAt?: Date
+  login?: {
+    role: UserRole
+    status: UserStatus
+  }
 }

@@ -1,8 +1,24 @@
 import { DbCreateUserLogin } from '@/application/usecases/db-create-user-login'
-import { CreateUserLoginRepository } from '@/application/protocols/db/create-user-login-repository'
 import { Hasher } from '@/application/protocols/cryptography/hasher'
+import { AddLoginRepository } from '@/application/protocols/db/add-login-repository'
+import { LoadRoleBySlugRepository } from '@/application/protocols/db/load-role-by-slug-repository'
 import { CreateUserLoginParams } from '@/domain/usecases/create-user-login'
-import { LoginModel } from '@/domain/models/login'
+import { Login } from '@/domain/models/login'
+import { Id } from '@/domain/value-objects/id'
+import { UserRole } from '@/domain/value-objects/user-role'
+import { UserStatus } from '@/domain/value-objects/user-status'
+import { Email } from '@/domain/value-objects/email'
+
+import { Role } from '@/domain/models/role'
+import { LoadUserByIdRepository } from '@/application/protocols/db/load-user-by-id-repository'
+import { UserWithLogin } from '@/domain/usecases/load-users'
+import { Name } from '@/domain/value-objects/name'
+import { Cpf } from '@/domain/value-objects/cpf'
+import { Rg } from '@/domain/value-objects/rg'
+
+const validLoginId = '550e8400-e29b-41d4-a716-446655440000'
+const validUserId = '550e8400-e29b-41d4-a716-446655440001'
+const validRoleId = '550e8400-e29b-41d4-a716-446655440002'
 
 const makeHasher = (): Hasher => {
   class HasherStub implements Hasher {
@@ -13,99 +29,150 @@ const makeHasher = (): Hasher => {
   return new HasherStub()
 }
 
-const makeCreateUserLoginRepository = (): CreateUserLoginRepository => {
-  class CreateUserLoginRepositoryStub implements CreateUserLoginRepository {
-    async create(_data: CreateUserLoginParams): Promise<LoginModel> {
+const makeAddLoginRepository = (): AddLoginRepository => {
+  class AddLoginRepositoryStub implements AddLoginRepository {
+    async add(_data: Omit<CreateUserLoginParams, 'role'> & { passwordHash: string, roleId: Id }): Promise<Login> {
+      return Promise.resolve(Login.create({
+        id: Id.create(validLoginId),
+        userId: Id.create(validUserId),
+        roleId: Id.create(validRoleId),
+        email: Email.create('any_email@mail.com') as Email,
+        passwordHash: 'hashed_password',
+        isActive: true
+      }))
+    }
+  }
+  return new AddLoginRepositoryStub()
+}
+
+const makeLoadRoleBySlugRepository = (): LoadRoleBySlugRepository => {
+  class LoadRoleBySlugRepositoryStub implements LoadRoleBySlugRepository {
+    async loadBySlug(_slug: string): Promise<Role | null> {
+      return Promise.resolve(Role.create({
+        id: Id.create(validRoleId),
+        slug: 'ADMIN',
+        description: 'Administrator'
+      }))
+    }
+  }
+  return new LoadRoleBySlugRepositoryStub()
+}
+
+const makeLoadUserByIdRepository = (): LoadUserByIdRepository => {
+  class LoadUserByIdRepositoryStub implements LoadUserByIdRepository {
+    async loadById(_id: string): Promise<UserWithLogin | null> {
       return Promise.resolve({
-        id: 'any_id',
-        userId: 'any_user_id',
-        password: 'hashed_password',
-        role: 'any_role',
-        accessToken: 'any_token'
+        id: Id.create(validUserId),
+        name: Name.create('Any Name') as Name,
+        email: Email.create('any_email@mail.com') as Email,
+        rg: Rg.create('123456789') as Rg,
+        cpf: Cpf.create('12345678909') as Cpf,
+        gender: 'male',
+        status: UserStatus.create('ACTIVE') as UserStatus,
+        version: 1
       })
     }
   }
-  return new CreateUserLoginRepositoryStub()
+  return new LoadUserByIdRepositoryStub()
 }
 
 interface SutTypes {
   sut: DbCreateUserLogin
   hasherStub: Hasher
-  createUserLoginRepositoryStub: CreateUserLoginRepository
+  addLoginRepositoryStub: AddLoginRepository
+  loadRoleBySlugRepositoryStub: LoadRoleBySlugRepository
+  loadUserByIdRepositoryStub: LoadUserByIdRepository
 }
 
 const makeSut = (): SutTypes => {
   const hasherStub = makeHasher()
-  const createUserLoginRepositoryStub = makeCreateUserLoginRepository()
-  const sut = new DbCreateUserLogin(hasherStub, createUserLoginRepositoryStub)
+  const addLoginRepositoryStub = makeAddLoginRepository()
+  const loadRoleBySlugRepositoryStub = makeLoadRoleBySlugRepository()
+  const loadUserByIdRepositoryStub = makeLoadUserByIdRepository()
+  const sut = new DbCreateUserLogin(hasherStub, addLoginRepositoryStub, loadRoleBySlugRepositoryStub, loadUserByIdRepositoryStub)
   return {
     sut,
     hasherStub,
-    createUserLoginRepositoryStub
+    addLoginRepositoryStub,
+    loadRoleBySlugRepositoryStub,
+    loadUserByIdRepositoryStub
   }
 }
 
 describe('DbCreateUserLogin UseCase', () => {
+  const fakeLoginData: CreateUserLoginParams = {
+    userId: Id.create(validUserId),
+    password: 'any_password',
+    role: UserRole.create('ADMIN') as UserRole,
+    status: UserStatus.create('active') as UserStatus
+  }
+
   test('Should call Hasher with correct password', async () => {
     const { sut, hasherStub } = makeSut()
     const hashSpy = jest.spyOn(hasherStub, 'hash')
-    const loginData = {
-      password: 'valid_password',
-      userId: 'valid_user_id'
-    }
-    await sut.create(loginData)
-    expect(hashSpy).toHaveBeenCalledWith('valid_password')
+    await sut.create(fakeLoginData)
+    expect(hashSpy).toHaveBeenCalledWith('any_password')
   })
 
   test('Should throw if Hasher throws', async () => {
     const { sut, hasherStub } = makeSut()
     jest.spyOn(hasherStub, 'hash').mockReturnValueOnce(Promise.reject(new Error()))
-    const loginData = {
-      password: 'valid_password',
-      userId: 'valid_user_id'
-    }
-    const promise = sut.create(loginData)
+    const promise = sut.create(fakeLoginData)
     await expect(promise).rejects.toThrow()
   })
 
-  test('Should call CreateUserLoginRepository with correct values', async () => {
-    const { sut, createUserLoginRepositoryStub } = makeSut()
-    const createSpy = jest.spyOn(createUserLoginRepositoryStub, 'create')
-    const loginData = {
-      password: 'valid_password',
-      userId: 'valid_user_id'
-    }
-    await sut.create(loginData)
-    expect(createSpy).toHaveBeenCalledWith({
-      password: 'hashed_password',
-      userId: 'valid_user_id'
+  test('Should call LoadUserByIdRepository with correct id', async () => {
+    const { sut, loadUserByIdRepositoryStub } = makeSut()
+    const loadSpy = jest.spyOn(loadUserByIdRepositoryStub, 'loadById')
+    await sut.create(fakeLoginData)
+    expect(loadSpy).toHaveBeenCalledWith(validUserId)
+  })
+
+  test('Should throw if LoadUserByIdRepository returns null', async () => {
+    const { sut, loadUserByIdRepositoryStub } = makeSut()
+    jest.spyOn(loadUserByIdRepositoryStub, 'loadById').mockResolvedValueOnce(null)
+    const promise = sut.create(fakeLoginData)
+    await expect(promise).rejects.toThrow(`User ${validUserId} not found`)
+  })
+
+  test('Should call LoadRoleBySlugRepository with correct slug', async () => {
+    const { sut, loadRoleBySlugRepositoryStub } = makeSut()
+    const loadSpy = jest.spyOn(loadRoleBySlugRepositoryStub, 'loadBySlug')
+    await sut.create(fakeLoginData)
+    expect(loadSpy).toHaveBeenCalledWith('ADMIN')
+  })
+
+  test('Should throw if LoadRoleBySlugRepository returns null (Role not found)', async () => {
+    const { sut, loadRoleBySlugRepositoryStub } = makeSut()
+    jest.spyOn(loadRoleBySlugRepositoryStub, 'loadBySlug').mockResolvedValueOnce(null)
+    const promise = sut.create(fakeLoginData)
+    await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call AddLoginRepository with correct values', async () => {
+    const { sut, addLoginRepositoryStub } = makeSut()
+    const addSpy = jest.spyOn(addLoginRepositoryStub, 'add')
+    await sut.create(fakeLoginData)
+    const { role: _, ...expectedData } = fakeLoginData
+    expect(addSpy).toHaveBeenCalledWith({
+      ...expectedData,
+      email: Email.create('any_email@mail.com'), // Email comes from user repository
+      passwordHash: 'hashed_password',
+      roleId: Id.create(validRoleId)
     })
   })
 
-  test('Should throw if CreateUserLoginRepository throws', async () => {
-    const { sut, createUserLoginRepositoryStub } = makeSut()
-    jest.spyOn(createUserLoginRepositoryStub, 'create').mockReturnValueOnce(Promise.reject(new Error()))
-    const loginData = {
-      password: 'valid_password',
-      userId: 'valid_user_id'
-    }
-    const promise = sut.create(loginData)
+  test('Should throw if AddLoginRepository throws', async () => {
+    const { sut, addLoginRepositoryStub } = makeSut()
+    jest.spyOn(addLoginRepositoryStub, 'add').mockReturnValueOnce(Promise.reject(new Error()))
+    const promise = sut.create(fakeLoginData)
     await expect(promise).rejects.toThrow()
   })
 
   test('Should return a Login on success', async () => {
     const { sut } = makeSut()
-    const loginData = {
-      password: 'valid_password',
-      userId: 'valid_user_id'
-    }
-    const login = await sut.create(loginData)
-    expect(login).toEqual({
-      id: 'any_id',
-      userId: 'any_user_id',
-      password: 'hashed_password',
-      role: 'any_role',
-      accessToken: 'any_token'
-    })
+    const login = await sut.create(fakeLoginData)
+    expect(login).toBeTruthy()
+    expect(login.roleId.value).toBe(validRoleId)
   })
 })

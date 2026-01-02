@@ -3,16 +3,18 @@ import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
-import { BirthDate } from '@/domain/value-objects/birth-date'
 import { Address } from '@/domain/value-objects/address'
+import { UserStatus } from '@/domain/value-objects/user-status'
 
 export interface AddUserParams {
   name: Name
   email: Email
   rg: Rg
   cpf: Cpf
-  birthDate: BirthDate
+  gender: string
+  phone?: string
   address?: Address
+  status: UserStatus
 }
 
 export interface AddUser {

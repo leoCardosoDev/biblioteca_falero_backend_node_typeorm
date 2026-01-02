@@ -9,7 +9,6 @@ import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
-import { BirthDate } from '@/domain/value-objects/birth-date'
 import { Address, AddressProps } from '@/domain/value-objects/address'
 
 export class UpdateUserController implements Controller {
@@ -56,10 +55,11 @@ export class UpdateUserController implements Controller {
           return badRequest(e as Error)
         }
       }
-      if (body?.birthDate) {
-        const birthDateVO = BirthDate.create(body.birthDate as string)
-        if (birthDateVO instanceof Error) return badRequest(birthDateVO)
-        updateData.birthDate = birthDateVO
+      if (body?.gender) {
+        updateData.gender = body.gender as string
+      }
+      if (body?.phone) {
+        updateData.phone = body.phone as string
       }
       if (body?.address) {
         const addressVO = Address.create(body.address as AddressProps)
@@ -77,14 +77,16 @@ export class UpdateUserController implements Controller {
         email: user.email.value,
         rg: user.rg.value,
         cpf: user.cpf.value,
-        birthDate: user.birthDate.value,
+        gender: user.gender,
+        phone: user.phone,
+        status: user.status.value,
+        version: user.version,
         address: user.address ? {
           street: user.address.street,
           number: user.address.number,
           complement: user.address.complement,
-          neighborhood: user.address.neighborhood,
-          city: user.address.city,
-          state: user.address.state,
+          neighborhoodId: user.address.neighborhoodId,
+          cityId: user.address.cityId,
           zipCode: user.address.zipCode
         } : undefined
       })

@@ -5,8 +5,9 @@ import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
-import { BirthDate } from '@/domain/value-objects/birth-date'
 import { Address, AddressProps } from '@/domain/value-objects/address'
+import { UserStatus } from '@/domain/value-objects/user-status'
+import { InvalidParamError } from '@/presentation/errors'
 
 export class AddUserController implements Controller {
   constructor(
@@ -20,52 +21,54 @@ export class AddUserController implements Controller {
       if (error) {
         return badRequest(error)
       }
-      const { name, email, rg, cpf, birthDate, address } = httpRequest.body as {
+      const { name, email, rg, cpf, gender, phone, address } = httpRequest.body as {
         name: string
         email: string
         rg: string
         cpf: string
-        birthDate: string
+        gender: string
+        phone?: string
         address?: AddressProps
       }
 
       const nameVO = Name.create(name)
-      if (nameVO instanceof Error) return badRequest(nameVO)
+      if (nameVO instanceof Error) return badRequest(new InvalidParamError('name'))
 
       let emailVO: Email
       try {
         emailVO = Email.create(email)
-      } catch (e) {
-        return badRequest(e as Error)
+      } catch (_error) {
+        return badRequest(new InvalidParamError('email'))
       }
 
       const rgVO = Rg.create(rg)
-      if (rgVO instanceof Error) return badRequest(rgVO)
+      if (rgVO instanceof Error) return badRequest(new InvalidParamError('rg'))
 
       let cpfVO: Cpf
       try {
         cpfVO = Cpf.create(cpf)
-      } catch (e) {
-        return badRequest(e as Error)
+      } catch (_error) {
+        return badRequest(new InvalidParamError('cpf'))
       }
-
-      const birthDateVO = BirthDate.create(birthDate)
-      if (birthDateVO instanceof Error) return badRequest(birthDateVO)
 
       let addressVO: Address | undefined
       if (address) {
         const addressResult = Address.create(address)
-        if (addressResult instanceof Error) return badRequest(addressResult)
+        if (addressResult instanceof Error) return badRequest(new InvalidParamError('address'))
         addressVO = addressResult
       }
+
+      const statusVO = UserStatus.create('ACTIVE') as UserStatus
 
       const userOrError = await this.addUser.add({
         name: nameVO,
         email: emailVO,
-        rg: rgVO,
+        rg: rgVO as Rg,
         cpf: cpfVO,
-        birthDate: birthDateVO,
-        address: addressVO
+        gender,
+        phone,
+        address: addressVO,
+        status: statusVO
       })
       if (userOrError instanceof Error) {
         return forbidden(userOrError)
@@ -76,14 +79,15 @@ export class AddUserController implements Controller {
         email: userOrError.email.value,
         rg: userOrError.rg.value,
         cpf: userOrError.cpf.value,
-        birthDate: userOrError.birthDate.value,
+        gender: userOrError.gender,
+        phone: userOrError.phone,
+        status: userOrError.status.value,
         address: userOrError.address ? {
           street: userOrError.address.street,
           number: userOrError.address.number,
           complement: userOrError.address.complement,
-          neighborhood: userOrError.address.neighborhood,
-          city: userOrError.address.city,
-          state: userOrError.address.state,
+          neighborhoodId: userOrError.address.neighborhoodId,
+          cityId: userOrError.address.cityId,
           zipCode: userOrError.address.zipCode
         } : undefined
       })

@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 
-import { Role } from '@/domain/models'
-import { JwtAdapter } from './jwt-adapter'
+
+import { JwtAdapter } from '@/infra/cryptography/jwt-adapter'
 
 jest.mock('jsonwebtoken', () => ({
   sign(): string {
@@ -21,13 +21,13 @@ describe('Jwt Adapter', () => {
     test('Should call sign with correct values', async () => {
       const sut = makeSut()
       const signSpy = jest.spyOn(jwt, 'sign')
-      await sut.encrypt({ id: 'any_id', role: Role.ADMIN })
+      await sut.encrypt({ id: 'any_id', role: 'ADMIN' })
       expect(signSpy).toHaveBeenCalledWith({ id: 'any_id', role: 'ADMIN' }, 'secret')
     })
 
     test('Should return a token on sign success', async () => {
       const sut = makeSut()
-      const accessToken = await sut.encrypt({ id: 'any_id', role: Role.ADMIN })
+      const accessToken = await sut.encrypt({ id: 'any_id', role: 'ADMIN' })
       expect(accessToken).toBe('any_token')
     })
 
@@ -36,7 +36,7 @@ describe('Jwt Adapter', () => {
       jest.spyOn(jwt, 'sign').mockImplementationOnce(() => {
         throw new Error()
       })
-      const promise = sut.encrypt({ id: 'any_id', role: Role.ADMIN })
+      const promise = sut.encrypt({ id: 'any_id', role: 'ADMIN' })
       await expect(promise).rejects.toThrow()
     })
   })
@@ -52,7 +52,7 @@ describe('Jwt Adapter', () => {
     test('Should return TokenPayload on verify success', async () => {
       const sut = makeSut()
       const value = await sut.decrypt('any_token')
-      expect(value).toEqual({ id: 'any_value', role: Role.MEMBER })
+      expect(value).toEqual({ id: 'any_value', role: 'MEMBER' })
     })
 
     test('Should return undefined if decoded id is missing', async () => {
@@ -66,7 +66,7 @@ describe('Jwt Adapter', () => {
       const sut = makeSut()
       jest.spyOn(jwt, 'verify').mockImplementationOnce(() => ({ id: 'any_id' }))
       const value = await sut.decrypt('any_token')
-      expect(value).toEqual({ id: 'any_id', role: Role.MEMBER })
+      expect(value).toEqual({ id: 'any_id', role: 'MEMBER' })
     })
 
     test('Should throw if verify throws', async () => {

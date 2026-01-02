@@ -6,17 +6,21 @@ import { JwtAdapter } from '@/infra/cryptography/jwt-adapter'
 import { Sha256Adapter } from '@/infra/cryptography/sha256-adapter'
 import { Authentication } from '@/domain/usecases/authentication'
 
+import { RoleTypeOrmRepository } from '@/infra/db/typeorm/role-repository'
+
 export const makeDbAuthentication = (): Authentication => {
   const salt = 12
   const bcryptAdapter = new BcryptAdapter(salt)
   const sha256Adapter = new Sha256Adapter()
   const jwtAdapter = new JwtAdapter(process.env.JWT_SECRET ?? 'secret')
   const loginRepository = new LoginTypeOrmRepository()
+  const roleTypeOrmRepository = new RoleTypeOrmRepository()
   const sessionRepository = new SessionTypeOrmRepository()
   const refreshTokenExpirationDays = parseInt(process.env.REFRESH_TOKEN_EXPIRATION_DAYS ?? '7', 10)
 
   return new DbAuthentication(
     loginRepository,
+    roleTypeOrmRepository,
     bcryptAdapter,
     jwtAdapter,
     loginRepository,

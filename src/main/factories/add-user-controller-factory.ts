@@ -3,9 +3,11 @@ import { Controller } from '@/presentation/protocols'
 import { makeAddUserValidation } from './add-user-validation-factory'
 import { DbAddUser } from '@/application/usecases/db-add-user'
 import { UserTypeOrmRepository } from '@/infra/db/typeorm/user-repository'
+import { DomainEventTypeOrmRepository } from '@/infra/db/typeorm/domain-event-repository'
 
 export const makeAddUserController = (): Controller => {
   const userTypeOrmRepository = new UserTypeOrmRepository()
-  const dbAddUser = new DbAddUser(userTypeOrmRepository, userTypeOrmRepository, userTypeOrmRepository)
+  const domainEventRepository = new DomainEventTypeOrmRepository()
+  const dbAddUser = new DbAddUser(userTypeOrmRepository, userTypeOrmRepository, userTypeOrmRepository, domainEventRepository)
   return new AddUserController(makeAddUserValidation(), dbAddUser)
 }

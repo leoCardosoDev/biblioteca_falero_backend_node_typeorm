@@ -1,6 +1,12 @@
 import { InvalidUserStatusError } from '../errors'
 
-export type UserStatusTypes = 'active' | 'inactive'
+export enum UserStatusEnum {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  BLOCKED = 'BLOCKED'
+}
+
+export type UserStatusTypes = 'ACTIVE' | 'INACTIVE' | 'BLOCKED'
 
 export class UserStatus {
   private readonly status: UserStatusTypes
@@ -14,15 +20,14 @@ export class UserStatus {
   }
 
   static create(status: string): UserStatus | Error {
-    const normalizedStatus = status.toLowerCase()
+    const normalizedStatus = status.toUpperCase()
     if (!UserStatus.validate(normalizedStatus)) {
       return new InvalidUserStatusError()
     }
     return new UserStatus(normalizedStatus as UserStatusTypes)
   }
 
-  private static validate(status: string): boolean {
-    const validStatuses = ['active', 'inactive']
-    return validStatuses.includes(status)
+  static validate(status: string): boolean {
+    return Object.values(UserStatusEnum).includes(status as UserStatusEnum)
   }
 }

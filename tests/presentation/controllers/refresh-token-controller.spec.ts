@@ -2,7 +2,7 @@ import { RefreshTokenController } from '@/presentation/controllers/login/refresh
 import { RefreshToken, RefreshTokenParams, RefreshTokenResult } from '@/domain/usecases/refresh-token'
 import { Validation } from '@/presentation/protocols/validation'
 import { HttpRequest } from '@/presentation/protocols/http'
-import { MissingParamError } from '@/presentation/errors'
+import { MissingParamError, ServerError, UnauthorizedError } from '@/presentation/errors'
 
 const makeRefreshToken = (): RefreshToken => {
   class RefreshTokenStub implements RefreshToken {
@@ -68,7 +68,7 @@ describe('RefreshToken Controller', () => {
     jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new MissingParamError('refreshToken'))
     const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body.error.code).toBe('MISSING_PARAM')
+    expect(httpResponse.body).toEqual(new MissingParamError('refreshToken'))
   })
 
   test('Should call RefreshToken with correct values', async () => {
@@ -87,7 +87,7 @@ describe('RefreshToken Controller', () => {
     jest.spyOn(refreshTokenStub, 'refresh').mockResolvedValueOnce(null)
     const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
     expect(httpResponse.statusCode).toBe(401)
-    expect(httpResponse.body.error.code).toBe('UNAUTHORIZED')
+    expect(httpResponse.body).toEqual(new UnauthorizedError())
   })
 
   test('Should return 200 with new tokens on success', async () => {
@@ -107,7 +107,7 @@ describe('RefreshToken Controller', () => {
     jest.spyOn(refreshTokenStub, 'refresh').mockRejectedValueOnce(new Error())
     const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body.error.code).toBe('INTERNAL_ERROR')
+    expect(httpResponse.body).toBeInstanceOf(ServerError)
   })
 
   test('Should return 500 if Validation throws', async () => {
@@ -117,7 +117,7 @@ describe('RefreshToken Controller', () => {
     })
     const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body.error.code).toBe('INTERNAL_ERROR')
+    expect(httpResponse.body).toBeInstanceOf(ServerError)
   })
 
   test('Should use ip from request if x-forwarded-for header is not present', async () => {

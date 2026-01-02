@@ -1,5 +1,5 @@
 import crypto, { Hash } from 'crypto'
-import { Sha256Adapter } from './sha256-adapter'
+import { Sha256Adapter } from '@/infra/cryptography/sha256-adapter'
 
 jest.mock('crypto', () => ({
   createHash: jest.fn().mockReturnThis(),

@@ -7,10 +7,11 @@ import { Name } from '@/domain/value-objects/name'
 import { Email } from '@/domain/value-objects/email'
 import { Rg } from '@/domain/value-objects/rg'
 import { Cpf } from '@/domain/value-objects/cpf'
-import { BirthDate } from '@/domain/value-objects/birth-date'
+// removed BirthDate import
 import { UserRole } from '@/domain/value-objects/user-role'
 import { UserStatus } from '@/domain/value-objects/user-status'
 import { UserWithLogin } from '@/domain/usecases/load-users'
+import { NotFoundError } from '@/presentation/errors/not-found-error'
 
 const makeFakeUser = (): UserModel => ({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
@@ -18,7 +19,9 @@ const makeFakeUser = (): UserModel => ({
   email: Email.create('any_email@mail.com'),
   rg: Rg.create('123456789') as Rg,
   cpf: Cpf.create('529.982.247-25'),
-  birthDate: BirthDate.create('1990-01-15') as BirthDate
+  gender: 'male',
+  status: UserStatus.create('ACTIVE') as UserStatus,
+  version: 1
 })
 
 const fakeUserById = makeFakeUser()
@@ -69,12 +72,8 @@ describe('LoadUserById Controller', () => {
     jest.spyOn(loadUserByIdStub, 'load').mockResolvedValueOnce(null)
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse.statusCode).toBe(404)
-    expect(httpResponse.body).toEqual(expect.objectContaining({
-      error: expect.objectContaining({
-        code: 'NOT_FOUND',
-        message: 'Resource not found'
-      })
-    }))
+    expect(httpResponse.body).toBeInstanceOf(NotFoundError)
+    expect((httpResponse.body as Error).message).toBe('User not found')
   })
 
   test('Should return 200 on success', async () => {
@@ -87,7 +86,10 @@ describe('LoadUserById Controller', () => {
       email: 'any_email@mail.com',
       rg: '123456789',
       cpf: '52998224725',
-      birthDate: '1990-01-15',
+      gender: 'male',
+      phone: undefined,
+      status: 'ACTIVE',
+      version: 1,
       address: undefined,
       login: null
     })
@@ -101,9 +103,8 @@ describe('LoadUserById Controller', () => {
         street: 'any_street',
         number: 'any_number',
         complement: 'any_complement',
-        neighborhood: 'any_neighborhood',
-        city: 'any_city',
-        state: 'any_state',
+        neighborhoodId: 'any_neighborhood',
+        cityId: 'any_city',
         zipCode: 'any_zipCode'
       }
     }
@@ -116,14 +117,16 @@ describe('LoadUserById Controller', () => {
       email: 'any_email@mail.com',
       rg: '123456789',
       cpf: '52998224725',
-      birthDate: '1990-01-15',
+      gender: 'male',
+      phone: undefined,
+      status: 'ACTIVE',
+      version: 1,
       address: {
         street: 'any_street',
         number: 'any_number',
         complement: 'any_complement',
-        neighborhood: 'any_neighborhood',
-        city: 'any_city',
-        state: 'any_state',
+        neighborhoodId: 'any_neighborhood',
+        cityId: 'any_city',
         zipCode: 'any_zipCode'
       },
       login: null
@@ -135,9 +138,6 @@ describe('LoadUserById Controller', () => {
     const userWithLogin: UserWithLogin = {
       ...makeFakeUser(),
       login: {
-        id: Id.create('550e8400-e29b-41d4-a716-446655440001') as Id,
-        userId: Id.create('550e8400-e29b-41d4-a716-446655440000') as Id,
-        password: 'any_password',
         role: UserRole.create('LIBRARIAN') as UserRole,
         status: UserStatus.create('active') as UserStatus
       }
@@ -151,11 +151,14 @@ describe('LoadUserById Controller', () => {
       email: 'any_email@mail.com',
       rg: '123456789',
       cpf: '52998224725',
-      birthDate: '1990-01-15',
+      gender: 'male',
+      phone: undefined,
+      status: 'ACTIVE',
+      version: 1,
       address: undefined,
       login: {
         role: 'LIBRARIAN',
-        status: 'active'
+        status: 'ACTIVE'
       }
     })
   })
@@ -166,11 +169,7 @@ describe('LoadUserById Controller', () => {
     jest.spyOn(loadUserByIdStub, 'load').mockRejectedValueOnce(error)
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(expect.objectContaining({
-      error: expect.objectContaining({
-        code: 'INTERNAL_ERROR'
-      })
-    }))
+    expect((httpResponse.body as Error).name).toBe('ServerError')
   })
 })
 

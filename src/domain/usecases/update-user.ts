@@ -4,7 +4,6 @@ import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
-import { BirthDate } from '@/domain/value-objects/birth-date'
 import { Address } from '@/domain/value-objects/address'
 
 export type UpdateUserParams = {
@@ -13,8 +12,10 @@ export type UpdateUserParams = {
   email?: Email
   rg?: Rg
   cpf?: Cpf
-  birthDate?: BirthDate
+  gender?: string
+  phone?: string
   address?: Address
+  version?: number
 }
 
 export interface UpdateUser {

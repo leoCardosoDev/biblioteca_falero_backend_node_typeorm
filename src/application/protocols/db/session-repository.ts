@@ -1,5 +1,5 @@
-import { UserSessionModel, UserId } from '@/domain/models'
-import { SessionId } from '@/domain/models/ids'
+import { UserSessionModel } from '@/domain/models'
+import { Id } from '@/domain/value-objects/id'
 
 export interface LoadSessionByTokenRepository {
   loadByToken: (tokenHash: string) => Promise<UserSessionModel | null>
@@ -10,11 +10,9 @@ export interface SaveSessionRepository {
 }
 
 export interface InvalidateSessionRepository {
-  invalidate: (sessionId: SessionId) => Promise<void>
+  invalidate: (sessionId: string) => Promise<void>
 }
 
-
-
 export interface LoadUserBySessionRepository {
-  loadUserBySessionId: (sessionId: SessionId) => Promise<{ id: UserId; name: string; role: string } | null>
+  loadUserBySessionId: (sessionId: string) => Promise<{ id: Id; name: string; role: string } | null>
 }

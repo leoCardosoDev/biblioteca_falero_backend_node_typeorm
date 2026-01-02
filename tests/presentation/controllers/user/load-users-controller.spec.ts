@@ -1,36 +1,40 @@
 import { LoadUsersController } from '@/presentation/controllers/user/load-users-controller'
-import { LoadUsers } from '@/domain/usecases/load-users'
-import { UserModel } from '@/domain/models/user'
+import { LoadUsers, UserWithLogin } from '@/domain/usecases/load-users'
 import { serverError } from '@/presentation/helpers/http-helper'
 import { Id } from '@/domain/value-objects/id'
 import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
-import { BirthDate } from '@/domain/value-objects/birth-date'
 import { Address } from '@/domain/value-objects/address'
+import { UserRole } from '@/domain/value-objects/user-role'
+import { UserStatus } from '@/domain/value-objects/user-status'
 
-const makeFakeUsers = (): UserModel[] => {
+const makeFakeUsers = (): UserWithLogin[] => {
   return [{
     id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
     name: Name.create('any_name') as Name,
     email: Email.create('any_email@mail.com'),
     rg: Rg.create('123456789') as Rg,
     cpf: Cpf.create('529.982.247-25'),
-    birthDate: BirthDate.create('1990-01-15') as BirthDate
+    gender: 'male',
+    status: UserStatus.create('ACTIVE') as UserStatus,
+    version: 1
   }, {
     id: Id.create('550e8400-e29b-41d4-a716-446655440001'),
     name: Name.create('other_name') as Name,
     email: Email.create('other_email@mail.com'),
     rg: Rg.create('987654321') as Rg,
     cpf: Cpf.create('71428793860'),
-    birthDate: BirthDate.create('1985-05-20') as BirthDate
+    gender: 'female',
+    status: UserStatus.create('ACTIVE') as UserStatus,
+    version: 1
   }]
 }
 
 const makeLoadUsers = (): LoadUsers => {
   class LoadUsersStub implements LoadUsers {
-    async load(): Promise<UserModel[]> {
+    async load(): Promise<UserWithLogin[]> {
       return await new Promise(resolve => resolve(makeFakeUsers()))
     }
   }
@@ -78,7 +82,11 @@ describe('LoadUsers Controller', () => {
         email: 'any_email@mail.com',
         rg: '123456789',
         cpf: '52998224725',
-        birthDate: '1990-01-15'
+        gender: 'male',
+        phone: undefined,
+        status: 'ACTIVE',
+        version: 1,
+        login: null
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440001',
@@ -86,7 +94,11 @@ describe('LoadUsers Controller', () => {
         email: 'other_email@mail.com',
         rg: '987654321',
         cpf: '71428793860',
-        birthDate: '1985-05-20'
+        gender: 'female',
+        phone: undefined,
+        status: 'ACTIVE',
+        version: 1,
+        login: null
       }
     ])
   })
@@ -100,19 +112,20 @@ describe('LoadUsers Controller', () => {
 
   test('Should serialize user address when present', async () => {
     const { sut, loadUsersStub } = makeSut()
-    const userWithAddress: UserModel = {
+    const userWithAddress: UserWithLogin = {
       id: Id.create('550e8400-e29b-41d4-a716-446655440002'),
       name: Name.create('user_with_address') as Name,
       email: Email.create('address@mail.com'),
       rg: Rg.create('999888777') as Rg,
       cpf: Cpf.create('529.982.247-25'),
-      birthDate: BirthDate.create('1990-01-15') as BirthDate,
+      gender: 'male',
+      status: UserStatus.create('ACTIVE') as UserStatus,
+      version: 1,
       address: Address.create({
         street: 'any_street',
         number: '123',
-        neighborhood: 'any_neighborhood',
-        city: 'any_city',
-        state: 'SP',
+        neighborhoodId: 'any_neighborhood',
+        cityId: 'any_city',
         zipCode: '12345678'
       }) as Address
     }
@@ -123,10 +136,27 @@ describe('LoadUsers Controller', () => {
       street: 'any_street',
       number: '123',
       complement: undefined,
-      neighborhood: 'any_neighborhood',
-      city: 'any_city',
-      state: 'SP',
+      neighborhoodId: 'any_neighborhood',
+      cityId: 'any_city',
       zipCode: '12345678'
+    })
+  })
+
+  test('Should serialize user login when present', async () => {
+    const { sut, loadUsersStub } = makeSut()
+    const userWithLogin: UserWithLogin = {
+      ...makeFakeUsers()[0],
+      login: {
+        role: UserRole.create('ADMIN') as UserRole,
+        status: UserStatus.create('ACTIVE') as UserStatus
+      }
+    }
+    jest.spyOn(loadUsersStub, 'load').mockResolvedValueOnce([userWithLogin])
+    const httpResponse = await sut.handle({})
+    expect(httpResponse.statusCode).toBe(200)
+    expect((httpResponse.body as Array<{ login: unknown }>)[0].login).toEqual({
+      role: 'ADMIN',
+      status: 'ACTIVE'
     })
   })
 })

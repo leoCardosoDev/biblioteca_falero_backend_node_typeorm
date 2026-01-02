@@ -5,10 +5,13 @@ import swaggerUi from '@fastify/swagger-ui'
 import { setupRoutes } from './routes'
 import { setupMiddlewares } from './middlewares'
 import { swaggerConfig } from './swagger'
+import { errorHandler } from './error-handler'
 
 const app = fastify()
+app.setErrorHandler(errorHandler)
 
 const setupSwagger = async (): Promise<void> => {
+
   await app.register(swagger, swaggerConfig)
   await app.register(swaggerUi, {
     routePrefix: '/api-docs',
