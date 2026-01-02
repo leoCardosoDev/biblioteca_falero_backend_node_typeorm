@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index, ManyToOne, JoinColumn } from 'typeorm'
+import { UserTypeOrmEntity } from './user-entity'
+import { RoleTypeOrmEntity } from './role-entity'
 
 @Entity('logins')
 export class LoginTypeOrmEntity {
@@ -8,10 +10,12 @@ export class LoginTypeOrmEntity {
   @Column()
   password!: string
 
+  @Column({ name: 'role_id', nullable: true })
+  roleId?: string
 
-  @Index()
-  @Column({ nullable: true })
-  role?: string
+  @ManyToOne(() => RoleTypeOrmEntity)
+  @JoinColumn({ name: 'role_id' })
+  role?: RoleTypeOrmEntity
 
   @Column({ nullable: true })
   status?: string
@@ -20,8 +24,12 @@ export class LoginTypeOrmEntity {
   accessToken?: string
 
   @Index()
-  @Column()
+  @Column({ name: 'user_id' })
   userId!: string
+
+  @ManyToOne(() => UserTypeOrmEntity)
+  @JoinColumn({ name: 'user_id' })
+  user?: UserTypeOrmEntity
 
   @Column({ type: 'datetime', nullable: true, name: 'deleted_at' })
   deletedAt?: Date

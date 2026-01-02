@@ -1,5 +1,5 @@
 import { Authentication, AuthenticationParams, AuthenticationModel } from '@/domain/usecases/authentication'
-import { Role } from '@/domain/models'
+import { LoadRoleByIdRepository } from '@/application/protocols/db/load-role-by-id-repository'
 import { ExpirationDate } from '@/domain/value-objects/expiration-date'
 import { LoadAccountByEmailRepository } from '@/application/protocols/db/load-account-by-email-repository'
 import { HashComparer } from '@/application/protocols/cryptography/hash-comparer'
@@ -12,6 +12,7 @@ import crypto from 'crypto'
 export class DbAuthentication implements Authentication {
   constructor(
     private readonly loadAccountByEmailRepository: LoadAccountByEmailRepository,
+    private readonly loadRoleByIdRepository: LoadRoleByIdRepository,
     private readonly hashComparer: HashComparer,
     private readonly encrypter: Encrypter,
     private readonly updateAccessTokenRepository: UpdateAccessTokenRepository,
@@ -26,12 +27,17 @@ export class DbAuthentication implements Authentication {
       return undefined
     }
 
-    const isValid = await this.hashComparer.compare(params.password, account.password)
+    const isValid = await this.hashComparer.compare(params.password, account.passwordHash)
     if (!isValid) {
       return undefined
     }
 
-    const role = (account.role?.value as unknown as Role) ?? Role.MEMBER
+    let role = 'MEMBER'
+    const roleEntity = await this.loadRoleByIdRepository.loadById(account.roleId)
+    if (roleEntity) {
+      role = roleEntity.slug
+    }
+
     const accessToken = await this.encrypter.encrypt({ id: account.id.value, role })
     await this.updateAccessTokenRepository.updateAccessToken(account.id.value, accessToken)
 
@@ -49,7 +55,7 @@ export class DbAuthentication implements Authentication {
     return {
       accessToken,
       refreshToken,
-      name: account.name ?? account.userId.value,
+      name: account.email.value,
       role
     }
   }

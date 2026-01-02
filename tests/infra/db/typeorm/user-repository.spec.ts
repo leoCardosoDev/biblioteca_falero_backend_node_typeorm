@@ -3,6 +3,9 @@ import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { UserTypeOrmRepository } from '@/infra/db/typeorm/user-repository'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
 import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
+import { RoleTypeOrmEntity } from '@/infra/db/typeorm/entities/role-entity'
+import { PermissionTypeOrmEntity } from '@/infra/db/typeorm/entities/permission-entity'
+import { DataSource } from 'typeorm'
 import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
@@ -10,17 +13,18 @@ import { Rg } from '@/domain/value-objects/rg'
 import { Address } from '@/domain/value-objects/address'
 import { Id } from '@/domain/value-objects/id'
 import { UserStatus, UserStatusEnum } from '@/domain/value-objects/user-status'
-import { UserRoleTypes } from '@/domain/value-objects/user-role'
 
 describe('UserTypeOrmRepository', () => {
+  let dataSource: DataSource
+
   beforeAll(async () => {
-    await TypeOrmHelper.connect({
+    dataSource = await TypeOrmHelper.connect({
       type: 'better-sqlite3',
       database: ':memory:',
       dropSchema: true,
-      entities: [UserTypeOrmEntity, LoginTypeOrmEntity],
+      entities: [UserTypeOrmEntity, LoginTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity],
       synchronize: true,
-      logging: true
+      logging: false
     })
   })
 
@@ -31,8 +35,14 @@ describe('UserTypeOrmRepository', () => {
   beforeEach(async () => {
     jest.useFakeTimers()
     jest.setSystemTime(new Date('2024-01-10T12:00:00Z'))
-    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
-    await userRepo.clear()
+    await dataSource.synchronize(true)
+
+    // Seed roles
+    const roleRepo = TypeOrmHelper.getRepository(RoleTypeOrmEntity)
+    await roleRepo.save([
+      { id: '550e8400-e29b-41d4-a716-446655440001', slug: 'admin', description: 'Admin' },
+      { id: '550e8400-e29b-41d4-a716-446655440002', slug: 'librarian', description: 'Librarian' }
+    ])
   })
 
   afterEach(() => {
@@ -154,7 +164,7 @@ describe('UserTypeOrmRepository', () => {
     await loginRepo.save(loginRepo.create({
       userId: user.id.value,
       password: 'any_password',
-      role: 'admin',
+      roleId: '550e8400-e29b-41d4-a716-446655440001', // Admin role
       status: 'active'
     }))
 
@@ -564,7 +574,7 @@ describe('UserTypeOrmRepository', () => {
       await loginRepo.save(loginRepo.create({
         userId: user.id.value,
         password: 'any_password',
-        role: 'librarian',
+        roleId: '550e8400-e29b-41d4-a716-446655440002', // Librarian role
         status: 'active'
       }))
 
@@ -628,12 +638,16 @@ describe('UserTypeOrmRepository', () => {
     const user = await sut.add(makeUserData())
 
     const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+    // Seed invalid role
+    const roleRepo = TypeOrmHelper.getRepository(RoleTypeOrmEntity)
+    await roleRepo.save({ id: '550e8400-e29b-41d4-a716-446655440003', slug: 'invalid_role', description: 'Invalid' })
+
     await loginRepo.save(loginRepo.create({
       userId: user.id.value,
       password: 'any_password',
-      role: 'INVALID_ROLE' as unknown as UserRoleTypes,
+      roleId: '550e8400-e29b-41d4-a716-446655440003',
       status: 'active'
-    }))
+    }) as unknown as LoginTypeOrmEntity)
 
     const users = await sut.loadAll()
     expect(users.length).toBe(1)

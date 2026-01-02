@@ -1,0 +1,2999 @@
+﻿  console.error
+    CreateUserLoginController Error: InvalidEmailError: Invalid email format
+        at Email.create (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\src\domain\value-objects\email.ts:16:13)
+        at CreateUserLoginController.handle (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\src\presentation\controllers\create-user-login-controller.ts:33:29)
+        at Object.<anonymous> (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\tests\presentation\controllers\create-user-login-controller.spec.ts:64:15)
+        at Promise.finally.completed (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at _runTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:497:12)
+
+    [0m [90m 52 |[39m       [36mreturn[39m ok(login)
+     [90m 53 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 54 |[39m       console[33m.[39merror([32m'CreateUserLoginController Error:'[39m[33m,[39m error)
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 55 |[39m       [36mreturn[39m serverError(error [36mas[39m [33mError[39m)
+     [90m 56 |[39m     }
+     [90m 57 |[39m   }[0m
+
+      at CreateUserLoginController.handle (src/presentation/controllers/create-user-login-controller.ts:54:15)
+      at Object.<anonymous> (tests/presentation/controllers/create-user-login-controller.spec.ts:64:15)
+
+  console.error
+    CreateUserLoginController Error: InvalidEmailError: Invalid email format
+        at Email.create (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\src\domain\value-objects\email.ts:16:13)
+        at CreateUserLoginController.handle (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\src\presentation\controllers\create-user-login-controller.ts:33:29)
+        at Object.<anonymous> (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\tests\presentation\controllers\create-user-login-controller.spec.ts:78:36)
+        at Promise.finally.completed (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at _runTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:497:12)
+
+    [0m [90m 52 |[39m       [36mreturn[39m ok(login)
+     [90m 53 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 54 |[39m       console[33m.[39merror([32m'CreateUserLoginController Error:'[39m[33m,[39m error)
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 55 |[39m       [36mreturn[39m serverError(error [36mas[39m [33mError[39m)
+     [90m 56 |[39m     }
+     [90m 57 |[39m   }[0m
+
+      at CreateUserLoginController.handle (src/presentation/controllers/create-user-login-controller.ts:54:15)
+      at Object.<anonymous> (tests/presentation/controllers/create-user-login-controller.spec.ts:78:36)
+
+  console.error
+    CreateUserLoginController Error: InvalidEmailError: Invalid email format
+        at Email.create (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\src\domain\value-objects\email.ts:16:13)
+        at CreateUserLoginController.handle (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\src\presentation\controllers\create-user-login-controller.ts:33:29)
+        at Object.<anonymous> (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\tests\presentation\controllers\create-user-login-controller.spec.ts:85:36)
+        at Promise.finally.completed (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at _runTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:497:12)
+
+    [0m [90m 52 |[39m       [36mreturn[39m ok(login)
+     [90m 53 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 54 |[39m       console[33m.[39merror([32m'CreateUserLoginController Error:'[39m[33m,[39m error)
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 55 |[39m       [36mreturn[39m serverError(error [36mas[39m [33mError[39m)
+     [90m 56 |[39m     }
+     [90m 57 |[39m   }[0m
+
+      at CreateUserLoginController.handle (src/presentation/controllers/create-user-login-controller.ts:54:15)
+      at Object.<anonymous> (tests/presentation/controllers/create-user-login-controller.spec.ts:85:36)
+
+node.exe : FAIL tests/main/factories/create-user-login
+-validation-factory.spec.ts
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL tes 
+   ts/main...factory.spec.ts:String) [], RemoteExcep  
+  tion
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  CreateUserLoginValidation Factory
+    ├ù Should call ValidationComposite with all 
+validations (21 ms)
+
+  ÔùÅ CreateUserLoginValidation Factory ÔÇ║ Should 
+call ValidationComposite with all validations
+
+    
+expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+    @@ -3,6 +3,9 @@
+          "fieldName": "userId",
+        },
+        RequiredFieldValidation {
+          "fieldName": "password",
+        },
+    +   RequiredFieldValidation {
+    +     "fieldName": "email",
+    +   },
+      ],
+
+    Number of calls: 1
+
+    [0m [90m 12 |[39m       
+validations[33m.[39mpush([36mnew[39m 
+[33mRequiredFieldValidation[39m(field))
+     [90m 13 |[39m     }
+    [31m[1m>[22m[39m[90m 14 |[39m     expect([3
+3mValidationComposite[39m)[33m.[39mtoHaveBeenCalled
+With(validations)
+     [90m    |[39m                                 
+[31m[1m^[22m[39m
+     [90m 15 |[39m   })
+     [90m 16 |[39m })
+     [90m 17 |[39m[0m
+
+      at Object.<anonymous> (tests/main/factories/crea
+te-user-login-validation-factory.spec.ts:14:33)
+
+  console.error
+    CreateUserLoginController Error: InvalidEmailError: Invalid email format
+        at Email.create (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\src\domain\value-objects\email.ts:16:13)
+        at CreateUserLoginController.handle (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\src\presentation\controllers\create-user-login-controller.ts:33:29)
+        at Object.<anonymous> (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\tests\presentation\controllers\create-user-login-controller.spec.ts:101:15)
+        at Promise.finally.completed (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at _runTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:497:12)
+
+    [0m [90m 52 |[39m       [36mreturn[39m ok(login)
+     [90m 53 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 54 |[39m       console[33m.[39merror([32m'CreateUserLoginController Error:'[39m[33m,[39m error)
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 55 |[39m       [36mreturn[39m serverError(error [36mas[39m [33mError[39m)
+     [90m 56 |[39m     }
+     [90m 57 |[39m   }[0m
+
+      at CreateUserLoginController.handle (src/presentation/controllers/create-user-login-controller.ts:54:15)
+      at Object.<anonymous> (tests/presentation/controllers/create-user-login-controller.spec.ts:101:15)
+
+  console.error
+    CreateUserLoginController Error: InvalidEmailError: Invalid email format
+        at Email.create (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\src\domain\value-objects\email.ts:16:13)
+        at CreateUserLoginController.handle (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\src\presentation\controllers\create-user-login-controller.ts:33:29)
+        at Object.<anonymous> (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\tests\presentation\controllers\create-user-login-controller.spec.ts:121:36)
+        at Promise.finally.completed (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at _runTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:497:12)
+
+    [0m [90m 52 |[39m       [36mreturn[39m ok(login)
+     [90m 53 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 54 |[39m       console[33m.[39merror([32m'CreateUserLoginController Error:'[39m[33m,[39m error)
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 55 |[39m       [36mreturn[39m serverError(error [36mas[39m [33mError[39m)
+     [90m 56 |[39m     }
+     [90m 57 |[39m   }[0m
+
+      at CreateUserLoginController.handle (src/presentation/controllers/create-user-login-controller.ts:54:15)
+      at Object.<anonymous> (tests/presentation/controllers/create-user-login-controller.spec.ts:121:36)
+
+  console.error
+    CreateUserLoginController Error: InvalidEmailError: Invalid email format
+        at Email.create (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\src\domain\value-objects\email.ts:16:13)
+        at CreateUserLoginController.handle (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\src\presentation\controllers\create-user-login-controller.ts:33:29)
+        at Object.<anonymous> (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\tests\presentation\controllers\create-user-login-controller.spec.ts:130:36)
+        at Promise.finally.completed (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at _runTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (C:\Users\leosi\OneDrive\Documentos\SoftwareHouse\app\backend\node_modules\jest-runner\build\testWorker.js:497:12)
+
+    [0m [90m 52 |[39m       [36mreturn[39m ok(login)
+     [90m 53 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 54 |[39m       console[33m.[39merror([32m'CreateUserLoginController Error:'[39m[33m,[39m error)
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 55 |[39m       [36mreturn[39m serverError(error [36mas[39m [33mError[39m)
+     [90m 56 |[39m     }
+     [90m 57 |[39m   }[0m
+
+      at CreateUserLoginController.handle (src/presentation/controllers/create-user-login-controller.ts:54:15)
+      at Object.<anonymous> (tests/presentation/controllers/create-user-login-controller.spec.ts:130:36)
+
+FAIL src/infra/cryptography/jwt-adapter.spec.ts
+  Jwt Adapter
+    sign()
+      ├ù Should call sign with correct values (45 ms)
+      ÔêÜ Should return a token on sign success (1 ms)
+      ÔêÜ Should throw if sign throws (19 ms)
+    verify()
+      ÔêÜ Should call verify with correct values (1 
+ms)
+      ├ù Should return TokenPayload on verify success 
+(4 ms)
+      ÔêÜ Should return undefined if decoded id is 
+missing (1 ms)
+      ÔêÜ Should default to MEMBER role if role is 
+missing
+      ÔêÜ Should throw if verify throws (2 ms)
+
+  ÔùÅ Jwt Adapter ÔÇ║ sign() ÔÇ║ Should call sign 
+with correct values
+
+    
+expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+        "id": "any_id",
+    -   "role": "ADMIN",
+    +   "role": undefined,
+      },
+      "secret",
+
+    Number of calls: 1
+
+    [0m [90m 23 |[39m       [36mconst[39m 
+signSpy [33m=[39m 
+jest[33m.[39mspyOn(jwt[33m,[39m [32m'sign'[39m)
+     [90m 24 |[39m       [36mawait[39m 
+sut[33m.[39mencrypt({ id[33m:[39m 
+[32m'any_id'[39m[33m,[39m role[33m:[39m 
+[33mRole[39m[33m.[39m[33mADMIN[39m })
+    [31m[1m>[22m[39m[90m 25 |[39m       
+expect(signSpy)[33m.[39mtoHaveBeenCalledWith({ 
+id[33m:[39m [32m'any_id'[39m[33m,[39m 
+role[33m:[39m [32m'ADMIN'[39m }[33m,[39m 
+[32m'secret'[39m)
+     [90m    |[39m                       
+[31m[1m^[22m[39m
+     [90m 26 |[39m     })
+     [90m 27 |[39m
+     [90m 28 |[39m     test([32m'Should return a 
+token on sign success'[39m[33m,[39m 
+[36masync[39m () [33m=>[39m {[0m
+
+      at Object.<anonymous> 
+(src/infra/cryptography/jwt-adapter.spec.ts:25:23)
+
+  ÔùÅ Jwt Adapter ÔÇ║ verify() ÔÇ║ Should return 
+TokenPayload on verify success
+
+    expect(received).toEqual(expected) // deep 
+equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "id": "any_value",
+    -   "role": undefined,
+    +   "role": "MEMBER",
+      }
+
+    [0m [90m 53 |[39m       [36mconst[39m sut 
+[33m=[39m makeSut()
+     [90m 54 |[39m       [36mconst[39m value 
+[33m=[39m [36mawait[39m 
+sut[33m.[39mdecrypt([32m'any_token'[39m)
+    [31m[1m>[22m[39m[90m 55 |[39m       
+expect(value)[33m.[39mtoEqual({ id[33m:[39m 
+[32m'any_value'[39m[33m,[39m role[33m:[39m 
+[33mRole[39m[33m.[39m[33mMEMBER[39m })
+     [90m    |[39m                     
+[31m[1m^[22m[39m
+     [90m 56 |[39m     })
+     [90m 57 |[39m
+     [90m 58 |[39m     test([32m'Should return 
+undefined if decoded id is missing'[39m[33m,[39m 
+[36masync[39m () [33m=>[39m {[0m
+
+      at Object.<anonymous> 
+(src/infra/cryptography/jwt-adapter.spec.ts:55:21)
+
+FAIL tests/presentation/controllers/create-user-login-
+controller.spec.ts
+  CreateUserLogin Controller
+    ├ù Should call CreateUserLogin with correct 
+values (253 ms)
+    ÔêÜ Should return 500 if CreateUserLogin throws 
+(25 ms)
+    ├ù Should return 200 if valid data is provided 
+(16 ms)
+    ÔêÜ Should call Validation with correct value (10 
+ms)
+    ÔêÜ Should return 400 if Validation returns an 
+error (3 ms)
+    ├ù Should return 400 if password does not meet 
+policy requirements (36 ms)
+    ├ù Should return 400 if ID.create throws (8 ms)
+
+  ÔùÅ CreateUserLogin Controller ÔÇ║ Should call 
+CreateUserLogin with correct values
+
+    
+expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: {"password": "Abcdefg1!", "role": 
+{"role": "MEMBER"}, "status": {"status": "ACTIVE"}, 
+"userId": {"id": 
+"550e8400-e29b-41d4-a716-446655440001"}}
+
+    Number of calls: 0
+
+    [0m [90m 63 |[39m     [36mconst[39m 
+createSpy [33m=[39m 
+jest[33m.[39mspyOn(createUserLoginStub[33m,[39m 
+[32m'create'[39m)
+     [90m 64 |[39m     [36mawait[39m 
+sut[33m.[39mhandle(makeFakeRequest())
+    [31m[1m>[22m[39m[90m 65 |[39m     
+expect(createSpy)[33m.[39mtoHaveBeenCalledWith({
+     [90m    |[39m                       
+[31m[1m^[22m[39m
+     [90m 66 |[39m       userId[33m:[39m [33mId[
+39m[33m.[39mcreate([32m'550e8400-e29b-41d4-a716-446
+655440001'[39m)[33m,[39m
+     [90m 67 |[39m       password[33m:[39m 
+[32m'Abcdefg1!'[39m[33m,[39m
+     [90m 68 |[39m       role[33m:[39m [33mUserRo
+le[39m[33m.[39mcreate([32m'MEMBER'[39m)[33m,[39
+m[0m
+
+      at Object.<anonymous> (tests/presentation/contro
+llers/create-user-login-controller.spec.ts:65:23)
+
+  ÔùÅ CreateUserLogin Controller ÔÇ║ Should return 
+200 if valid data is provided
+
+    expect(received).toBe(expected) // Object.is 
+equality
+
+    Expected: 200
+    Received: 500
+
+    [0m [90m 84 |[39m     [36mconst[39m { sut } 
+[33m=[39m makeSut()
+     [90m 85 |[39m     [36mconst[39m httpResponse 
+[33m=[39m [36mawait[39m 
+sut[33m.[39mhandle(makeFakeRequest()) [36mas[39m 
+{ statusCode[33m:[39m number[33m;[39m 
+body[33m:[39m unknown }
+    [31m[1m>[22m[39m[90m 86 |[39m     expect(htt
+pResponse[33m.[39mstatusCode)[33m.[39mtoBe([35m20
+0[39m)
+     [90m    |[39m                                  
+   [31m[1m^[22m[39m
+     [90m 87 |[39m     expect(httpResponse[33m.[39
+mbody)[33m.[39mtoEqual({
+     [90m 88 |[39m       id[33m:[39m [33mId[39m
+[33m.[39mcreate([32m'550e8400-e29b-41d4-a716-4466554
+40000'[39m)[33m,[39m
+     [90m 89 |[39m       userId[33m:[39m [33mId[
+39m[33m.[39mcreate([32m'550e8400-e29b-41d4-a716-446
+655440001'[39m)[33m,[39m[0m
+
+      at Object.<anonymous> (tests/presentation/contro
+llers/create-user-login-controller.spec.ts:86:37)
+
+  ÔùÅ CreateUserLogin Controller ÔÇ║ Should return 
+400 if password does not meet policy requirements
+
+    expect(received).toBe(expected) // Object.is 
+equality
+
+    Expected: 400
+    Received: 500
+
+    [0m [90m 120 |[39m     }
+     [90m 121 |[39m     [36mconst[39m 
+httpResponse [33m=[39m [36mawait[39m 
+sut[33m.[39mhandle(httpRequest) [36mas[39m { 
+statusCode[33m:[39m number[33m;[39m 
+body[33m:[39m { error[33m:[39m { 
+message[33m:[39m string } } }
+    [31m[1m>[22m[39m[90m 122 |[39m     expect(ht
+tpResponse[33m.[39mstatusCode)[33m.[39mtoBe([35m4
+00[39m)
+     [90m     |[39m                                 
+    [31m[1m^[22m[39m
+     [90m 123 |[39m     expect(httpResponse[33m.[3
+9mbody[33m.[39merror[33m.[39mmessage)[33m.[39mto
+Contain([32m'Password'[39m)
+     [90m 124 |[39m   })
+     [90m 125 |[39m[0m
+
+      at Object.<anonymous> (tests/presentation/contro
+llers/create-user-login-controller.spec.ts:122:37)
+
+  ÔùÅ CreateUserLogin Controller ÔÇ║ Should return 
+400 if ID.create throws
+
+    expect(received).toBe(expected) // Object.is 
+equality
+
+    Expected: 400
+    Received: 500
+
+    [0m [90m 129 |[39m     
+httpRequest[33m.[39mparams [33m=[39m { 
+userId[33m:[39m [32m'invalid-id'[39m }
+     [90m 130 |[39m     [36mconst[39m 
+httpResponse [33m=[39m [36mawait[39m 
+sut[33m.[39mhandle(httpRequest) [36mas[39m { 
+statusCode[33m:[39m number[33m;[39m 
+body[33m:[39m { error[33m:[39m { code[33m:[39m 
+string } } }
+    [31m[1m>[22m[39m[90m 131 |[39m     expect(ht
+tpResponse[33m.[39mstatusCode)[33m.[39mtoBe([35m4
+00[39m)
+     [90m     |[39m                                 
+    [31m[1m^[22m[39m
+     [90m 132 |[39m     expect(httpResponse[33m.[3
+9mbody[33m.[39merror[33m.[39mcode)[33m.[39mtoBe(
+[32m'INVALID_PARAM'[39m)
+     [90m 133 |[39m   })
+     [90m 134 |[39m })[0m
+
+      at Object.<anonymous> (tests/presentation/contro
+llers/create-user-login-controller.spec.ts:131:37)
+
+FAIL src/presentation/middlewares/require-role-middlew
+are.spec.ts
+  RequireRoleMiddleware
+    ÔêÜ Should return 403 if no userId is provided 
+(15 ms)
+    ÔêÜ Should return 403 if no role is provided (1 
+ms)
+    ÔêÜ Should return 403 if user role is not in 
+allowed roles (1 ms)
+    ├ù Should return 200 if user role is in allowed 
+roles (12 ms)
+    ├ù Should return 200 for ADMIN even if not in 
+allowed roles (ADMIN bypasses) (3 ms)
+    ├ù Should return 200 if allowed roles is empty 
+(any authenticated user) (4 ms)
+
+  ÔùÅ RequireRoleMiddleware ÔÇ║ Should return 200 if 
+user role is in allowed roles
+
+    expect(received).toEqual(expected) // deep 
+equality
+
+    - Expected  - 3
+    + Received  + 7
+
+      Object {
+        "body": Object {
+    -     "role": undefined,
+    -     "userId": "any_user_id",
+    +     "error": Object {
+    +       "code": "FORBIDDEN",
+    +       "details": undefined,
+    +       "message": "Access denied",
+    +       "timestamp": "2025-01-01T00:00:00.000Z",
+          },
+    -   "statusCode": 200,
+    +   },
+    +   "statusCode": 403,
+      }
+
+    [0m [90m 41 |[39m     [36mconst[39m sut 
+[33m=[39m [36mnew[39m [33mRequireRoleMiddleware[
+39m([[33mRole[39m[33m.[39m[33mADMIN[39m[33m,[3
+9m [33mRole[39m[33m.[39m[33mLIBRARIAN[39m])
+     [90m 42 |[39m     [36mconst[39m httpResponse 
+[33m=[39m [36mawait[39m sut[33m.[39mhandle(makeF
+akeRequest([33mRole[39m[33m.[39m[33mLIBRARIAN[39
+m))
+    [31m[1m>[22m[39m[90m 43 |[39m     
+expect(httpResponse)[33m.[39mtoEqual(ok({ 
+userId[33m:[39m [32m'any_user_id'[39m[33m,[39m 
+role[33m:[39m 
+[33mRole[39m[33m.[39m[33mLIBRARIAN[39m }))
+     [90m    |[39m                          
+[31m[1m^[22m[39m
+     [90m 44 |[39m   })
+     [90m 45 |[39m
+     [90m 46 |[39m   test([32m'Should return 200 
+for ADMIN even if not in allowed roles (ADMIN 
+bypasses)'[39m[33m,[39m [36masync[39m () 
+[33m=>[39m {[0m
+
+      at Object.<anonymous> (src/presentation/middlewa
+res/require-role-middleware.spec.ts:43:26)
+
+  ÔùÅ RequireRoleMiddleware ÔÇ║ Should return 200 for 
+ADMIN even if not in allowed roles (ADMIN bypasses)
+
+    expect(received).toEqual(expected) // deep 
+equality
+
+    - Expected  - 3
+    + Received  + 7
+
+      Object {
+        "body": Object {
+    -     "role": undefined,
+    -     "userId": "any_user_id",
+    +     "error": Object {
+    +       "code": "FORBIDDEN",
+    +       "details": undefined,
+    +       "message": "Access denied",
+    +       "timestamp": "2025-01-01T00:00:00.000Z",
+          },
+    -   "statusCode": 200,
+    +   },
+    +   "statusCode": 403,
+      }
+
+    [0m [90m 47 |[39m     [36mconst[39m sut 
+[33m=[39m [36mnew[39m [33mRequireRoleMiddleware[
+39m([[33mRole[39m[33m.[39m[33mLIBRARIAN[39m])
+     [90m 48 |[39m     [36mconst[39m httpResponse 
+[33m=[39m [36mawait[39m sut[33m.[39mhandle(makeF
+akeRequest([33mRole[39m[33m.[39m[33mADMIN[39m))
+    [31m[1m>[22m[39m[90m 49 |[39m     
+expect(httpResponse)[33m.[39mtoEqual(ok({ 
+userId[33m:[39m [32m'any_user_id'[39m[33m,[39m 
+role[33m:[39m 
+[33mRole[39m[33m.[39m[33mADMIN[39m }))
+     [90m    |[39m                          
+[31m[1m^[22m[39m
+     [90m 50 |[39m   })
+     [90m 51 |[39m
+     [90m 52 |[39m   test([32m'Should return 200 
+if allowed roles is empty (any authenticated 
+user)'[39m[33m,[39m [36masync[39m () 
+[33m=>[39m {[0m
+
+      at Object.<anonymous> (src/presentation/middlewa
+res/require-role-middleware.spec.ts:49:26)
+
+  ÔùÅ RequireRoleMiddleware ÔÇ║ Should return 200 if 
+allowed roles is empty (any authenticated user)
+
+    expect(received).toEqual(expected) // deep 
+equality
+
+    - Expected  - 3
+    + Received  + 7
+
+      Object {
+        "body": Object {
+    -     "role": undefined,
+    -     "userId": "any_user_id",
+    +     "error": Object {
+    +       "code": "FORBIDDEN",
+    +       "details": undefined,
+    +       "message": "Access denied",
+    +       "timestamp": "2025-01-01T00:00:00.000Z",
+          },
+    -   "statusCode": 200,
+    +   },
+    +   "statusCode": 403,
+      }
+
+    [0m [90m 53 |[39m     [36mconst[39m sut 
+[33m=[39m [36mnew[39m 
+[33mRequireRoleMiddleware[39m([])
+     [90m 54 |[39m     [36mconst[39m httpResponse 
+[33m=[39m [36mawait[39m sut[33m.[39mhandle(makeF
+akeRequest([33mRole[39m[33m.[39m[33mMEMBER[39m))
+    [31m[1m>[22m[39m[90m 55 |[39m     
+expect(httpResponse)[33m.[39mtoEqual(ok({ 
+userId[33m:[39m [32m'any_user_id'[39m[33m,[39m 
+role[33m:[39m 
+[33mRole[39m[33m.[39m[33mMEMBER[39m }))
+     [90m    |[39m                          
+[31m[1m^[22m[39m
+     [90m 56 |[39m   })
+     [90m 57 |[39m })
+     [90m 58 |[39m[0m
+
+      at Object.<anonymous> (src/presentation/middlewa
+res/require-role-middleware.spec.ts:55:26)
+
+FAIL 
+tests/application/usecases/db-refresh-token.spec.ts
+  DbRefreshToken UseCase
+    ÔêÜ Should call Hasher with correct refresh token 
+(18 ms)
+    ÔêÜ Should throw if Hasher throws (28 ms)
+    ÔêÜ Should call LoadSessionByTokenRepository with 
+correct token hash (2 ms)
+    ÔêÜ Should throw if LoadSessionByTokenRepository 
+throws (8 ms)
+    ÔêÜ Should return null if 
+LoadSessionByTokenRepository returns null (2 ms)
+    ÔêÜ Should return null if session is not valid (5 
+ms)
+    ÔêÜ Should return null if session is expired (7 
+ms)
+    ÔêÜ Should call LoadUserBySessionRepository with 
+correct session id (2 ms)
+    ÔêÜ Should throw if LoadUserBySessionRepository 
+throws (2 ms)
+    ÔêÜ Should return null if 
+LoadUserBySessionRepository returns null (1 ms)
+    ÔêÜ Should call InvalidateSessionRepository with 
+correct session id (1 ms)
+    ÔêÜ Should throw if InvalidateSessionRepository 
+throws (1 ms)
+    ÔêÜ Should call SaveSessionRepository with 
+correct values (1 ms)
+    ÔêÜ Should throw if SaveSessionRepository throws 
+(1 ms)
+    ├ù Should call Encrypter with correct payload (11 
+ms)
+    ÔêÜ Should throw if Encrypter throws (1 ms)
+    ÔêÜ Should return new tokens on success (18 ms)
+    ÔêÜ Should default role to MEMBER if user.role is 
+undefined (1 ms)
+
+  ÔùÅ DbRefreshToken UseCase ÔÇ║ Should call 
+Encrypter with correct payload
+
+    
+expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+    -   "role": undefined,
+    +   "role": "ADMIN",
+      },
+
+    Number of calls: 1
+
+    [0m [90m 245 |[39m     [36mconst[39m 
+encryptSpy [33m=[39m 
+jest[33m.[39mspyOn(encrypterStub[33m,[39m 
+[32m'encrypt'[39m)
+     [90m 246 |[39m     [36mawait[39m 
+sut[33m.[39mrefresh(makeFakeRefreshTokenParams())
+    [31m[1m>[22m[39m[90m 247 |[39m     
+expect(encryptSpy)[33m.[39mtoHaveBeenCalledWith({ 
+id[33m:[39m [33mVALID_ID[39m[33m,[39m 
+role[33m:[39m 
+[33mRole[39m[33m.[39m[33mADMIN[39m })
+     [90m     |[39m                        
+[31m[1m^[22m[39m
+     [90m 248 |[39m   })
+     [90m 249 |[39m
+     [90m 250 |[39m   test([32m'Should throw if 
+Encrypter throws'[39m[33m,[39m [36masync[39m () 
+[33m=>[39m {[0m
+
+      at Object.<anonymous> (tests/application/usecase
+s/db-refresh-token.spec.ts:247:24)
+
+PASS src/presentation/controllers/add-neighborhood-con
+troller.spec.ts
+  AddNeighborhood Controller
+    ÔêÜ Should return 400 if validation fails (14 ms)
+    ÔêÜ Should call AddNeighborhood with correct 
+values (3 ms)
+    ÔêÜ Should return 500 if AddNeighborhood throws 
+(18 ms)
+    ÔêÜ Should return 200 on success (2 ms)
+
+PASS tests/infra/db/typeorm/typeorm-helper.spec.ts
+  TypeOrmHelper
+    connect
+      ÔêÜ Should call DataSource.initialize once if 
+success (6 ms)
+      ÔêÜ Should return the client if success (2 ms)
+      ÔêÜ Should retry connection if initialize fails 
+(4 ms)
+      ÔêÜ Should fail if max retries reached (3 ms)
+      ÔêÜ Should throw error if retries is 0 (loop 
+skipped) (17 ms)
+      ÔêÜ Should return client after loop completes 
+(2 ms)
+    disconnect
+      ÔêÜ Should call destroy (1 ms)
+    getRepository
+      ÔêÜ Should call client.getRepository (3 ms)
+
+PASS tests/presentation/controllers/add-user-controlle
+r.spec.ts
+  AddUser Controller
+    ÔêÜ Should call Validation with correct values (4 
+ms)
+    ÔêÜ Should return 400 if Validation returns an 
+error (2 ms)
+    ÔêÜ Should call AddUser with correct values (1 ms)
+    ÔêÜ Should return 403 if AddUser returns 
+UserAlreadyExistsError (1 ms)
+    ÔêÜ Should return 500 if AddUser throws (39 ms)
+    ÔêÜ Should return 200 on success (1 ms)
+    ÔêÜ Should return 400 if Email.create throws (1 
+ms)
+    ÔêÜ Should return 400 if Cpf.create throws (1 ms)
+    ÔêÜ Should return 400 if Name.create returns an 
+error
+    ÔêÜ Should return 400 if Rg.create returns an 
+error
+    ÔêÜ Should return 400 if Address.create returns 
+an error (1 ms)
+
+PASS tests/domain/value-objects/cpf.spec.ts
+  Cpf Value Object
+    ÔêÜ Should create a valid CPF (2 ms)
+    ÔêÜ Should create a valid CPF from unformatted 
+string (1 ms)
+    ÔêÜ Should throw if CPF has invalid check digits 
+(11 ms)
+    ÔêÜ Should throw if CPF is empty (1 ms)
+    ÔêÜ Should throw if CPF has wrong length (2 ms)
+    ÔêÜ Should throw if CPF has all same digits (1 ms)
+    ÔêÜ Should throw if first digit is valid but 
+second is invalid (2 ms)
+    ÔêÜ Should accept CPF where remainder equals 10 
+(edge case)
+    ÔêÜ Should accept CPF where second remainder 
+equals 10 (edge case)
+
+PASS tests/presentation/controllers/user/update-user-c
+ontroller.spec.ts
+  UpdateUser Controller
+    ÔêÜ Should return 400 if no id is provided (3 ms)
+    ÔêÜ Should call UpdateUser with correct values (3 
+ms)
+    ÔêÜ Should call UpdateUser with gender and phone 
+(1 ms)
+    ÔêÜ Should return 200 on success (1 ms)
+    ÔêÜ Should return 500 if UpdateUser throws (17 ms)
+    ÔêÜ Should return 400 if id is invalid (1 ms)
+    ÔêÜ Should return 400 if name is invalid (1 ms)
+    ÔêÜ Should return 404 if UpdateUser returns null 
+(7 ms)
+    ÔêÜ Should return 400 if email is invalid (2 ms)
+    ÔêÜ Should return 400 if cpf is invalid (1 ms)
+    ÔêÜ Should return 400 if rg is invalid
+    ÔêÜ Should return 400 if address is invalid (1 ms)
+    ÔêÜ Should serialize user address when returned 
+(2 ms)
+
+PASS 
+tests/infra/db/typeorm/entities/user-entity.spec.ts
+  UserTypeOrmEntity
+    ÔêÜ should be defined (2 ms)
+  Date Transformer
+    ÔêÜ Should return the same value if to is called 
+(1 ms)
+    ÔêÜ Should return the same value if from is 
+called with a string (1 ms)
+    ÔêÜ Should return a formatted string if from is 
+called with a Date (1 ms)
+
+PASS tests/validation/validators/required-field-valida
+tion.spec.ts
+  RequiredField Validation
+    ÔêÜ Should return a MissingParamError if 
+validation fails (2 ms)
+    ÔêÜ Should not return if validation succeeds (1 
+ms)
+
+PASS 
+tests/infra/db/typeorm/domain-event-repository.spec.ts
+  DomainEventTypeOrmRepository
+    ÔêÜ Should save a domain event on success (46 ms)
+
+PASS 
+tests/infra/db/typeorm/neighborhood-repository.spec.ts
+  NeighborhoodTypeOrmRepository
+    ÔêÜ Should return a neighborhood on add success 
+(83 ms)
+    ÔêÜ Should return a neighborhood on 
+findByNameAndCity success (17 ms)
+    ÔêÜ Should return undefined if findByNameAndCity 
+finds nothing (5 ms)
+
+PASS tests/presentation/controllers/user/add-user-logi
+n-controller.spec.ts
+  AddUserLogin Controller
+    ÔêÜ Should call Validation with correct values (4 
+ms)
+    ÔêÜ Should return 400 if Validation returns an 
+error (4 ms)
+    ÔêÜ Should return 400 if invalid Id is provided 
+(1 ms)
+    ÔêÜ Should return 400 if invalid role is provided 
+(2 ms)
+    ÔêÜ Should return 400 if invalid status is 
+provided (2 ms)
+    ÔêÜ Should call AddUserLogin with correct values 
+(1 ms)
+    ÔêÜ Should return 500 if AddUserLogin throws (20 
+ms)
+    ÔêÜ Should return 200 if valid data is provided 
+(1 ms)
+
+PASS tests/infra/db/typeorm/entities/timestamp-verific
+ation.spec.ts
+  Timestamp Governance Verification
+    ÔêÜ User entity should have UpdateDateColumn and 
+CreateDateColumn configured (3 ms)
+    ÔêÜ City entity should have createdAt but NO 
+updatedAt (6 ms)
+
+PASS tests/infra/db/typeorm/login-repository.spec.ts
+  LoginTypeOrmRepository
+    ÔêÜ Should return an account on loadByEmail 
+success (99 ms)
+    ÔêÜ Should return undefined if loadByEmail fails 
+(28 ms)
+    ÔêÜ Should return undefined if loadByEmail finds 
+user but not login (46 ms)
+    ÔêÜ Should update the account accessToken on 
+updateAccessToken success (64 ms)
+    ÔêÜ Should return an account on add success (54 
+ms)
+    ÔêÜ Should return login with default values if 
+role and status are null in DB (36 ms)
+    ÔêÜ Should return undefined if loadByEmail finds 
+user but is soft deleted (23 ms)
+    ÔêÜ Should return undefined if loadByEmail finds 
+user but status is INACTIVE (26 ms)
+
+PASS tests/presentation/controllers/refresh-token-cont
+roller.spec.ts
+  RefreshToken Controller
+    ÔêÜ Should call Validation with correct values (9 
+ms)
+    ÔêÜ Should return 400 if Validation returns an 
+error (1 ms)
+    ÔêÜ Should call RefreshToken with correct values 
+(1 ms)
+    ÔêÜ Should return 401 if RefreshToken returns 
+null (1 ms)
+    ÔêÜ Should return 200 with new tokens on success 
+(1 ms)
+    ÔêÜ Should return 500 if RefreshToken throws (12 
+ms)
+    ÔêÜ Should return 500 if Validation throws (6 ms)
+    ÔêÜ Should use ip from request if x-forwarded-for 
+header is not present (1 ms)
+
+PASS tests/presentation/helpers/http-helper.spec.ts
+  Http Helper
+    formatError security
+      ÔêÜ Should NOT expose original message from 
+generic Error (2 ms)
+      ÔêÜ Should expose message from AppError 
+(controlled) (1 ms)
+      ÔêÜ Should expose message from DomainError 
+(controlled) (1 ms)
+    serverError security
+      ÔêÜ Should NEVER return original error message 
+(15 ms)
+      ÔêÜ Should have code INTERNAL_ERROR (1 ms)
+    DomainError fallback
+      ÔêÜ Should use fallbackCode for unmapped 
+DomainError (10 ms)
+    badRequest
+      ÔêÜ Should return 400 with correct error 
+structure (4 ms)
+    unauthorized
+      ÔêÜ Should return 401 with UNAUTHORIZED code (4 
+ms)
+    forbidden
+      ÔêÜ Should return 403 with FORBIDDEN code for 
+AccessDeniedError (1 ms)
+    notFound
+      ÔêÜ Should return 404 with NOT_FOUND code (1 ms)
+    ok
+      ÔêÜ Should return 200 with data (1 ms)
+    noContent
+      ÔêÜ Should return 204 with undefined body (1 ms)
+    paymentRequired
+      ÔêÜ Should return 402 with default "An error 
+occurred" message for unknown code (1 ms)
+
+PASS 
+tests/application/usecases/db-authentication.spec.ts
+  DbAuthentication UseCase
+    ÔêÜ Should call LoadAccountByEmailRepository with 
+correct email (6 ms)
+    ÔêÜ Should throw if LoadAccountByEmailRepository 
+throws (20 ms)
+    ÔêÜ Should return undefined if 
+LoadAccountByEmailRepository returns undefined (1 ms)
+    ÔêÜ Should call HashComparer with correct values 
+(1 ms)
+    ÔêÜ Should throw if HashComparer throws (2 ms)
+    ÔêÜ Should return undefined if HashComparer 
+returns false (1 ms)
+    ÔêÜ Should call Encrypter with correct payload (1 
+ms)
+    ÔêÜ Should throw if Encrypter throws (1 ms)
+    ÔêÜ Should call UpdateAccessTokenRepository with 
+correct values (2 ms)
+    ÔêÜ Should throw if UpdateAccessTokenRepository 
+throws (2 ms)
+    ÔêÜ Should call Hasher with refresh token (1 ms)
+    ÔêÜ Should throw if Hasher throws (2 ms)
+    ÔêÜ Should call SaveSessionRepository with 
+correct values (2 ms)
+    ÔêÜ Should throw if SaveSessionRepository throws 
+(2 ms)
+    ÔêÜ Should return authentication data with 
+refreshToken on success (4 ms)
+    ÔêÜ Should default role to MEMBER if 
+account.roleId is missing (unlikely given mandatory, 
+but if logic allows) (3 ms)
+
+PASS tests/application/usecases/db-create-user-login.s
+pec.ts
+  DbCreateUserLogin UseCase
+    ÔêÜ Should call Hasher with correct password (6 
+ms)
+    ÔêÜ Should throw if Hasher throws (17 ms)
+    ÔêÜ Should call LoadRoleBySlugRepository with 
+correct slug (1 ms)
+    ÔêÜ Should throw if LoadRoleBySlugRepository 
+returns null (Role not found) (3 ms)
+    ÔêÜ Should call AddLoginRepository with correct 
+values (1 ms)
+    ÔêÜ Should throw if AddLoginRepository throws (1 
+ms)
+    ÔêÜ Should return a Login on success (6 ms)
+
+PASS tests/application/usecases/db-add-user.spec.ts
+  DbAddUser UseCase
+    ÔêÜ Should call LoadUserByEmailRepository with 
+correct email (6 ms)
+    ÔêÜ Should return EmailInUseError if 
+LoadUserByEmailRepository returns an account (2 ms)
+    ÔêÜ Should call LoadUserByCpfRepository with 
+correct cpf (1 ms)
+    ÔêÜ Should return CpfInUseError if 
+LoadUserByCpfRepository returns an account (1 ms)
+    ÔêÜ Should call AddUserRepository with correct 
+values (1 ms)
+    ÔêÜ Should throw if AddUserRepository throws (14 
+ms)
+    ÔêÜ Should call DomainEvents with correct values 
+(2 ms)
+    ÔêÜ Should return an account on success (1 ms)
+
+PASS tests/presentation/controllers/user/load-users-co
+ntroller.spec.ts
+  LoadUsers Controller
+    ÔêÜ Should call LoadUsers (5 ms)
+    ÔêÜ Should return 200 on success (3 ms)
+    ÔêÜ Should return 500 if LoadUsers throws (38 ms)
+    ÔêÜ Should serialize user address when present (1 
+ms)
+    ÔêÜ Should serialize user login when present (2 
+ms)
+
+PASS 
+tests/application/usecases/db-add-user-login.spec.ts
+  DbAddUserLogin UseCase
+    ÔêÜ Should call Hasher with correct password (2 
+ms)
+    ÔêÜ Should throw if Hasher throws (18 ms)
+    ÔêÜ Should call LoadRoleBySlugRepository with 
+correct slug (1 ms)
+    ÔêÜ Should throw if LoadRoleBySlugRepository 
+returns null (Role not found) (4 ms)
+    ÔêÜ Should call AddLoginRepository with correct 
+values (1 ms)
+    ÔêÜ Should throw if AddLoginRepository throws (2 
+ms)
+    ÔêÜ Should return a login on success (1 ms)
+
+PASS src/presentation/controllers/login/login-controll
+er.spec.ts
+  Login Controller
+    ÔêÜ Should call Validation with correct value (7 
+ms)
+    ÔêÜ Should return 400 if Validation returns an 
+error (2 ms)
+    ÔêÜ Should call Authentication with correct 
+values (1 ms)
+    ÔêÜ Should return 401 if invalid credentials are 
+provided (1 ms)
+    ÔêÜ Should return 500 if Authentication throws 
+(17 ms)
+    ÔêÜ Should return 200 if valid credentials are 
+provided
+
+PASS tests/presentation/controllers/login-controller.s
+pec.ts
+  Login Controller
+    ÔêÜ Should call Validation with correct values 
+(10 ms)
+    ÔêÜ Should return 400 if Validation returns an 
+error (4 ms)
+    ÔêÜ Should call Authentication with correct 
+values (1 ms)
+    ÔêÜ Should return 401 if Authentication returns 
+undefined (1 ms)
+    ÔêÜ Should return 200 with accessToken and name 
+on success (1 ms)
+    ÔêÜ Should return 500 if Authentication throws 
+(13 ms)
+    ÔêÜ Should return 500 if Validation throws (5 ms)
+
+PASS tests/presentation/controllers/user/delete-user-c
+ontroller.spec.ts
+  DeleteUser Controller
+    ÔêÜ Should return 400 if no id is provided (6 ms)
+    ÔêÜ Should call DeleteUser with correct id (1 ms)
+    ÔêÜ Should return 204 on success
+    ÔêÜ Should return 500 if DeleteUser throws (11 ms)
+
+PASS tests/presentation/controllers/user/load-user-by-
+id-controller.spec.ts
+  LoadUserById Controller
+    ÔêÜ Should call LoadUserById with correct id (4 
+ms)
+    ÔêÜ Should return 404 if LoadUserById returns 
+null (4 ms)
+    ÔêÜ Should return 200 on success (1 ms)
+    ÔêÜ Should return 200 on success if address is 
+provided (1 ms)
+    ÔêÜ Should return 200 on success if login data is 
+provided (1 ms)
+    ÔêÜ Should return 500 if LoadUserById throws (14 
+ms)
+
+PASS src/infra/cryptography/sha256-adapter.spec.ts
+  Sha256 Adapter
+    hash()
+      ÔêÜ Should call crypto.createHash with correct 
+values (2 ms)
+      ÔêÜ Should return a hash on success (1 ms)
+      ÔêÜ Should throw if crypto throws (18 ms)
+    compare()
+      ÔêÜ Should return true when hash matches (1 ms)
+      ÔêÜ Should return false when hash does not 
+match (1 ms)
+
+PASS 
+tests/application/usecases/db-load-user-by-id.spec.ts
+  DbLoadUserById UseCase
+    ÔêÜ Should call LoadUserByIdRepository with 
+correct id (2 ms)
+    ÔêÜ Should return null if LoadUserByIdRepository 
+returns null
+    ÔêÜ Should return a user on success
+    ÔêÜ Should throw if LoadUserByIdRepository throws 
+(10 ms)
+
+PASS 
+src/presentation/middlewares/auth-middleware.spec.ts
+  AuthMiddleware
+    ÔêÜ Should return 403 if no authorization header 
+is provided (2 ms)
+    ÔêÜ Should return 403 if authorization header has 
+invalid format (4 ms)
+    ÔêÜ Should call Decrypter with correct token (3 
+ms)
+    ÔêÜ Should return 403 if Decrypter returns 
+undefined (1 ms)
+    ÔêÜ Should return 500 if Decrypter throws (12 ms)
+    ÔêÜ Should return 200 with userId and role on 
+success (1 ms)
+
+PASS tests/domain/value-objects/user-status.spec.ts
+  UserStatus Value Object
+    ÔêÜ Should return correct values (2 ms)
+    ÔêÜ Should normalize to uppercase
+    ÔêÜ Should return an error if status is invalid
+
+PASS tests/infra/cryptography/bcrypt-adapter.spec.ts
+  Bcrypt Adapter
+    ÔêÜ Should call hash with correct values (6 ms)
+    ÔêÜ Should return a valid hash on hash success (4 
+ms)
+    ÔêÜ Should throw if hash throws (20 ms)
+    ÔêÜ Should call compare with correct values (1 ms)
+    ÔêÜ Should return true when compare succeeds (1 
+ms)
+    ÔêÜ Should return false when compare fails
+    ÔêÜ Should throw if compare throws (2 ms)
+
+PASS 
+src/application/usecases/db-add-neighborhood.spec.ts
+  DbAddNeighborhood UseCase
+    ÔêÜ Should call findByNameAndCity with correct 
+values (8 ms)
+    ÔêÜ Should return existing neighborhood if 
+findByNameAndCity returns one (1 ms)
+    ÔêÜ Should call add with correct values if 
+neighborhood does not exist
+    ÔêÜ Should return the created neighborhood on 
+success
+    ÔêÜ Should throw if repository throws (18 ms)
+
+PASS 
+tests/domain/value-objects/expiration-date.spec.ts
+  ExpirationDate Value Object
+    fromDays()
+      ÔêÜ Should create an expiration date N days 
+from now (2 ms)
+      ÔêÜ Should throw if days is zero (16 ms)
+      ÔêÜ Should throw if days is negative (2 ms)
+    fromDate()
+      ÔêÜ Should create an expiration date from a 
+future date (1 ms)
+      ÔêÜ Should throw if date is in the past (2 ms)
+    isExpired()
+      ÔêÜ Should return false for a future date (1 ms)
+    toDate()
+      ÔêÜ Should return the underlying Date object
+
+PASS tests/domain/value-objects/address.spec.ts
+  Address Value Object
+    ÔêÜ Should return InvalidAddressError if street 
+is empty (2 ms)
+    ÔêÜ Should return InvalidAddressError if number 
+is empty (1 ms)
+    ÔêÜ Should return InvalidAddressError if 
+neighborhoodId is empty
+    ÔêÜ Should return InvalidAddressError if cityId 
+is empty
+    ÔêÜ Should return InvalidAddressError if zipCode 
+is not 8 digits (1 ms)
+    ÔêÜ Should create a valid address (2 ms)
+    ÔêÜ Should accept optional complement
+    ÔêÜ Should strip non-digit chars from zipCode
+
+PASS tests/application/usecases/db-load-users.spec.ts
+  DbLoadUsers UseCase
+    ÔêÜ Should call LoadUsersRepository (6 ms)
+    ÔêÜ Should return a list of Users on success (3 
+ms)
+    ÔêÜ Should throw if LoadUsersRepository throws 
+(16 ms)
+
+PASS tests/application/usecases/db-update-user.spec.ts
+  DbUpdateUser UseCase
+    ÔêÜ Should call UpdateUserRepository with correct 
+values (2 ms)
+    ÔêÜ Should throw if UpdateUserRepository throws 
+(10 ms)
+    ÔêÜ Should return an updated user on success (1 
+ms)
+
+PASS tests/domain/value-objects/password.spec.ts
+  Password Value Object
+    Validation Rules (RN01)
+      ÔêÜ Should return error if password is empty (3 
+ms)
+      ÔêÜ Should return error if password is less 
+than 8 characters (1 ms)
+      ÔêÜ Should return error if password has no 
+uppercase letter (4 ms)
+      ÔêÜ Should return error if password has no 
+number (2 ms)
+      ÔêÜ Should return error if password has no 
+special character (2 ms)
+      ÔêÜ Should create valid password with all 
+requirements met (13 ms)
+      ÔêÜ Should accept various special characters (3 
+ms)
+
+PASS tests/presentation/errors/server-error.spec.ts
+  ServerError
+    ÔêÜ Should return stack if provided (2 ms)
+    ÔêÜ Should have correct name and message (2 ms)
+
+PASS tests/domain/models/role.spec.ts
+  Role Entity
+    ÔêÜ Should create a valid Role (3 ms)
+    ÔêÜ Should add permission (1 ms)
+    ÔêÜ Should not add duplicate permission (1 ms)
+
+PASS src/domain/events/domain-events.spec.ts
+  DomainEvents
+    ÔêÜ Should mark an aggregate for dispatch (2 ms)
+    ÔêÜ Should dispatch events for an aggregate and 
+save to repository (2 ms)
+    ÔêÜ Should clear events after dispatch (1 ms)
+
+PASS tests/domain/value-objects/rg.spec.ts
+  Rg Value Object
+    ÔêÜ Should return InvalidRgError if rg is empty 
+(2 ms)
+    ÔêÜ Should create a valid rg (2 ms)
+    ÔêÜ Should strip formatting (dots and hyphens)
+    ÔêÜ Should accept X character (common in RGs) (1 
+ms)
+    ÔêÜ Should return InvalidRgError for invalid 
+characters (special symbols) (2 ms)
+
+  console.error
+    [DATA CORRUPTION] Failed to reconstitute User 278ee03f-6801-4711-b194-d6f2e744dad4: Invalid email format
+
+    [0m [90m 83 |[39m     } [36mcatch[39m (error) {
+     [90m 84 |[39m       [36mconst[39m errorMessage [33m=[39m error [36minstanceof[39m [33mError[39m [33m?[39m error[33m.[39mmessage [33m:[39m [33mString[39m(error)
+    [31m[1m>[22m[39m[90m 85 |[39m       console[33m.[39merror([32m`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: ${errorMessage}`[39m)
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 86 |[39m       [36mreturn[39m [36mnull[39m
+     [90m 87 |[39m     }
+     [90m 88 |[39m   }[0m
+
+      at UserTypeOrmRepository.toUserModel (src/infra/db/typeorm/user-repository.ts:85:15)
+      at UserTypeOrmRepository.loadAll (src/infra/db/typeorm/user-repository.ts:141:30)
+      at Object.<anonymous> (tests/infra/db/typeorm/user-repository.spec.ts:392:19)
+
+PASS tests/domain/value-objects/email.spec.ts
+  Email Value Object
+    ÔêÜ Should create a valid Email (1 ms)
+    ÔêÜ Should throw if email is invalid (12 ms)
+    ÔêÜ Should throw if email is empty (2 ms)
+    ÔêÜ Should normalize email to lowercase (1 ms)
+
+  console.error
+    [DATA CORRUPTION] Failed to reconstitute User 024a1c6f-7b9b-4bc8-bbd7-9d6ea138f1e0: Invalid Name - "A"
+
+    [0m [90m 29 |[39m       [36mconst[39m nameOrError [33m=[39m [33mName[39m[33m.[39mcreate(entity[33m.[39mname)
+     [90m 30 |[39m       [36mif[39m ([33m![39m(nameOrError [36minstanceof[39m [33mName[39m)) {
+    [31m[1m>[22m[39m[90m 31 |[39m         console[33m.[39merror([32m`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: Invalid Name - "${entity.name}"`[39m)
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 32 |[39m         [36mreturn[39m [36mnull[39m
+     [90m 33 |[39m       }
+     [90m 34 |[39m[0m
+
+      at UserTypeOrmRepository.toUserModel (src/infra/db/typeorm/user-repository.ts:31:17)
+      at UserTypeOrmRepository.loadAll (src/infra/db/typeorm/user-repository.ts:141:30)
+      at Object.<anonymous> (tests/infra/db/typeorm/user-repository.spec.ts:413:19)
+
+PASS tests/domain/value-objects/user-role.spec.ts
+  UserRole Value Object
+    ÔêÜ Should create a valid UserRole (1 ms)
+    ÔêÜ Should normalize role to uppercase
+    ÔêÜ Should return an error if role is invalid
+
+PASS tests/application/usecases/db-delete-user.spec.ts
+  DbDeleteUser UseCase
+    ÔêÜ Should call DeleteUserRepository with correct 
+id (2 ms)
+    ÔêÜ Should throw if DeleteUserRepository throws 
+(34 ms)
+
+PASS tests/domain/value-objects/name.spec.ts
+  Name Value Object
+    ÔêÜ Should return InvalidNameError if name is 
+empty (2 ms)
+    ÔêÜ Should return InvalidNameError if name has 
+less than 2 characters (1 ms)
+    ÔêÜ Should create a valid name
+    ÔêÜ Should trim the name
+
+  console.error
+    [DATA CORRUPTION] Failed to reconstitute User b5fdb7c4-c6b2-4937-a7cf-982977b4aca9: Invalid RG - ""
+
+    [0m [90m 36 |[39m       [36mconst[39m rgOrError [33m=[39m [33mRg[39m[33m.[39mcreate(entity[33m.[39mrg)
+     [90m 37 |[39m       [36mif[39m ([33m![39m(rgOrError [36minstanceof[39m [33mRg[39m)) {
+    [31m[1m>[22m[39m[90m 38 |[39m         console[33m.[39merror([32m`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: Invalid RG - "${entity.rg}"`[39m)
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 39 |[39m         [36mreturn[39m [36mnull[39m
+     [90m 40 |[39m       }
+     [90m 41 |[39m[0m
+
+      at UserTypeOrmRepository.toUserModel (src/infra/db/typeorm/user-repository.ts:38:17)
+      at UserTypeOrmRepository.loadAll (src/infra/db/typeorm/user-repository.ts:141:30)
+      at Object.<anonymous> (tests/infra/db/typeorm/user-repository.spec.ts:433:19)
+
+PASS tests/domain/value-objects/birth-date.spec.ts
+  BirthDate Value Object
+    ÔêÜ Should return InvalidBirthDateError if date 
+is empty (2 ms)
+    ÔêÜ Should return InvalidBirthDateError if date 
+is invalid format (1 ms)
+    ÔêÜ Should return InvalidBirthDateError if date 
+is in the future (1 ms)
+    ÔêÜ Should create a valid birth date (ISO format) 
+(1 ms)
+
+PASS tests/domain/models/permission.spec.ts
+  Permission Entity
+    ÔêÜ Should create a valid Permission (2 ms)
+    ÔêÜ Should update description (1 ms)
+
+  console.error
+    [DATA CORRUPTION] Failed to reconstitute User ee3134f7-eb79-4949-b324-543e0a19b749: Invalid RG - ""
+
+    [0m [90m 36 |[39m       [36mconst[39m rgOrError [33m=[39m [33mRg[39m[33m.[39mcreate(entity[33m.[39mrg)
+     [90m 37 |[39m       [36mif[39m ([33m![39m(rgOrError [36minstanceof[39m [33mRg[39m)) {
+    [31m[1m>[22m[39m[90m 38 |[39m         console[33m.[39merror([32m`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: Invalid RG - "${entity.rg}"`[39m)
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 39 |[39m         [36mreturn[39m [36mnull[39m
+     [90m 40 |[39m       }
+     [90m 41 |[39m[0m
+
+      at UserTypeOrmRepository.toUserModel (src/infra/db/typeorm/user-repository.ts:38:17)
+      at UserTypeOrmRepository.loadByEmail (src/infra/db/typeorm/user-repository.ts:119:17)
+      at Object.<anonymous> (tests/infra/db/typeorm/user-repository.spec.ts:451:18)
+
+PASS tests/domain/value-objects/id.spec.ts
+  Id Value Object
+    ÔêÜ Should create an Id from a valid UUID (1 ms)
+    ÔêÜ Should throw if UUID is invalid (16 ms)
+    ÔêÜ Should throw if UUID is empty (2 ms)
+    ÔêÜ Should generate a new Id if no value provided 
+(4 ms)
+
+PASS tests/domain/models/login.spec.ts
+  Login Entity
+    ÔêÜ Should create a valid Login (3 ms)
+
+  console.error
+    [DATA CORRUPTION] Failed to reconstitute User 8b4c6f2e-1da1-4a26-a99f-0b3ce4114cfd: Invalid Name - "A"
+
+    [0m [90m 29 |[39m       [36mconst[39m nameOrError [33m=[39m [33mName[39m[33m.[39mcreate(entity[33m.[39mname)
+     [90m 30 |[39m       [36mif[39m ([33m![39m(nameOrError [36minstanceof[39m [33mName[39m)) {
+    [31m[1m>[22m[39m[90m 31 |[39m         console[33m.[39merror([32m`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: Invalid Name - "${entity.name}"`[39m)
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 32 |[39m         [36mreturn[39m [36mnull[39m
+     [90m 33 |[39m       }
+     [90m 34 |[39m[0m
+
+      at UserTypeOrmRepository.toUserModel (src/infra/db/typeorm/user-repository.ts:31:17)
+      at UserTypeOrmRepository.loadByCpf (src/infra/db/typeorm/user-repository.ts:126:17)
+      at Object.<anonymous> (tests/infra/db/typeorm/user-repository.spec.ts:468:18)
+
+PASS tests/validation/validators/validation-composite.
+spec.ts
+  Validation Composite
+    ÔêÜ Should return an error if any validation 
+fails (2 ms)
+    ÔêÜ Should return the first error if more than 
+one validation fails (1 ms)
+    ÔêÜ Should not return if validation succeeds
+
+PASS tests/main/factories/add-user-validation-factory.
+spec.ts
+  AddUserValidation Factory
+    ÔêÜ Should call ValidationComposite with all 
+validations (2 ms)
+
+  console.error
+    [DATA CORRUPTION] Failed to reconstitute User 803ea918-6490-4658-b38d-8c67f2587ebe: string-error-not-Error-instance
+
+    [0m [90m 83 |[39m     } [36mcatch[39m (error) {
+     [90m 84 |[39m       [36mconst[39m errorMessage [33m=[39m error [36minstanceof[39m [33mError[39m [33m?[39m error[33m.[39mmessage [33m:[39m [33mString[39m(error)
+    [31m[1m>[22m[39m[90m 85 |[39m       console[33m.[39merror([32m`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: ${errorMessage}`[39m)
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 86 |[39m       [36mreturn[39m [36mnull[39m
+     [90m 87 |[39m     }
+     [90m 88 |[39m   }[0m
+
+      at UserTypeOrmRepository.toUserModel (src/infra/db/typeorm/user-repository.ts:85:15)
+      at UserTypeOrmRepository.loadAll (src/infra/db/typeorm/user-repository.ts:141:30)
+      at Object.<anonymous> (tests/infra/db/typeorm/user-repository.spec.ts:517:19)
+
+  console.error
+    [DATA CORRUPTION] Failed to reconstitute User 550e8400-e29b-41d4-a716-446655440001: Invalid Name - "A"
+
+    [0m [90m 29 |[39m       [36mconst[39m nameOrError [33m=[39m [33mName[39m[33m.[39mcreate(entity[33m.[39mname)
+     [90m 30 |[39m       [36mif[39m ([33m![39m(nameOrError [36minstanceof[39m [33mName[39m)) {
+    [31m[1m>[22m[39m[90m 31 |[39m         console[33m.[39merror([32m`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: Invalid Name - "${entity.name}"`[39m)
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 32 |[39m         [36mreturn[39m [36mnull[39m
+     [90m 33 |[39m       }
+     [90m 34 |[39m[0m
+
+      at UserTypeOrmRepository.toUserModel (src/infra/db/typeorm/user-repository.ts:31:17)
+      at UserTypeOrmRepository.loadById (src/infra/db/typeorm/user-repository.ts:175:28)
+      at Object.<anonymous> (tests/infra/db/typeorm/user-repository.spec.ts:556:20)
+
+  console.error
+    [DATA CORRUPTION] Failed to reconstitute User 6c7d9f59-ff1f-4e1a-b0ae-4237bd8565ef: Invalid Status - "INVALID_STATUS"
+
+    [0m [90m 64 |[39m       [36mconst[39m statusOrError [33m=[39m [33mUserStatus[39m[33m.[39mcreate(entity[33m.[39mstatus)
+     [90m 65 |[39m       [36mif[39m (statusOrError [36minstanceof[39m [33mError[39m) {
+    [31m[1m>[22m[39m[90m 66 |[39m         console[33m.[39merror([32m`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: Invalid Status - "${entity.status}"`[39m)
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 67 |[39m         [36mreturn[39m [36mnull[39m
+     [90m 68 |[39m       }
+     [90m 69 |[39m[0m
+
+      at UserTypeOrmRepository.toUserModel (src/infra/db/typeorm/user-repository.ts:66:17)
+      at UserTypeOrmRepository.loadByEmail (src/infra/db/typeorm/user-repository.ts:119:17)
+      at Object.<anonymous> (tests/infra/db/typeorm/user-repository.spec.ts:632:18)
+
+PASS tests/infra/db/typeorm/user-repository.spec.ts 
+(5.305 s)
+  UserTypeOrmRepository
+    ÔêÜ Should return a user on success (145 ms)
+    ÔêÜ Should throw when adding user with duplicate 
+email (135 ms)
+    ÔêÜ Should throw when adding user with duplicate 
+cpf (25 ms)
+    ÔêÜ Should return a user on loadByEmail success 
+(33 ms)
+    ÔêÜ Should return undefined if loadByEmail finds 
+no user (25 ms)
+    ÔêÜ Should return a user on loadByCpf success (24 
+ms)
+    ÔêÜ Should return undefined if loadByCpf finds no 
+user (16 ms)
+    ÔêÜ Should return all users on loadAll success 
+(29 ms)
+    ÔêÜ Should return all users with login data on 
+loadAll success (31 ms)
+    ÔêÜ Should return empty list if no users found 
+(17 ms)
+    ÔêÜ Should update a user on success (34 ms)
+    ÔêÜ Should soft delete a user on success (20 ms)
+    ÔêÜ Should not load soft deleted user by 
+loadByCpf (17 ms)
+    ÔêÜ Should not load soft deleted user by loadById 
+(20 ms)
+    ÔêÜ Should not load soft deleted user by loadAll 
+(15 ms)
+    ÔêÜ Should add a user with address on success (19 
+ms)
+    ÔêÜ Should update a user with address on success 
+(23 ms)
+    ÔêÜ Should return null if update is called with 
+non-existent id (15 ms)
+    ÔêÜ Should update rg on success (27 ms)
+    ÔêÜ Should update cpf on success (39 ms)
+    ÔêÜ Should update gender on success (21 ms)
+    ÔêÜ Should return user with undefined address if 
+DB has invalid address data (defensive check) (20 ms)
+    ÔêÜ Should exclude users with invalid email from 
+loadAll results (domain shielding) (218 ms)
+    ÔêÜ Should exclude users with invalid Name from 
+loadAll results (46 ms)
+    ÔêÜ Should exclude users with invalid RG from 
+loadAll results (56 ms)
+    ÔêÜ Should return undefined from loadByEmail if 
+user data is corrupt (93 ms)
+    ÔêÜ Should return undefined from loadByCpf if 
+user data is corrupt (36 ms)
+    ÔêÜ Should throw error if add fails to 
+reconstitute saved user (line 102) (24 ms)
+    ÔêÜ Should throw error if update fails to 
+reconstitute saved user (line 151) (20 ms)
+    ÔêÜ Should handle non-Error thrown by VO creation 
+(line 77 String(error) fallback) (22 ms)
+    ÔêÜ Should throw OptimisticLockError on 
+concurrent updates (28 ms)
+    ÔêÜ Should update phone on success (18 ms)
+    ÔêÜ Should return null from toUserModel if 
+UserStatus is invalid in DB (20 ms)
+    ÔêÜ Should skip login data in loadAll if UserRole 
+or UserStatus in login is invalid (16 ms)
+    loadById()
+      ÔêÜ Should return a user on success (21 ms)
+      ÔêÜ Should return null if loadById finds no 
+user (13 ms)
+      ÔêÜ Should return null if user data is corrupt 
+(defensive check) (19 ms)
+      ÔêÜ Should return user without login if login 
+data does not exist (16 ms)
+      ÔêÜ Should return user with login data if it 
+exists (18 ms)
+
+PASS tests/main/routes/add-user-login-routes.test.ts 
+(6.354 s)
+  CreateUserLogin Routes
+    POST /users/:userId/login
+      ÔêÜ Should return 403 if no access token is 
+provided (84 ms)
+      ÔêÜ Should return 200 on success with valid 
+token (379 ms)
+      ÔêÜ Should return 400 if password is missing 
+(10 ms)
+
+PASS 
+tests/main/routes/create-user-login-routes.test.ts 
+(6.232 s)
+  CreateUserLogin Routes
+    POST /users/:userId/login
+      ÔêÜ Should return 403 if no access token is 
+provided (67 ms)
+      ÔêÜ Should return 200 on success with valid 
+token (372 ms)
+      ÔêÜ Should return 400 if password is missing 
+(10 ms)
+
+FAIL 
+tests/infra/db/typeorm/session-repository.spec.ts 
+(8.371 s)
+  ÔùÅ SessionTypeOrmRepository ÔÇ║ save() ÔÇ║ Should 
+save a session
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 10 |[39m   [36mlet[39m 
+sut[33m:[39m [33mSessionTypeOrmRepository[39m
+     [90m 11 |[39m
+    [31m[1m>[22m[39m[90m 12 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 13 |[39m     [36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 14 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 15 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at 
+tests/infra/db/typeorm/session-repository.spec.ts:12:3
+      at Object.<anonymous> (tests/infra/db/typeorm/se
+ssion-repository.spec.ts:9:1)
+
+  ÔùÅ SessionTypeOrmRepository ÔÇ║ loadByToken() ÔÇ║ 
+Should load a session by token
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 10 |[39m   [36mlet[39m 
+sut[33m:[39m [33mSessionTypeOrmRepository[39m
+     [90m 11 |[39m
+    [31m[1m>[22m[39m[90m 12 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 13 |[39m     [36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 14 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 15 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at 
+tests/infra/db/typeorm/session-repository.spec.ts:12:3
+      at Object.<anonymous> (tests/infra/db/typeorm/se
+ssion-repository.spec.ts:9:1)
+
+  ÔùÅ SessionTypeOrmRepository ÔÇ║ loadByToken() ÔÇ║ 
+Should return null if token is not found
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 10 |[39m   [36mlet[39m 
+sut[33m:[39m [33mSessionTypeOrmRepository[39m
+     [90m 11 |[39m
+    [31m[1m>[22m[39m[90m 12 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 13 |[39m     [36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 14 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 15 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at 
+tests/infra/db/typeorm/session-repository.spec.ts:12:3
+      at Object.<anonymous> (tests/infra/db/typeorm/se
+ssion-repository.spec.ts:9:1)
+
+  ÔùÅ SessionTypeOrmRepository ÔÇ║ invalidate() ÔÇ║ 
+Should invalidate a session
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 10 |[39m   [36mlet[39m 
+sut[33m:[39m [33mSessionTypeOrmRepository[39m
+     [90m 11 |[39m
+    [31m[1m>[22m[39m[90m 12 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 13 |[39m     [36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 14 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 15 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at 
+tests/infra/db/typeorm/session-repository.spec.ts:12:3
+      at Object.<anonymous> (tests/infra/db/typeorm/se
+ssion-repository.spec.ts:9:1)
+
+  ÔùÅ SessionTypeOrmRepository ÔÇ║ 
+loadUserBySessionId() ÔÇ║ Should return user info 
+with role from logins table
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 10 |[39m   [36mlet[39m 
+sut[33m:[39m [33mSessionTypeOrmRepository[39m
+     [90m 11 |[39m
+    [31m[1m>[22m[39m[90m 12 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 13 |[39m     [36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 14 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 15 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at 
+tests/infra/db/typeorm/session-repository.spec.ts:12:3
+      at Object.<anonymous> (tests/infra/db/typeorm/se
+ssion-repository.spec.ts:9:1)
+
+  ÔùÅ SessionTypeOrmRepository ÔÇ║ 
+loadUserBySessionId() ÔÇ║ Should return null if 
+session does not exist
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 10 |[39m   [36mlet[39m 
+sut[33m:[39m [33mSessionTypeOrmRepository[39m
+     [90m 11 |[39m
+    [31m[1m>[22m[39m[90m 12 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 13 |[39m     [36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 14 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 15 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at 
+tests/infra/db/typeorm/session-repository.spec.ts:12:3
+      at Object.<anonymous> (tests/infra/db/typeorm/se
+ssion-repository.spec.ts:9:1)
+
+  ÔùÅ SessionTypeOrmRepository ÔÇ║ 
+loadUserBySessionId() ÔÇ║ Should return user info 
+with default role MEMBER if no login found
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 10 |[39m   [36mlet[39m 
+sut[33m:[39m [33mSessionTypeOrmRepository[39m
+     [90m 11 |[39m
+    [31m[1m>[22m[39m[90m 12 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 13 |[39m     [36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 14 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 15 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at 
+tests/infra/db/typeorm/session-repository.spec.ts:12:3
+      at Object.<anonymous> (tests/infra/db/typeorm/se
+ssion-repository.spec.ts:9:1)
+
+
+  ÔùÅ Test suite failed to run
+
+    CannotExecuteNotConnectedError: Cannot execute 
+operation on "default" connection because connection 
+is not yet established.
+
+      at DataSource.destroy 
+(src/data-source/DataSource.ts:307:19)
+      at Object.disconnect 
+(src/infra/db/typeorm/typeorm-helper.ts:24:23)
+      at Object.<anonymous> (tests/infra/db/typeorm/se
+ssion-repository.spec.ts:23:25)
+
+FAIL tests/main/routes/user-routes.test.ts (9.822 s)
+  ÔùÅ User Routes ÔÇ║ POST /users ÔÇ║ Should return 
+403 if no access token is provided
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ POST /users ÔÇ║ Should return 
+403 if user role is MEMBER
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ POST /users ÔÇ║ Should return 
+200 on success with valid token
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ GET /users ÔÇ║ Should return 
+403 if no access token is provided
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ GET /users ÔÇ║ Should return 
+403 if user role is MEMBER
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ GET /users ÔÇ║ Should return 
+200 on success with valid token
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ PUT /users/:id ÔÇ║ Should 
+return 403 if user role is not ADMIN
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ PUT /users/:id ÔÇ║ Should 
+return 404 if user does not exist
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ PUT /users/:id ÔÇ║ Should 
+return 200 on success
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ DELETE /users/:id ÔÇ║ Should 
+return 403 if user role is not ADMIN
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ DELETE /users/:id ÔÇ║ Should 
+return 204 on success
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+
+  ÔùÅ Test suite failed to run
+
+    CannotExecuteNotConnectedError: Cannot execute 
+operation on "default" connection because connection 
+is not yet established.
+
+      at DataSource.destroy 
+(src/data-source/DataSource.ts:307:19)
+      at Object.disconnect 
+(src/infra/db/typeorm/typeorm-helper.ts:24:23)
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:31:25)
+
+A worker process has failed to exit gracefully and 
+has been force exited. This is likely caused by tests 
+leaking due to improper teardown. Try running with 
+--detectOpenHandles to find leaks. Active timers can 
+also cause this, ensure that .unref() was called on 
+them.
+Summary of all failing tests
+FAIL tests/main/factories/create-user-login-validation
+-factory.spec.ts
+  ÔùÅ CreateUserLoginValidation Factory ÔÇ║ Should 
+call ValidationComposite with all validations
+
+    
+expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+    @@ -3,6 +3,9 @@
+          "fieldName": "userId",
+        },
+        RequiredFieldValidation {
+          "fieldName": "password",
+        },
+    +   RequiredFieldValidation {
+    +     "fieldName": "email",
+    +   },
+      ],
+
+    Number of calls: 1
+
+    [0m [90m 12 |[39m       
+validations[33m.[39mpush([36mnew[39m 
+[33mRequiredFieldValidation[39m(field))
+     [90m 13 |[39m     }
+    [31m[1m>[22m[39m[90m 14 |[39m     expect([3
+3mValidationComposite[39m)[33m.[39mtoHaveBeenCalled
+With(validations)
+     [90m    |[39m                                 
+[31m[1m^[22m[39m
+     [90m 15 |[39m   })
+     [90m 16 |[39m })
+     [90m 17 |[39m[0m
+
+      at Object.<anonymous> (tests/main/factories/crea
+te-user-login-validation-factory.spec.ts:14:33)
+
+FAIL src/infra/cryptography/jwt-adapter.spec.ts
+  ÔùÅ Jwt Adapter ÔÇ║ sign() ÔÇ║ Should call sign 
+with correct values
+
+    
+expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+        "id": "any_id",
+    -   "role": "ADMIN",
+    +   "role": undefined,
+      },
+      "secret",
+
+    Number of calls: 1
+
+    [0m [90m 23 |[39m       [36mconst[39m 
+signSpy [33m=[39m 
+jest[33m.[39mspyOn(jwt[33m,[39m [32m'sign'[39m)
+     [90m 24 |[39m       [36mawait[39m 
+sut[33m.[39mencrypt({ id[33m:[39m 
+[32m'any_id'[39m[33m,[39m role[33m:[39m 
+[33mRole[39m[33m.[39m[33mADMIN[39m })
+    [31m[1m>[22m[39m[90m 25 |[39m       
+expect(signSpy)[33m.[39mtoHaveBeenCalledWith({ 
+id[33m:[39m [32m'any_id'[39m[33m,[39m 
+role[33m:[39m [32m'ADMIN'[39m }[33m,[39m 
+[32m'secret'[39m)
+     [90m    |[39m                       
+[31m[1m^[22m[39m
+     [90m 26 |[39m     })
+     [90m 27 |[39m
+     [90m 28 |[39m     test([32m'Should return a 
+token on sign success'[39m[33m,[39m 
+[36masync[39m () [33m=>[39m {[0m
+
+      at Object.<anonymous> 
+(src/infra/cryptography/jwt-adapter.spec.ts:25:23)
+
+  ÔùÅ Jwt Adapter ÔÇ║ verify() ÔÇ║ Should return 
+TokenPayload on verify success
+
+    expect(received).toEqual(expected) // deep 
+equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "id": "any_value",
+    -   "role": undefined,
+    +   "role": "MEMBER",
+      }
+
+    [0m [90m 53 |[39m       [36mconst[39m sut 
+[33m=[39m makeSut()
+     [90m 54 |[39m       [36mconst[39m value 
+[33m=[39m [36mawait[39m 
+sut[33m.[39mdecrypt([32m'any_token'[39m)
+    [31m[1m>[22m[39m[90m 55 |[39m       
+expect(value)[33m.[39mtoEqual({ id[33m:[39m 
+[32m'any_value'[39m[33m,[39m role[33m:[39m 
+[33mRole[39m[33m.[39m[33mMEMBER[39m })
+     [90m    |[39m                     
+[31m[1m^[22m[39m
+     [90m 56 |[39m     })
+     [90m 57 |[39m
+     [90m 58 |[39m     test([32m'Should return 
+undefined if decoded id is missing'[39m[33m,[39m 
+[36masync[39m () [33m=>[39m {[0m
+
+      at Object.<anonymous> 
+(src/infra/cryptography/jwt-adapter.spec.ts:55:21)
+
+FAIL tests/presentation/controllers/create-user-login-
+controller.spec.ts
+  ÔùÅ CreateUserLogin Controller ÔÇ║ Should call 
+CreateUserLogin with correct values
+
+    
+expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: {"password": "Abcdefg1!", "role": 
+{"role": "MEMBER"}, "status": {"status": "ACTIVE"}, 
+"userId": {"id": 
+"550e8400-e29b-41d4-a716-446655440001"}}
+
+    Number of calls: 0
+
+    [0m [90m 63 |[39m     [36mconst[39m 
+createSpy [33m=[39m 
+jest[33m.[39mspyOn(createUserLoginStub[33m,[39m 
+[32m'create'[39m)
+     [90m 64 |[39m     [36mawait[39m 
+sut[33m.[39mhandle(makeFakeRequest())
+    [31m[1m>[22m[39m[90m 65 |[39m     
+expect(createSpy)[33m.[39mtoHaveBeenCalledWith({
+     [90m    |[39m                       
+[31m[1m^[22m[39m
+     [90m 66 |[39m       userId[33m:[39m [33mId[
+39m[33m.[39mcreate([32m'550e8400-e29b-41d4-a716-446
+655440001'[39m)[33m,[39m
+     [90m 67 |[39m       password[33m:[39m 
+[32m'Abcdefg1!'[39m[33m,[39m
+     [90m 68 |[39m       role[33m:[39m [33mUserRo
+le[39m[33m.[39mcreate([32m'MEMBER'[39m)[33m,[39
+m[0m
+
+      at Object.<anonymous> (tests/presentation/contro
+llers/create-user-login-controller.spec.ts:65:23)
+
+  ÔùÅ CreateUserLogin Controller ÔÇ║ Should return 
+200 if valid data is provided
+
+    expect(received).toBe(expected) // Object.is 
+equality
+
+    Expected: 200
+    Received: 500
+
+    [0m [90m 84 |[39m     [36mconst[39m { sut } 
+[33m=[39m makeSut()
+     [90m 85 |[39m     [36mconst[39m httpResponse 
+[33m=[39m [36mawait[39m 
+sut[33m.[39mhandle(makeFakeRequest()) [36mas[39m 
+{ statusCode[33m:[39m number[33m;[39m 
+body[33m:[39m unknown }
+    [31m[1m>[22m[39m[90m 86 |[39m     expect(htt
+pResponse[33m.[39mstatusCode)[33m.[39mtoBe([35m20
+0[39m)
+     [90m    |[39m                                  
+   [31m[1m^[22m[39m
+     [90m 87 |[39m     expect(httpResponse[33m.[39
+mbody)[33m.[39mtoEqual({
+     [90m 88 |[39m       id[33m:[39m [33mId[39m
+[33m.[39mcreate([32m'550e8400-e29b-41d4-a716-4466554
+40000'[39m)[33m,[39m
+     [90m 89 |[39m       userId[33m:[39m [33mId[
+39m[33m.[39mcreate([32m'550e8400-e29b-41d4-a716-446
+655440001'[39m)[33m,[39m[0m
+
+      at Object.<anonymous> (tests/presentation/contro
+llers/create-user-login-controller.spec.ts:86:37)
+
+  ÔùÅ CreateUserLogin Controller ÔÇ║ Should return 
+400 if password does not meet policy requirements
+
+    expect(received).toBe(expected) // Object.is 
+equality
+
+    Expected: 400
+    Received: 500
+
+    [0m [90m 120 |[39m     }
+     [90m 121 |[39m     [36mconst[39m 
+httpResponse [33m=[39m [36mawait[39m 
+sut[33m.[39mhandle(httpRequest) [36mas[39m { 
+statusCode[33m:[39m number[33m;[39m 
+body[33m:[39m { error[33m:[39m { 
+message[33m:[39m string } } }
+    [31m[1m>[22m[39m[90m 122 |[39m     expect(ht
+tpResponse[33m.[39mstatusCode)[33m.[39mtoBe([35m4
+00[39m)
+     [90m     |[39m                                 
+    [31m[1m^[22m[39m
+     [90m 123 |[39m     expect(httpResponse[33m.[3
+9mbody[33m.[39merror[33m.[39mmessage)[33m.[39mto
+Contain([32m'Password'[39m)
+     [90m 124 |[39m   })
+     [90m 125 |[39m[0m
+
+      at Object.<anonymous> (tests/presentation/contro
+llers/create-user-login-controller.spec.ts:122:37)
+
+  ÔùÅ CreateUserLogin Controller ÔÇ║ Should return 
+400 if ID.create throws
+
+    expect(received).toBe(expected) // Object.is 
+equality
+
+    Expected: 400
+    Received: 500
+
+    [0m [90m 129 |[39m     
+httpRequest[33m.[39mparams [33m=[39m { 
+userId[33m:[39m [32m'invalid-id'[39m }
+     [90m 130 |[39m     [36mconst[39m 
+httpResponse [33m=[39m [36mawait[39m 
+sut[33m.[39mhandle(httpRequest) [36mas[39m { 
+statusCode[33m:[39m number[33m;[39m 
+body[33m:[39m { error[33m:[39m { code[33m:[39m 
+string } } }
+    [31m[1m>[22m[39m[90m 131 |[39m     expect(ht
+tpResponse[33m.[39mstatusCode)[33m.[39mtoBe([35m4
+00[39m)
+     [90m     |[39m                                 
+    [31m[1m^[22m[39m
+     [90m 132 |[39m     expect(httpResponse[33m.[3
+9mbody[33m.[39merror[33m.[39mcode)[33m.[39mtoBe(
+[32m'INVALID_PARAM'[39m)
+     [90m 133 |[39m   })
+     [90m 134 |[39m })[0m
+
+      at Object.<anonymous> (tests/presentation/contro
+llers/create-user-login-controller.spec.ts:131:37)
+
+FAIL src/presentation/middlewares/require-role-middlew
+are.spec.ts
+  ÔùÅ RequireRoleMiddleware ÔÇ║ Should return 200 if 
+user role is in allowed roles
+
+    expect(received).toEqual(expected) // deep 
+equality
+
+    - Expected  - 3
+    + Received  + 7
+
+      Object {
+        "body": Object {
+    -     "role": undefined,
+    -     "userId": "any_user_id",
+    +     "error": Object {
+    +       "code": "FORBIDDEN",
+    +       "details": undefined,
+    +       "message": "Access denied",
+    +       "timestamp": "2025-01-01T00:00:00.000Z",
+          },
+    -   "statusCode": 200,
+    +   },
+    +   "statusCode": 403,
+      }
+
+    [0m [90m 41 |[39m     [36mconst[39m sut 
+[33m=[39m [36mnew[39m [33mRequireRoleMiddleware[
+39m([[33mRole[39m[33m.[39m[33mADMIN[39m[33m,[3
+9m [33mRole[39m[33m.[39m[33mLIBRARIAN[39m])
+     [90m 42 |[39m     [36mconst[39m httpResponse 
+[33m=[39m [36mawait[39m sut[33m.[39mhandle(makeF
+akeRequest([33mRole[39m[33m.[39m[33mLIBRARIAN[39
+m))
+    [31m[1m>[22m[39m[90m 43 |[39m     
+expect(httpResponse)[33m.[39mtoEqual(ok({ 
+userId[33m:[39m [32m'any_user_id'[39m[33m,[39m 
+role[33m:[39m 
+[33mRole[39m[33m.[39m[33mLIBRARIAN[39m }))
+     [90m    |[39m                          
+[31m[1m^[22m[39m
+     [90m 44 |[39m   })
+     [90m 45 |[39m
+     [90m 46 |[39m   test([32m'Should return 200 
+for ADMIN even if not in allowed roles (ADMIN 
+bypasses)'[39m[33m,[39m [36masync[39m () 
+[33m=>[39m {[0m
+
+      at Object.<anonymous> (src/presentation/middlewa
+res/require-role-middleware.spec.ts:43:26)
+
+  ÔùÅ RequireRoleMiddleware ÔÇ║ Should return 200 for 
+ADMIN even if not in allowed roles (ADMIN bypasses)
+
+    expect(received).toEqual(expected) // deep 
+equality
+
+    - Expected  - 3
+    + Received  + 7
+
+      Object {
+        "body": Object {
+    -     "role": undefined,
+    -     "userId": "any_user_id",
+    +     "error": Object {
+    +       "code": "FORBIDDEN",
+    +       "details": undefined,
+    +       "message": "Access denied",
+    +       "timestamp": "2025-01-01T00:00:00.000Z",
+          },
+    -   "statusCode": 200,
+    +   },
+    +   "statusCode": 403,
+      }
+
+    [0m [90m 47 |[39m     [36mconst[39m sut 
+[33m=[39m [36mnew[39m [33mRequireRoleMiddleware[
+39m([[33mRole[39m[33m.[39m[33mLIBRARIAN[39m])
+     [90m 48 |[39m     [36mconst[39m httpResponse 
+[33m=[39m [36mawait[39m sut[33m.[39mhandle(makeF
+akeRequest([33mRole[39m[33m.[39m[33mADMIN[39m))
+    [31m[1m>[22m[39m[90m 49 |[39m     
+expect(httpResponse)[33m.[39mtoEqual(ok({ 
+userId[33m:[39m [32m'any_user_id'[39m[33m,[39m 
+role[33m:[39m 
+[33mRole[39m[33m.[39m[33mADMIN[39m }))
+     [90m    |[39m                          
+[31m[1m^[22m[39m
+     [90m 50 |[39m   })
+     [90m 51 |[39m
+     [90m 52 |[39m   test([32m'Should return 200 
+if allowed roles is empty (any authenticated 
+user)'[39m[33m,[39m [36masync[39m () 
+[33m=>[39m {[0m
+
+      at Object.<anonymous> (src/presentation/middlewa
+res/require-role-middleware.spec.ts:49:26)
+
+  ÔùÅ RequireRoleMiddleware ÔÇ║ Should return 200 if 
+allowed roles is empty (any authenticated user)
+
+    expect(received).toEqual(expected) // deep 
+equality
+
+    - Expected  - 3
+    + Received  + 7
+
+      Object {
+        "body": Object {
+    -     "role": undefined,
+    -     "userId": "any_user_id",
+    +     "error": Object {
+    +       "code": "FORBIDDEN",
+    +       "details": undefined,
+    +       "message": "Access denied",
+    +       "timestamp": "2025-01-01T00:00:00.000Z",
+          },
+    -   "statusCode": 200,
+    +   },
+    +   "statusCode": 403,
+      }
+
+    [0m [90m 53 |[39m     [36mconst[39m sut 
+[33m=[39m [36mnew[39m 
+[33mRequireRoleMiddleware[39m([])
+     [90m 54 |[39m     [36mconst[39m httpResponse 
+[33m=[39m [36mawait[39m sut[33m.[39mhandle(makeF
+akeRequest([33mRole[39m[33m.[39m[33mMEMBER[39m))
+    [31m[1m>[22m[39m[90m 55 |[39m     
+expect(httpResponse)[33m.[39mtoEqual(ok({ 
+userId[33m:[39m [32m'any_user_id'[39m[33m,[39m 
+role[33m:[39m 
+[33mRole[39m[33m.[39m[33mMEMBER[39m }))
+     [90m    |[39m                          
+[31m[1m^[22m[39m
+     [90m 56 |[39m   })
+     [90m 57 |[39m })
+     [90m 58 |[39m[0m
+
+      at Object.<anonymous> (src/presentation/middlewa
+res/require-role-middleware.spec.ts:55:26)
+
+FAIL 
+tests/application/usecases/db-refresh-token.spec.ts
+  ÔùÅ DbRefreshToken UseCase ÔÇ║ Should call 
+Encrypter with correct payload
+
+    
+expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+    -   "role": undefined,
+    +   "role": "ADMIN",
+      },
+
+    Number of calls: 1
+
+    [0m [90m 245 |[39m     [36mconst[39m 
+encryptSpy [33m=[39m 
+jest[33m.[39mspyOn(encrypterStub[33m,[39m 
+[32m'encrypt'[39m)
+     [90m 246 |[39m     [36mawait[39m 
+sut[33m.[39mrefresh(makeFakeRefreshTokenParams())
+    [31m[1m>[22m[39m[90m 247 |[39m     
+expect(encryptSpy)[33m.[39mtoHaveBeenCalledWith({ 
+id[33m:[39m [33mVALID_ID[39m[33m,[39m 
+role[33m:[39m 
+[33mRole[39m[33m.[39m[33mADMIN[39m })
+     [90m     |[39m                        
+[31m[1m^[22m[39m
+     [90m 248 |[39m   })
+     [90m 249 |[39m
+     [90m 250 |[39m   test([32m'Should throw if 
+Encrypter throws'[39m[33m,[39m [36masync[39m () 
+[33m=>[39m {[0m
+
+      at Object.<anonymous> (tests/application/usecase
+s/db-refresh-token.spec.ts:247:24)
+
+FAIL 
+tests/infra/db/typeorm/session-repository.spec.ts 
+(8.371 s)
+  ÔùÅ SessionTypeOrmRepository ÔÇ║ save() ÔÇ║ Should 
+save a session
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 10 |[39m   [36mlet[39m 
+sut[33m:[39m [33mSessionTypeOrmRepository[39m
+     [90m 11 |[39m
+    [31m[1m>[22m[39m[90m 12 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 13 |[39m     [36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 14 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 15 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at 
+tests/infra/db/typeorm/session-repository.spec.ts:12:3
+      at Object.<anonymous> (tests/infra/db/typeorm/se
+ssion-repository.spec.ts:9:1)
+
+  ÔùÅ SessionTypeOrmRepository ÔÇ║ loadByToken() ÔÇ║ 
+Should load a session by token
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 10 |[39m   [36mlet[39m 
+sut[33m:[39m [33mSessionTypeOrmRepository[39m
+     [90m 11 |[39m
+    [31m[1m>[22m[39m[90m 12 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 13 |[39m     [36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 14 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 15 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at 
+tests/infra/db/typeorm/session-repository.spec.ts:12:3
+      at Object.<anonymous> (tests/infra/db/typeorm/se
+ssion-repository.spec.ts:9:1)
+
+  ÔùÅ SessionTypeOrmRepository ÔÇ║ loadByToken() ÔÇ║ 
+Should return null if token is not found
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 10 |[39m   [36mlet[39m 
+sut[33m:[39m [33mSessionTypeOrmRepository[39m
+     [90m 11 |[39m
+    [31m[1m>[22m[39m[90m 12 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 13 |[39m     [36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 14 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 15 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at 
+tests/infra/db/typeorm/session-repository.spec.ts:12:3
+      at Object.<anonymous> (tests/infra/db/typeorm/se
+ssion-repository.spec.ts:9:1)
+
+  ÔùÅ SessionTypeOrmRepository ÔÇ║ invalidate() ÔÇ║ 
+Should invalidate a session
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 10 |[39m   [36mlet[39m 
+sut[33m:[39m [33mSessionTypeOrmRepository[39m
+     [90m 11 |[39m
+    [31m[1m>[22m[39m[90m 12 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 13 |[39m     [36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 14 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 15 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at 
+tests/infra/db/typeorm/session-repository.spec.ts:12:3
+      at Object.<anonymous> (tests/infra/db/typeorm/se
+ssion-repository.spec.ts:9:1)
+
+  ÔùÅ SessionTypeOrmRepository ÔÇ║ 
+loadUserBySessionId() ÔÇ║ Should return user info 
+with role from logins table
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 10 |[39m   [36mlet[39m 
+sut[33m:[39m [33mSessionTypeOrmRepository[39m
+     [90m 11 |[39m
+    [31m[1m>[22m[39m[90m 12 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 13 |[39m     [36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 14 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 15 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at 
+tests/infra/db/typeorm/session-repository.spec.ts:12:3
+      at Object.<anonymous> (tests/infra/db/typeorm/se
+ssion-repository.spec.ts:9:1)
+
+  ÔùÅ SessionTypeOrmRepository ÔÇ║ 
+loadUserBySessionId() ÔÇ║ Should return null if 
+session does not exist
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 10 |[39m   [36mlet[39m 
+sut[33m:[39m [33mSessionTypeOrmRepository[39m
+     [90m 11 |[39m
+    [31m[1m>[22m[39m[90m 12 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 13 |[39m     [36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 14 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 15 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at 
+tests/infra/db/typeorm/session-repository.spec.ts:12:3
+      at Object.<anonymous> (tests/infra/db/typeorm/se
+ssion-repository.spec.ts:9:1)
+
+  ÔùÅ SessionTypeOrmRepository ÔÇ║ 
+loadUserBySessionId() ÔÇ║ Should return user info 
+with default role MEMBER if no login found
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 10 |[39m   [36mlet[39m 
+sut[33m:[39m [33mSessionTypeOrmRepository[39m
+     [90m 11 |[39m
+    [31m[1m>[22m[39m[90m 12 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 13 |[39m     [36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 14 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 15 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at 
+tests/infra/db/typeorm/session-repository.spec.ts:12:3
+      at Object.<anonymous> (tests/infra/db/typeorm/se
+ssion-repository.spec.ts:9:1)
+
+
+  ÔùÅ Test suite failed to run
+
+    CannotExecuteNotConnectedError: Cannot execute 
+operation on "default" connection because connection 
+is not yet established.
+
+      at DataSource.destroy 
+(src/data-source/DataSource.ts:307:19)
+      at Object.disconnect 
+(src/infra/db/typeorm/typeorm-helper.ts:24:23)
+      at Object.<anonymous> (tests/infra/db/typeorm/se
+ssion-repository.spec.ts:23:25)
+
+FAIL tests/main/routes/user-routes.test.ts (9.822 s)
+  ÔùÅ User Routes ÔÇ║ POST /users ÔÇ║ Should return 
+403 if no access token is provided
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ POST /users ÔÇ║ Should return 
+403 if user role is MEMBER
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ POST /users ÔÇ║ Should return 
+200 on success with valid token
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ GET /users ÔÇ║ Should return 
+403 if no access token is provided
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ GET /users ÔÇ║ Should return 
+403 if user role is MEMBER
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ GET /users ÔÇ║ Should return 
+200 on success with valid token
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ PUT /users/:id ÔÇ║ Should 
+return 403 if user role is not ADMIN
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ PUT /users/:id ÔÇ║ Should 
+return 404 if user does not exist
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ PUT /users/:id ÔÇ║ Should 
+return 200 on success
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ DELETE /users/:id ÔÇ║ Should 
+return 403 if user role is not ADMIN
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+  ÔùÅ User Routes ÔÇ║ DELETE /users/:id ÔÇ║ Should 
+return 204 on success
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the 
+timeout, if this is a long-running test. See 
+https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 16 |[39m   [36mlet[39m 
+dataSource[33m:[39m [33mDataSource[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   
+beforeAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m   [31m[1m^[22m[39m
+     [90m 19 |[39m     dataSource [33m=[39m 
+[36mawait[39m 
+[33mTypeOrmHelper[39m[33m.[39mconnect({
+     [90m 20 |[39m       type[33m:[39m 
+[32m'better-sqlite3'[39m[33m,[39m
+     [90m 21 |[39m       database[33m:[39m 
+[32m':memory:'[39m[33m,[39m[0m
+
+      at tests/main/routes/user-routes.test.ts:18:3
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:15:1)
+
+
+  ÔùÅ Test suite failed to run
+
+    CannotExecuteNotConnectedError: Cannot execute 
+operation on "default" connection because connection 
+is not yet established.
+
+      at DataSource.destroy 
+(src/data-source/DataSource.ts:307:19)
+      at Object.disconnect 
+(src/infra/db/typeorm/typeorm-helper.ts:24:23)
+      at Object.<anonymous> 
+(tests/main/routes/user-routes.test.ts:31:25)
+
+
+Test Suites: 7 failed, 51 passed, 58 total
+Tests:       29 failed, 333 passed, 362 total
+Snapshots:   0 total
+Time:        12.421 s
+Ran all test suites.

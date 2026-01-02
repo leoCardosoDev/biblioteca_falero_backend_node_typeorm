@@ -2,6 +2,8 @@ import { SessionTypeOrmRepository } from '@/infra/db/typeorm/session-repository'
 import { SessionTypeOrmEntity } from '@/infra/db/typeorm/entities/session-entity'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
 import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
+import { RoleTypeOrmEntity } from '@/infra/db/typeorm/entities/role-entity'
+import { PermissionTypeOrmEntity } from '@/infra/db/typeorm/entities/permission-entity'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { Id } from '@/domain/value-objects/id'
 import { DataSource } from 'typeorm'
@@ -15,7 +17,7 @@ describe('SessionTypeOrmRepository', () => {
       database: ':memory:',
       dropSchema: true,
       synchronize: true,
-      entities: [SessionTypeOrmEntity, UserTypeOrmEntity, LoginTypeOrmEntity]
+      entities: [SessionTypeOrmEntity, UserTypeOrmEntity, LoginTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity]
     })
   })
 
@@ -41,12 +43,23 @@ describe('SessionTypeOrmRepository', () => {
     return await repo.save(user)
   }
 
-  const makeLogin = async (userId: string, role: string = 'ADMIN'): Promise<LoginTypeOrmEntity> => {
+  const makeLogin = async (userId: string, roleSlug: string = 'ADMIN'): Promise<LoginTypeOrmEntity> => {
+    const roleRepo = TypeOrmHelper.getRepository(RoleTypeOrmEntity)
+    let role = await roleRepo.findOne({ where: { slug: roleSlug } })
+
+    if (!role) {
+      role = roleRepo.create({
+        slug: roleSlug,
+        description: `Description for ${roleSlug}`
+      })
+      role = await roleRepo.save(role)
+    }
+
     const repo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
     const login = repo.create({
       userId,
       password: 'hashed_password',
-      role
+      role: role
     })
     return await repo.save(login)
   }

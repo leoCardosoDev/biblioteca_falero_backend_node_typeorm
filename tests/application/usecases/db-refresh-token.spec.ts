@@ -1,5 +1,5 @@
 import { RefreshToken, RefreshTokenParams } from '@/domain/usecases/refresh-token'
-import { UserSessionModel, TokenPayload, Role } from '@/domain/models'
+import { UserSessionModel, TokenPayload } from '@/domain/models'
 import {
   LoadSessionByTokenRepository,
   InvalidateSessionRepository,
@@ -244,7 +244,7 @@ describe('DbRefreshToken UseCase', () => {
     const { sut, encrypterStub } = makeSut()
     const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
     await sut.refresh(makeFakeRefreshTokenParams())
-    expect(encryptSpy).toHaveBeenCalledWith({ id: VALID_ID, role: Role.ADMIN })
+    expect(encryptSpy).toHaveBeenCalledWith({ id: VALID_ID, role: 'ADMIN' })
   })
 
   test('Should throw if Encrypter throws', async () => {
@@ -265,15 +265,5 @@ describe('DbRefreshToken UseCase', () => {
     expect(result?.role).toBe('ADMIN')
   })
 
-  test('Should default role to MEMBER if user.role is undefined', async () => {
-    const { sut, loadUserBySessionRepositoryStub, encrypterStub } = makeSut()
-    jest.spyOn(loadUserBySessionRepositoryStub, 'loadUserBySessionId').mockResolvedValueOnce({
-      id: Id.create(VALID_ID),
-      name: 'any_name',
-      role: undefined as unknown as string
-    })
-    const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
-    await sut.refresh(makeFakeRefreshTokenParams())
-    expect(encryptSpy).toHaveBeenCalledWith({ id: VALID_ID, role: Role.MEMBER })
-  })
+
 })

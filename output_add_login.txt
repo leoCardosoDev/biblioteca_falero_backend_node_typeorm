@@ -1,0 +1,57 @@
+﻿node.exe : FAIL tests/main/routes/add-user-login-routes.test.ts
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL tests/main...-routes.test.ts:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  CreateUserLogin Routes
+    POST /users/:userId/login
+      ├ù Should return 403 if no access token is provided (43 ms)
+      ├ù Should return 200 on success with valid token (13 ms)
+      ÔêÜ Should return 400 if password is missing (7 ms)
+
+  ÔùÅ CreateUserLogin Routes ÔÇ║ POST /users/:userId/login ÔÇ║ Should return 403 if no access token is 
+provided
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 403
+    Received: 400
+
+    [0m [90m 55 |[39m         }
+     [90m 56 |[39m       })
+    [31m[1m>[22m[39m[90m 57 |[39m       
+expect(response[33m.[39mstatusCode)[33m.[39mtoBe([35m403[39m)
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 58 |[39m     })
+     [90m 59 |[39m
+     [90m 60 |[39m     test([32m'Should return 200 on success with valid token'[39m[33m,[39m 
+[36masync[39m () [33m=>[39m {[0m
+
+      at Object.<anonymous> (tests/main/routes/add-user-login-routes.test.ts:57:35)
+
+  ÔùÅ CreateUserLogin Routes ÔÇ║ POST /users/:userId/login ÔÇ║ Should return 200 on success with valid token
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 400
+
+    [0m [90m 79 |[39m         }
+     [90m 80 |[39m       })
+    [31m[1m>[22m[39m[90m 81 |[39m       
+expect(response[33m.[39mstatusCode)[33m.[39mtoBe([35m200[39m)
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 82 |[39m     })
+     [90m 83 |[39m
+     [90m 84 |[39m     test([32m'Should return 400 if password is missing'[39m[33m,[39m 
+[36masync[39m () [33m=>[39m {[0m
+
+      at Object.<anonymous> (tests/main/routes/add-user-login-routes.test.ts:81:35)
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 1 passed, 3 total
+Snapshots:   0 total
+Time:        2.075 s
+Ran all test suites matching tests/main/routes/add-user-login-routes.test.ts.

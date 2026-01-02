@@ -1,1 +1,6 @@
 export * from './user-repository'
+export * from './role-repository'
+export * from './login-repository'
+export * from './session-repository'
+export * from './neighborhood-repository'
+export * from './domain-event-repository'

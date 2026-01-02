@@ -1,17 +1,16 @@
-import { Role } from '@/domain/models'
 import { RequireRoleMiddleware } from '@/presentation/middlewares/require-role-middleware'
 import { Middleware } from '@/presentation/protocols'
 
-export const makeRequireRoleMiddleware = (allowedRoles: Role[]): Middleware => {
+export const makeRequireRoleMiddleware = (allowedRoles: string[]): Middleware => {
   return new RequireRoleMiddleware(allowedRoles)
 }
 
 export const makeAdminOnly = (): Middleware => {
-  return makeRequireRoleMiddleware([Role.ADMIN])
+  return makeRequireRoleMiddleware(['ADMIN'])
 }
 
 export const makeLibrarianOrAdmin = (): Middleware => {
-  return makeRequireRoleMiddleware([Role.ADMIN, Role.LIBRARIAN])
+  return makeRequireRoleMiddleware(['ADMIN', 'LIBRARIAN'])
 }
 
 export const makeAuthenticatedOnly = (): Middleware => {

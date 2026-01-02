@@ -4,11 +4,13 @@ import app, { setupApp } from '@/main/config/app'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
 import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
+import { RoleTypeOrmEntity } from '@/infra/db/typeorm/entities/role-entity'
+import { PermissionTypeOrmEntity } from '@/infra/db/typeorm/entities/permission-entity'
 import { DomainEventTypeOrmEntity } from '@/infra/db/typeorm/entities/domain-event-entity'
 import { DataSource } from 'typeorm'
-import { Role } from '@/domain/models'
 
-const makeAccessToken = (role: Role = Role.LIBRARIAN): string => {
+
+const makeAccessToken = (role: string = 'LIBRARIAN'): string => {
   return jwt.sign({ id: 'any_id', role }, process.env.JWT_SECRET ?? 'secret')
 }
 
@@ -21,7 +23,7 @@ describe('User Routes', () => {
       database: ':memory:',
       dropSchema: true,
       synchronize: true,
-      entities: [UserTypeOrmEntity, LoginTypeOrmEntity, DomainEventTypeOrmEntity]
+      entities: [UserTypeOrmEntity, LoginTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity, DomainEventTypeOrmEntity]
     })
     await setupApp()
     await app.ready()
@@ -53,7 +55,7 @@ describe('User Routes', () => {
     })
 
     test('Should return 403 if user role is MEMBER', async () => {
-      const accessToken = makeAccessToken(Role.MEMBER)
+      const accessToken = makeAccessToken('MEMBER')
       const response = await app.inject({
         method: 'POST',
         url: '/api/users',
@@ -70,7 +72,7 @@ describe('User Routes', () => {
     })
 
     test('Should return 200 on success with valid token', async () => {
-      const accessToken = makeAccessToken(Role.LIBRARIAN)
+      const accessToken = makeAccessToken('LIBRARIAN')
       const response = await app.inject({
         method: 'POST',
         url: '/api/users',
@@ -97,7 +99,7 @@ describe('User Routes', () => {
     })
 
     test('Should return 403 if user role is MEMBER', async () => {
-      const accessToken = makeAccessToken(Role.MEMBER)
+      const accessToken = makeAccessToken('MEMBER')
       const response = await app.inject({
         method: 'GET',
         url: '/api/users',
@@ -115,7 +117,7 @@ describe('User Routes', () => {
         cpf: '52998224725',
         gender: 'male'
       }))
-      const accessToken = makeAccessToken(Role.LIBRARIAN)
+      const accessToken = makeAccessToken('LIBRARIAN')
       const response = await app.inject({
         method: 'GET',
         url: '/api/users',
@@ -129,7 +131,7 @@ describe('User Routes', () => {
 
   describe('PUT /users/:id', () => {
     test('Should return 403 if user role is not ADMIN', async () => {
-      const accessToken = makeAccessToken(Role.LIBRARIAN)
+      const accessToken = makeAccessToken('LIBRARIAN')
       const response = await app.inject({
         method: 'PUT',
         url: '/api/users/550e8400-e29b-41d4-a716-446655440000',
@@ -140,7 +142,7 @@ describe('User Routes', () => {
     })
 
     test('Should return 404 if user does not exist', async () => {
-      const accessToken = makeAccessToken(Role.ADMIN)
+      const accessToken = makeAccessToken('ADMIN')
       const response = await app.inject({
         method: 'PUT',
         url: '/api/users/550e8400-e29b-41d4-a716-446655440000',
@@ -159,7 +161,7 @@ describe('User Routes', () => {
         cpf: '52998224725',
         gender: 'male'
       }))
-      const accessToken = makeAccessToken(Role.ADMIN)
+      const accessToken = makeAccessToken('ADMIN')
       const response = await app.inject({
         method: 'PUT',
         url: `/api/users/${user.id}`,
@@ -173,7 +175,7 @@ describe('User Routes', () => {
 
   describe('DELETE /users/:id', () => {
     test('Should return 403 if user role is not ADMIN', async () => {
-      const accessToken = makeAccessToken(Role.LIBRARIAN)
+      const accessToken = makeAccessToken('LIBRARIAN')
       const response = await app.inject({
         method: 'DELETE',
         url: '/api/users/550e8400-e29b-41d4-a716-446655440000',
@@ -191,7 +193,7 @@ describe('User Routes', () => {
         cpf: '71428793860',
         gender: 'male'
       }))
-      const accessToken = makeAccessToken(Role.ADMIN)
+      const accessToken = makeAccessToken('ADMIN')
       const response = await app.inject({
         method: 'DELETE',
         url: `/api/users/${user.id}`,

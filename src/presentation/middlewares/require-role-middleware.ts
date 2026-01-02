@@ -1,10 +1,10 @@
-import { Role } from '@/domain/models'
+
 import { AccessDeniedError } from '@/presentation/errors'
 import { forbidden, ok } from '@/presentation/helpers'
 import { HttpRequest, HttpResponse, Middleware } from '@/presentation/protocols'
 
 export class RequireRoleMiddleware implements Middleware {
-  constructor(private readonly allowedRoles: Role[]) { }
+  constructor(private readonly allowedRoles: string[]) { }
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     const { userId, role } = httpRequest
@@ -12,8 +12,8 @@ export class RequireRoleMiddleware implements Middleware {
       return forbidden(new AccessDeniedError())
     }
 
-    const userRole = role as Role
-    const isAdmin = userRole === Role.ADMIN
+    const userRole = role
+    const isAdmin = userRole === 'ADMIN'
     const isAllowed = this.allowedRoles.length === 0 || this.allowedRoles.includes(userRole)
 
     if (!isAdmin && !isAllowed) {

@@ -2,23 +2,24 @@ import { CreateUserLoginController } from '@/presentation/controllers/create-use
 import { MissingParamError } from '@/presentation/errors'
 import { Validation } from '@/presentation/protocols'
 import { CreateUserLogin, CreateUserLoginParams } from '@/domain/usecases/create-user-login'
-import { LoginModel } from '@/domain/models/login'
+import { Login, LoginModel } from '@/domain/models/login'
 import { HttpRequest } from '@/presentation/protocols'
 import { Id } from '@/domain/value-objects/id'
 import { UserRole } from '@/domain/value-objects/user-role'
 import { UserStatus } from '@/domain/value-objects/user-status'
+import { Email } from '@/domain/value-objects/email'
 
 const makeCreateUserLogin = (): CreateUserLogin => {
   class CreateUserLoginStub implements CreateUserLogin {
     async create(_params: CreateUserLoginParams): Promise<LoginModel> {
-      return Promise.resolve({
+      return Promise.resolve(Login.create({
         id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
         userId: Id.create('550e8400-e29b-41d4-a716-446655440001'),
-        password: 'valid_password',
-        role: UserRole.create('MEMBER') as UserRole,
-        status: UserStatus.create('ACTIVE') as UserStatus,
-        accessToken: 'valid_token'
-      })
+        roleId: Id.create('550e8400-e29b-41d4-a716-446655440002'),
+        email: Email.create('any_email@mail.com') as Email,
+        passwordHash: 'hashed_password',
+        isActive: true
+      }))
     }
   }
   return new CreateUserLoginStub()
@@ -36,7 +37,8 @@ const makeValidation = (): Validation => {
 const makeFakeRequest = (): HttpRequest => ({
   body: {
     userId: '550e8400-e29b-41d4-a716-446655440001',
-    password: 'Abcdefg1!'
+    password: 'Abcdefg1!',
+    email: 'any_email@mail.com'
   }
 })
 
@@ -65,6 +67,7 @@ describe('CreateUserLogin Controller', () => {
     expect(createSpy).toHaveBeenCalledWith({
       userId: Id.create('550e8400-e29b-41d4-a716-446655440001'),
       password: 'Abcdefg1!',
+      email: Email.create('any_email@mail.com'),
       role: UserRole.create('MEMBER'),
       status: UserStatus.create('ACTIVE')
     })
@@ -84,14 +87,14 @@ describe('CreateUserLogin Controller', () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: unknown }
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toEqual({
+    expect(httpResponse.body).toEqual(Login.create({
       id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
       userId: Id.create('550e8400-e29b-41d4-a716-446655440001'),
-      password: 'valid_password',
-      role: UserRole.create('MEMBER'),
-      status: UserStatus.create('ACTIVE'),
-      accessToken: 'valid_token'
-    })
+      roleId: Id.create('550e8400-e29b-41d4-a716-446655440002'),
+      email: Email.create('any_email@mail.com') as Email,
+      passwordHash: 'hashed_password',
+      isActive: true
+    }))
   })
 
   test('Should call Validation with correct value', async () => {
@@ -115,7 +118,8 @@ describe('CreateUserLogin Controller', () => {
     const httpRequest = {
       body: {
         userId: '550e8400-e29b-41d4-a716-446655440001',
-        password: 'weak'
+        password: 'weak',
+        email: 'any_email@mail.com'
       }
     }
     const httpResponse = await sut.handle(httpRequest) as { statusCode: number; body: { error: { message: string } } }
@@ -130,5 +134,18 @@ describe('CreateUserLogin Controller', () => {
     const httpResponse = await sut.handle(httpRequest) as { statusCode: number; body: { error: { code: string } } }
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body.error.code).toBe('INVALID_PARAM')
+  })
+  test('Should return 400 if Email.create throws', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        userId: '550e8400-e29b-41d4-a716-446655440001',
+        password: 'Abcdefg1!',
+        email: 'invalid-email'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest) as { statusCode: number; body: { error: { message: string } } }
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body.error.message).toContain('email')
   })
 })

@@ -8,6 +8,7 @@ import { UserSessionModel } from '@/domain/models'
 import { SessionTypeOrmEntity } from './entities/session-entity'
 import { UserTypeOrmEntity } from './entities/user-entity'
 import { LoginTypeOrmEntity } from './entities/login-entity'
+import { RoleTypeOrmEntity } from './entities/role-entity'
 import { TypeOrmHelper } from './typeorm-helper'
 import { Id } from '@/domain/value-objects/id'
 
@@ -50,7 +51,8 @@ export class SessionTypeOrmRepository implements
       .createQueryBuilder('session')
       .innerJoin(UserTypeOrmEntity, 'user', 'user.id = session.userId')
       .leftJoin(LoginTypeOrmEntity, 'login', 'login.userId = session.userId')
-      .select(['user.id', 'user.name', 'login.role'])
+      .leftJoin(RoleTypeOrmEntity, 'role', 'role.id = login.roleId')
+      .select(['user.id', 'user.name', 'role.slug'])
       .where('session.id = :sessionId', { sessionId })
       .getRawOne()
 
@@ -59,7 +61,7 @@ export class SessionTypeOrmRepository implements
     return {
       id: Id.create(result.user_id) as Id,
       name: result.user_name,
-      role: result.login_role ?? 'MEMBER'
+      role: result.role_slug ?? 'MEMBER'
     }
   }
 

@@ -131,6 +131,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
 
     const users = await userRepo.createQueryBuilder('user')
       .leftJoinAndMapOne('user.tempLogin', LoginTypeOrmEntity, 'login', 'login.userId = user.id')
+      .leftJoinAndSelect('login.role', 'role')
       .where('user.deletedAt IS NULL')
       .getMany()
 
@@ -144,7 +145,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
         let loginVO: { role: UserRole, status: UserStatus } | undefined
 
         if (loginEntity && loginEntity.role && loginEntity.status) {
-          const roleOrError = UserRole.create(loginEntity.role)
+          const roleOrError = UserRole.create(loginEntity.role.slug)
           const statusOrError = UserStatus.create(loginEntity.status)
 
           if (!(roleOrError instanceof Error) && !(statusOrError instanceof Error)) {
@@ -170,14 +171,14 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
     const userEntity = await userRepo.findOne({ where: { id, deletedAt: IsNull() } })
     if (!userEntity) return null
 
-    const loginEntity = await loginRepo.findOne({ where: { userId: id } })
+    const loginEntity = await loginRepo.findOne({ where: { userId: id }, relations: ['role'] })
     const userModel = this.toUserModel(userEntity)
     if (!userModel) return null
 
     return {
       ...userModel,
-      login: loginEntity ? {
-        role: UserRole.create(loginEntity.role!) as UserRole,
+      login: loginEntity && loginEntity.role ? {
+        role: UserRole.create(loginEntity.role.slug) as UserRole,
         status: UserStatus.create(loginEntity.status!) as UserStatus
       } : undefined
     }

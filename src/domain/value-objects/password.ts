@@ -1,14 +1,15 @@
 import { InvalidPasswordError } from '@/domain/errors/invalid-password-error'
+import { Either, left, right } from '@/shared/either'
 
 export class Password {
   private constructor(readonly value: string) { }
 
-  static create(password: string): Password | InvalidPasswordError {
+  static create(password: string): Either<InvalidPasswordError, Password> {
     const validationResult = Password.validate(password)
     if (validationResult !== null) {
-      return validationResult
+      return left(validationResult)
     }
-    return new Password(password)
+    return right(new Password(password))
   }
 
   private static validate(password: string): InvalidPasswordError | null {

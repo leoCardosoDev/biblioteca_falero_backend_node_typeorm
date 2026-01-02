@@ -1,5 +1,5 @@
 import { RefreshToken, RefreshTokenParams, RefreshTokenResult } from '@/domain/usecases/refresh-token'
-import { Role } from '@/domain/models'
+
 import { ExpirationDate } from '@/domain/value-objects/expiration-date'
 import {
   LoadSessionByTokenRepository,
@@ -49,7 +49,7 @@ export class DbRefreshToken implements RefreshToken {
       isValid: true
     })
 
-    const role = (user.role as Role) ?? Role.MEMBER
+    const role = user.role
     const accessToken = await this.encrypter.encrypt({ id: user.id.value, role })
 
     return {

@@ -1,20 +1,22 @@
 import { Authentication, AuthenticationParams } from '@/domain/usecases/authentication'
+import { LoadRoleByIdRepository } from '@/application/protocols/db/load-role-by-id-repository'
 import { HashComparer } from '@/application/protocols/cryptography/hash-comparer'
 import { Hasher } from '@/application/protocols/cryptography/hasher'
 import { Encrypter } from '@/application/protocols/cryptography/encrypter'
 import { LoadAccountByEmailRepository } from '@/application/protocols/db/load-account-by-email-repository'
 import { UpdateAccessTokenRepository } from '@/application/protocols/db/update-access-token-repository'
 import { SaveSessionRepository } from '@/application/protocols/db/session-repository'
-import { LoginModel } from '@/domain/models/login'
-import { TokenPayload, Role, UserSessionModel } from '@/domain/models'
+import { Login } from '@/domain/models/login'
+import { TokenPayload, UserSessionModel } from '@/domain/models'
 import { DbAuthentication } from '@/application/usecases/db-authentication'
 import { Id } from '@/domain/value-objects/id'
-import { UserRole } from '@/domain/value-objects/user-role'
-import { UserStatus } from '@/domain/value-objects/user-status'
+import { Role } from '@/domain/models/role'
+import { Email } from '@/domain/value-objects/email'
 
 type SutTypes = {
   sut: Authentication
   loadAccountByEmailRepositoryStub: LoadAccountByEmailRepository
+  loadRoleByIdRepositoryStub: LoadRoleByIdRepository
   hashComparerStub: HashComparer
   encrypterStub: Encrypter
   updateAccessTokenRepositoryStub: UpdateAccessTokenRepository
@@ -25,14 +27,15 @@ type SutTypes = {
 const VALID_ID = '550e8400-e29b-41d4-a716-446655440000'
 const USER_ID = '29962e38-d948-4a87-84a9-f4ca90d52a33'
 const SESSION_ID = '63237524-27fb-4461-b2a5-f2609fcda713'
+const VALID_ROLE_ID = '550e8400-e29b-41d4-a716-446655440099'
 
-const makeFakeAccount = (): LoginModel => ({
+const makeFakeAccount = (): Login => Login.create({
   id: Id.create(VALID_ID),
   userId: Id.create(USER_ID),
-  password: 'hashed_password',
-  role: UserRole.create('admin') as UserRole,
-  status: UserStatus.create('active') as UserStatus,
-  name: 'any_name'
+  roleId: Id.create(VALID_ROLE_ID),
+  email: Email.create('any_email@mail.com') as Email,
+  passwordHash: 'hashed_password',
+  isActive: true
 })
 
 const makeFakeAuthentication = (): AuthenticationParams => ({
@@ -55,7 +58,7 @@ const makeFakeSession = (): UserSessionModel => {
 
 const makeLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
   class LoadAccountByEmailRepositoryStub implements LoadAccountByEmailRepository {
-    async loadByEmail(_email: string): Promise<LoginModel | undefined> {
+    async loadByEmail(_email: string): Promise<Login | undefined> {
       return await Promise.resolve(makeFakeAccount())
     }
   }
@@ -107,8 +110,22 @@ const makeSaveSessionRepository = (): SaveSessionRepository => {
   return new SaveSessionRepositoryStub()
 }
 
+const makeLoadRoleByIdRepository = (): LoadRoleByIdRepository => {
+  class LoadRoleByIdRepositoryStub implements LoadRoleByIdRepository {
+    async loadById(id: Id): Promise<Role | null> {
+      return Promise.resolve(Role.create({
+        id: id,
+        slug: 'admin',
+        description: 'Administrator'
+      }))
+    }
+  }
+  return new LoadRoleByIdRepositoryStub()
+}
+
 const makeSut = (): SutTypes => {
   const loadAccountByEmailRepositoryStub = makeLoadAccountByEmailRepository()
+  const loadRoleByIdRepositoryStub = makeLoadRoleByIdRepository()
   const hashComparerStub = makeHashComparer()
   const encrypterStub = makeEncrypter()
   const updateAccessTokenRepositoryStub = makeUpdateAccessTokenRepository()
@@ -116,6 +133,7 @@ const makeSut = (): SutTypes => {
   const hasherStub = makeHasher()
   const sut = new DbAuthentication(
     loadAccountByEmailRepositoryStub,
+    loadRoleByIdRepositoryStub,
     hashComparerStub,
     encrypterStub,
     updateAccessTokenRepositoryStub,
@@ -126,6 +144,7 @@ const makeSut = (): SutTypes => {
   return {
     sut,
     loadAccountByEmailRepositoryStub,
+    loadRoleByIdRepositoryStub,
     hashComparerStub,
     encrypterStub,
     updateAccessTokenRepositoryStub,
@@ -181,7 +200,7 @@ describe('DbAuthentication UseCase', () => {
     const { sut, encrypterStub } = makeSut()
     const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
     await sut.auth(makeFakeAuthentication())
-    expect(encryptSpy).toHaveBeenCalledWith({ id: VALID_ID, role: 'ADMIN' })
+    expect(encryptSpy).toHaveBeenCalledWith({ id: VALID_ID, role: 'admin' })
   })
 
   test('Should throw if Encrypter throws', async () => {
@@ -242,63 +261,16 @@ describe('DbAuthentication UseCase', () => {
     const result = await sut.auth(makeFakeAuthentication())
     expect(result?.accessToken).toBe('any_token')
     expect(result?.refreshToken).toBeDefined()
-    expect(result?.name).toBe('any_name')
-    expect(result?.role).toBe(Role.ADMIN)
+    expect(result?.name).toBe('any_email@mail.com')
+    expect(result?.role).toBe('admin')
   })
 
-  test('Should default role to MEMBER if account.role is undefined', async () => {
-    const { sut, loadAccountByEmailRepositoryStub } = makeSut()
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce({
-      id: Id.create(VALID_ID),
-      userId: Id.create(USER_ID),
-      password: 'hashed_password',
-      role: undefined as unknown as UserRole,
-      status: UserStatus.create('active') as UserStatus,
-      name: 'any_name'
-    })
+  test('Should default role to MEMBER if account.roleId is missing (unlikely given mandatory, but if logic allows)', async () => {
+    const { sut, loadRoleByIdRepositoryStub } = makeSut()
+    // Mimic no role found
+    jest.spyOn(loadRoleByIdRepositoryStub, 'loadById').mockResolvedValueOnce(null)
     const result = await sut.auth(makeFakeAuthentication())
-    expect(result?.role).toBe(Role.MEMBER)
+    expect(result?.role).toBe('MEMBER')
   })
 
-  test('Should use userId as name if account.name is undefined', async () => {
-    const { sut, loadAccountByEmailRepositoryStub } = makeSut()
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce({
-      id: Id.create(VALID_ID),
-      userId: Id.create(USER_ID),
-      password: 'hashed_password',
-      role: UserRole.create('admin') as UserRole,
-      status: UserStatus.create('active') as UserStatus,
-      name: undefined as unknown as string
-    })
-    const result = await sut.auth(makeFakeAuthentication())
-    expect(result?.name).toBe(USER_ID)
-  })
-
-  test('Should default role to MEMBER if account.role is null', async () => {
-    const { sut, loadAccountByEmailRepositoryStub } = makeSut()
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce({
-      id: Id.create(VALID_ID),
-      userId: Id.create(USER_ID),
-      password: 'hashed_password',
-      role: null as unknown as UserRole,
-      status: UserStatus.create('active') as UserStatus,
-      name: 'any_name'
-    })
-    const result = await sut.auth(makeFakeAuthentication())
-    expect(result?.role).toBe(Role.MEMBER)
-  })
-
-  test('Should use userId as name if account.name is null', async () => {
-    const { sut, loadAccountByEmailRepositoryStub } = makeSut()
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce({
-      id: Id.create(VALID_ID),
-      userId: Id.create(USER_ID),
-      password: 'hashed_password',
-      role: UserRole.create('admin') as UserRole,
-      status: UserStatus.create('active') as UserStatus,
-      name: null as unknown as string
-    })
-    const result = await sut.auth(makeFakeAuthentication())
-    expect(result?.name).toBe(USER_ID)
-  })
 })

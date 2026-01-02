@@ -1,41 +1,31 @@
-import { CreateUserLoginRepository } from '@/application/protocols/db/create-user-login-repository'
-import { IsNull } from 'typeorm'
 import { AddLoginRepository } from '@/application/protocols/db/add-login-repository'
 import { LoadAccountByEmailRepository } from '@/application/protocols/db/load-account-by-email-repository'
 import { UpdateAccessTokenRepository } from '@/application/protocols/db/update-access-token-repository'
-import { CreateUserLoginParams } from '@/domain/usecases/create-user-login'
 import { AddUserLoginParams } from '@/domain/usecases/add-user-login'
-import { LoginModel } from '@/domain/models/login'
+import { Login, LoginModel } from '@/domain/models/login'
 import { LoginTypeOrmEntity } from './entities/login-entity'
 import { UserTypeOrmEntity } from './entities/user-entity'
 import { TypeOrmHelper } from './typeorm-helper'
-import { UserRole } from '@/domain/value-objects/user-role'
-import { UserStatus, UserStatusEnum } from '@/domain/value-objects/user-status'
 import { Id } from '@/domain/value-objects/id'
+import { IsNull } from 'typeorm'
+import { Email } from '@/domain/value-objects/email'
+import { UserStatusEnum } from '@/domain/value-objects/user-status'
 
-export class LoginTypeOrmRepository implements CreateUserLoginRepository, AddLoginRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository {
-  async create(data: CreateUserLoginParams): Promise<LoginModel> {
-    const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
-    const loginEntity = repository.create({
-      userId: data.userId.value,
-      password: data.password,
-      role: data.role.value,
-      status: data.status.value
-    })
-    const saved = await repository.save(loginEntity)
-    return this.toDomain(saved)
-  }
+export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository {
 
-  async add(data: AddUserLoginParams & { passwordHash: string }): Promise<LoginModel> {
+  async add(data: Omit<AddUserLoginParams, 'role'> & { passwordHash: string, roleId: Id }): Promise<LoginModel> {
     const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
     const loginEntity = repository.create({
       userId: data.userId.value,
       password: data.passwordHash,
-      role: data.role.value,
-      status: data.status.value
+      roleId: data.roleId.value,
+      status: data.status.value,
+      createdAt: new Date(),
+      updatedAt: new Date()
     })
     const saved = await repository.save(loginEntity)
-    return this.toDomain(saved)
+    // We need email to return Domain Login. 'data' has email.
+    return this.toDomain(saved, data.email)
   }
 
   async loadByEmail(email: string): Promise<LoginModel | undefined> {
@@ -50,8 +40,7 @@ export class LoginTypeOrmRepository implements CreateUserLoginRepository, AddLog
       const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
       const login = await repository.findOne({ where: { userId: user.id } })
       if (login) {
-        const loginModel = this.toDomain(login)
-        return { ...loginModel, name: user.name }
+        return this.toDomain(login, Email.create(user.email))
       }
     }
     return undefined
@@ -62,14 +51,14 @@ export class LoginTypeOrmRepository implements CreateUserLoginRepository, AddLog
     await repository.update({ id }, { accessToken: token })
   }
 
-  private toDomain(entity: LoginTypeOrmEntity): LoginModel {
-    return {
-      id: Id.create(entity.id) as Id,
-      userId: Id.create(entity.userId) as Id,
-      password: entity.password,
-      role: UserRole.create(entity.role ?? 'MEMBER') as UserRole,
-      status: UserStatus.create(entity.status ?? 'ACTIVE') as UserStatus,
-      accessToken: entity.accessToken
-    }
+  private toDomain(entity: LoginTypeOrmEntity, email: Email): Login {
+    return Login.create({
+      id: Id.create(entity.id),
+      userId: Id.create(entity.userId),
+      roleId: entity.roleId ? Id.create(entity.roleId) : Id.generate(), // Should have roleId
+      email: email,
+      passwordHash: entity.password,
+      isActive: entity.status === 'ACTIVE' // basic mapping
+    })
   }
 }

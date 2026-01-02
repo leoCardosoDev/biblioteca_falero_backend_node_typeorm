@@ -5,9 +5,9 @@ import app, { setupApp } from '@/main/config/app'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
-import { Role } from '@/domain/models'
-
-const makeAccessToken = (role: Role = Role.LIBRARIAN): string => {
+import { RoleTypeOrmEntity } from '@/infra/db/typeorm/entities/role-entity'
+import { PermissionTypeOrmEntity } from '@/infra/db/typeorm/entities/permission-entity'
+const makeAccessToken = (role: string = 'LIBRARIAN'): string => {
   return jwt.sign({ id: 'any_id', role }, process.env.JWT_SECRET ?? 'secret')
 }
 
@@ -20,7 +20,7 @@ describe('CreateUserLogin Routes', () => {
       database: ':memory:',
       dropSchema: true,
       synchronize: true,
-      entities: [LoginTypeOrmEntity, UserTypeOrmEntity]
+      entities: [LoginTypeOrmEntity, UserTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity]
     })
     await setupApp()
     await app.ready()
@@ -33,14 +33,21 @@ describe('CreateUserLogin Routes', () => {
 
   beforeEach(async () => {
     await dataSource.synchronize(true)
+    const roleRepo = TypeOrmHelper.getRepository(RoleTypeOrmEntity)
+    await roleRepo.save([
+      { id: '550e8400-e29b-41d4-a716-446655440001', slug: 'ADMIN', description: 'Admin' },
+      { id: '550e8400-e29b-41d4-a716-446655440002', slug: 'LIBRARIAN', description: 'Librarian' },
+      { id: '550e8400-e29b-41d4-a716-446655440003', slug: 'MEMBER', description: 'Member' }
+    ])
   })
 
   describe('POST /users/:userId/login', () => {
     test('Should return 403 if no access token is provided', async () => {
       const response = await app.inject({
         method: 'POST',
-        url: '/api/users/any_user_id/login',
+        url: '/api/users/550e8400-e29b-41d4-a716-446655440000/login',
         payload: {
+          email: 'any_email@mail.com',
           password: 'Abcdefg1!',
           role: 'member',
           status: 'active'
@@ -59,12 +66,13 @@ describe('CreateUserLogin Routes', () => {
         gender: 'male'
       }))
 
-      const accessToken = makeAccessToken(Role.ADMIN)
+      const accessToken = makeAccessToken('ADMIN')
       const response = await app.inject({
         method: 'POST',
         url: `/api/users/${user.id}/login`,
         headers: { authorization: `Bearer ${accessToken}` },
         payload: {
+          email: 'john@mail.com',
           password: 'Abcdefg1!',
           role: 'librarian',
           status: 'active'
@@ -74,7 +82,7 @@ describe('CreateUserLogin Routes', () => {
     })
 
     test('Should return 400 if password is missing', async () => {
-      const accessToken = makeAccessToken(Role.ADMIN)
+      const accessToken = makeAccessToken('ADMIN')
       const response = await app.inject({
         method: 'POST',
         url: '/api/users/any_user_id/login',
