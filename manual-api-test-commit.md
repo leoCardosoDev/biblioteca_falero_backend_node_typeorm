@@ -231,6 +231,63 @@ Requires ADMIN role.
 
 ---
 
+## 7. Block User (🔒 LIBRARIAN or ADMIN)
+
+**Endpoint**: `PATCH http://localhost:5050/api/users/:id/status`
+
+> ⚠️ Este endpoint altera o status de acesso do usuário. "BLOCKED" impede login.
+
+**Headers**:
+```
+Authorization: Bearer <accessToken>
+```
+
+### 7.1 Block User (Success)
+**Body (JSON)**:
+```json
+{
+  "status": "BLOCKED"
+}
+```
+**Expected Response:** `204 No Content`
+
+### 7.2 Unblock User (Activate)
+**Body (JSON)**:
+```json
+{
+  "status": "ACTIVE"
+}
+```
+**Expected Response:** `204 No Content`
+
+### 7.3 Error: Access Denied (403 Forbidden)
+Se tentar bloquear um usuário com `powerLevel` maior ou igual ao seu (ex: LIBRARIAN tentando bloquear ADMIN).
+
+---
+
+## 8. Promote User (🔒 ADMIN Only)
+
+**Endpoint**: `PATCH http://localhost:5050/api/users/:id/role`
+
+**Headers**:
+```
+Authorization: Bearer <accessToken>
+```
+
+### 8.1 Promote to Librarian (Success)
+**Body (JSON)**:
+```json
+{
+  "roleId": "<uuid-of-librarian-role>"
+}
+```
+**Expected Response:** `204 No Content`
+
+### 8.2 Error: Access Denied (403 Forbidden)
+Requires ADMIN role.
+
+---
+
 ## Resumo de Permissões
 
 | Rota | Método | Permissão |
@@ -241,3 +298,5 @@ Requires ADMIN role.
 | `/api/users/:userId/login` | POST | 🔒 LIBRARIAN, ADMIN |
 | `/api/users/:id` | PUT | 🔒 ADMIN |
 | `/api/users/:id` | DELETE | 🔒 ADMIN |
+| `/api/users/:id/status` | PATCH | 🔒 LIBRARIAN, ADMIN |
+| `/api/users/:id/role` | PATCH | 🔒 ADMIN |
