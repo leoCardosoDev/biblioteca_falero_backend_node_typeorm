@@ -2,9 +2,12 @@ import { makeAddUserValidation } from '@/main/factories/add-user-validation-fact
 import { ValidationComposite, RequiredFieldValidation } from '@/validation/validators'
 import { Validation } from '@/presentation/protocols/validation'
 
-jest.mock('@/validation/validators/validation-composite')
+jest.mock('@/validation/validators', () => ({
+  ValidationComposite: jest.fn(),
+  RequiredFieldValidation: jest.fn()
+}))
 
-describe('AddUserValidation Factory', () => {
+describe('AddUserValidationFactory', () => {
   test('Should call ValidationComposite with all validations', () => {
     makeAddUserValidation()
     const validations: Validation[] = []
