@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } from "typeorm"
+import { MigrationInterface, QueryRunner, Table, TableIndex } from "typeorm"
 
 export class CreateNeighborhood1735688400000 implements MigrationInterface {
 

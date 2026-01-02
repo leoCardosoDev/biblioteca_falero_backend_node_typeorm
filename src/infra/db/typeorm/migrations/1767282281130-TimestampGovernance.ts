@@ -7,11 +7,11 @@ export class TimestampGovernance1767282281130 implements MigrationInterface {
         // Drop unique indexes if they exist to allow foreign key changes, but we will recreate them or rely on standard FK naming
         try {
             await queryRunner.query(`DROP INDEX \`uq_city_name_state\` ON \`city\``);
-        } catch (e) { /* ignore if not exists */ }
+        } catch (_e) { /* ignore if not exists */ }
 
         try {
             await queryRunner.query(`DROP INDEX \`uq_neighborhood_name_city\` ON \`neighborhood\``);
-        } catch (e) { /* ignore if not exists */ }
+        } catch (_e) { /* ignore if not exists */ }
 
         // State table should already exist. If ensuring structure, do it via safe ALTERs, but skipping CREATE to avoid failure.
         // await queryRunner.query(`CREATE TABLE \`state\` ...`); // REMOVED
@@ -77,11 +77,11 @@ export class TimestampGovernance1767282281130 implements MigrationInterface {
         // We will execute them. If they exist, it might error.
         try {
             await queryRunner.query(`ALTER TABLE \`city\` ADD CONSTRAINT \`FK_37ecd8addf395545dcb0242a593\` FOREIGN KEY (\`state_id\`) REFERENCES \`state\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        } catch (e) { /* ignore constraint already exists */ }
+        } catch (_e) { /* ignore constraint already exists */ }
 
         try {
             await queryRunner.query(`ALTER TABLE \`neighborhood\` ADD CONSTRAINT \`FK_afa8388e34d9117a5ec01da4764\` FOREIGN KEY (\`city_id\`) REFERENCES \`city\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        } catch (e) { /* ignore */ }
+        } catch (_e) { /* ignore */ }
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
