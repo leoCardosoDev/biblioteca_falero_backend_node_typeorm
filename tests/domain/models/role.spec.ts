@@ -1,5 +1,4 @@
-import { Role } from '@/domain/models/role'
-import { Permission } from '@/domain/models/permission'
+import { Role, Permission } from '@/domain/models'
 
 describe('Role Entity', () => {
   test('Should create a valid Role', () => {

@@ -1,5 +1,5 @@
-import { Id } from '@/domain/value-objects/id'
-import { Permission } from '@/domain/models/permission'
+import { Id } from '@/domain/value-objects'
+import { Permission } from './permission'
 
 export type RoleProps = {
   id?: Id
