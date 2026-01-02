@@ -29,6 +29,7 @@ export class DbPromoteUser implements PromoteUser {
     if (!actorRole || !targetRole) return left(new AccessDeniedError())
     if (!newRole) return left(new NotFoundError('Role'))
 
+
     if (actorRole.powerLevel <= targetRole.powerLevel) {
       return left(new AccessDeniedError())
     }

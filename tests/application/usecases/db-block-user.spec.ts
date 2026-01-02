@@ -1,43 +1,29 @@
 
 import { DbBlockUser } from '@/application/usecases/db-block-user'
 import { LoadLoginByUserIdRepository } from '@/application/protocols/db/load-login-by-user-id-repository'
-import { UpdateUserStatusRepository } from '@/application/protocols/db/update-user-status-repository'
 import { LoadRoleByIdRepository } from '@/application/protocols/db/load-role-by-id-repository'
+import { UpdateUserStatusRepository } from '@/application/protocols/db/update-user-status-repository'
+import { UserStatus } from '@/domain/value-objects/user-status'
 import { LoginModel } from '@/domain/models/login'
 import { Role } from '@/domain/models/role'
 import { Id } from '@/domain/value-objects/id'
-import { Email } from '@/domain/value-objects/email'
-import { UserStatus } from '@/domain/value-objects/user-status'
 import { AccessDeniedError } from '@/domain/errors/access-denied-error'
 import { NotFoundError } from '@/domain/errors/not-found-error'
 
-const validActorId = '00000000-0000-0000-0000-000000000001'
-const validTargetId = '00000000-0000-0000-0000-000000000002'
-const validActorRoleId = '00000000-0000-0000-0000-000000000003'
-const validTargetRoleId = '00000000-0000-0000-0000-000000000004'
-const validAnyLoginId = '00000000-0000-0000-0000-000000000099'
-const validAnyRoleId = '00000000-0000-0000-0000-000000000088'
-
-const makeFakeLogin = (userId: string, roleId: string): LoginModel => ({
-  id: Id.create(validAnyLoginId),
-  userId: Id.create(userId),
-  roleId: Id.create(roleId),
-  email: Email.create('any_email@mail.com').value as unknown as Email,
-  passwordHash: 'any_hash',
-  isActive: true
-} as LoginModel)
-
-const makeFakeRole = (id: string, powerLevel: number): Role => Role.create({
-  id: Id.create(id),
-  slug: 'any_slug',
-  description: 'any_description',
-  powerLevel
-})
+const VALID_UUID = '00000000-0000-0000-0000-000000000001'
+const ANOTHER_UUID = '00000000-0000-0000-0000-000000000002'
+const ROLE_UUID = '00000000-0000-0000-0000-000000000003'
 
 const makeLoadLoginByUserIdRepository = (): LoadLoginByUserIdRepository => {
   class LoadLoginByUserIdRepositoryStub implements LoadLoginByUserIdRepository {
-    async loadByUserId(userId: string): Promise<LoginModel | undefined> {
-      return Promise.resolve(makeFakeLogin(userId, validAnyRoleId))
+    async loadByUserId(userId: string): Promise<LoginModel | null> {
+      return Promise.resolve({
+        id: Id.create(VALID_UUID),
+        userId: Id.create(userId),
+        roleId: Id.create(ROLE_UUID),
+        password: 'any_password',
+        status: 'ACTIVE'
+      } as LoginModel)
     }
   }
   return new LoadLoginByUserIdRepositoryStub()
@@ -46,7 +32,13 @@ const makeLoadLoginByUserIdRepository = (): LoadLoginByUserIdRepository => {
 const makeLoadRoleByIdRepository = (): LoadRoleByIdRepository => {
   class LoadRoleByIdRepositoryStub implements LoadRoleByIdRepository {
     async loadById(id: Id): Promise<Role | null> {
-      return Promise.resolve(makeFakeRole(id.value, 0))
+      return Promise.resolve({
+        id: id,
+        slug: 'any_slug',
+        description: 'any_description',
+        powerLevel: 50,
+        permissions: []
+      } as Role)
     }
   }
   return new LoadRoleByIdRepositoryStub()
@@ -61,7 +53,7 @@ const makeUpdateUserStatusRepository = (): UpdateUserStatusRepository => {
   return new UpdateUserStatusRepositoryStub()
 }
 
-type SutTypes = {
+interface SutTypes {
   sut: DbBlockUser
   loadLoginByUserIdRepositoryStub: LoadLoginByUserIdRepository
   loadRoleByIdRepositoryStub: LoadRoleByIdRepository
@@ -72,11 +64,7 @@ const makeSut = (): SutTypes => {
   const loadLoginByUserIdRepositoryStub = makeLoadLoginByUserIdRepository()
   const loadRoleByIdRepositoryStub = makeLoadRoleByIdRepository()
   const updateUserStatusRepositoryStub = makeUpdateUserStatusRepository()
-  const sut = new DbBlockUser(
-    loadLoginByUserIdRepositoryStub,
-    loadRoleByIdRepositoryStub,
-    updateUserStatusRepositoryStub
-  )
+  const sut = new DbBlockUser(loadLoginByUserIdRepositoryStub, loadRoleByIdRepositoryStub, updateUserStatusRepositoryStub)
   return {
     sut,
     loadLoginByUserIdRepositoryStub,
@@ -86,106 +74,95 @@ const makeSut = (): SutTypes => {
 }
 
 describe('DbBlockUser UseCase', () => {
-  test('Should call LoadLoginByUserIdRepository with correct values', async () => {
+  test('Should call LoadLoginByUserId with correct actorId', async () => {
     const { sut, loadLoginByUserIdRepositoryStub } = makeSut()
     const loadSpy = jest.spyOn(loadLoginByUserIdRepositoryStub, 'loadByUserId')
-    await sut.block(validActorId, validTargetId)
-    expect(loadSpy).toHaveBeenCalledWith(validActorId)
-    expect(loadSpy).toHaveBeenCalledWith(validTargetId)
-    expect(loadSpy).toHaveBeenCalledWith(validTargetId)
+    await sut.block(VALID_UUID, ANOTHER_UUID)
+    expect(loadSpy).toHaveBeenCalledWith(VALID_UUID)
   })
 
-  test('Should return AccessDeniedError if actor login is not found', async () => {
+  test('Should return AccessDeniedError if actorLogin is not found', async () => {
     const { sut, loadLoginByUserIdRepositoryStub } = makeSut()
-    jest.spyOn(loadLoginByUserIdRepositoryStub, 'loadByUserId').mockReturnValueOnce(Promise.resolve(undefined))
-    const result = await sut.block(validActorId, validTargetId)
+    jest.spyOn(loadLoginByUserIdRepositoryStub, 'loadByUserId').mockReturnValueOnce(Promise.resolve(null))
+    const result = await sut.block(VALID_UUID, ANOTHER_UUID)
     expect(result.isLeft()).toBe(true)
     expect(result.value).toEqual(new AccessDeniedError())
   })
 
-  test('Should return NotFoundError if target login is not found', async () => {
+  test('Should call LoadLoginByUserId with correct targetId', async () => {
     const { sut, loadLoginByUserIdRepositoryStub } = makeSut()
-    jest.spyOn(loadLoginByUserIdRepositoryStub, 'loadByUserId').mockImplementation(async (id) => {
-      if (id === validActorId) return makeFakeLogin(validActorId, validActorRoleId)
-      return undefined
-    })
-    const result = await sut.block(validActorId, validTargetId)
-    expect(result.isLeft()).toBe(true)
-    expect(result.value).toEqual(new NotFoundError('Login')) // Assuming BlockUser uses NotFoundError for target
+    const loadSpy = jest.spyOn(loadLoginByUserIdRepositoryStub, 'loadByUserId')
+    await sut.block(VALID_UUID, ANOTHER_UUID)
+    expect(loadSpy).toHaveBeenCalledWith(ANOTHER_UUID)
   })
 
-  test('Should return AccessDeniedError if actorRole or targetRole is not found', async () => {
-    const { sut, loadRoleByIdRepositoryStub, loadLoginByUserIdRepositoryStub } = makeSut()
-    jest.spyOn(loadLoginByUserIdRepositoryStub, 'loadByUserId').mockImplementation(async (userId) => {
-      if (userId === validActorId) return makeFakeLogin(validActorId, validActorRoleId)
-      return makeFakeLogin(validTargetId, validTargetRoleId)
-    })
-    jest.spyOn(loadRoleByIdRepositoryStub, 'loadById').mockResolvedValueOnce(null)
-    const result = await sut.block(validActorId, validTargetId)
+  test('Should return NotFoundError if targetLogin is not found', async () => {
+    const { sut, loadLoginByUserIdRepositoryStub } = makeSut()
+    jest.spyOn(loadLoginByUserIdRepositoryStub, 'loadByUserId')
+      .mockReturnValueOnce(Promise.resolve({ id: Id.create(VALID_UUID), userId: Id.create(VALID_UUID), roleId: Id.create(ROLE_UUID), password: 'pwd' } as LoginModel))
+      .mockReturnValueOnce(Promise.resolve(null))
+
+    const result = await sut.block(VALID_UUID, ANOTHER_UUID)
     expect(result.isLeft()).toBe(true)
-    expect(result.value).toEqual(new AccessDeniedError())
+    expect(result.value).toEqual(new NotFoundError('Login'))
   })
 
-  test('Should return AccessDeniedError if Actor power level is not greater than Target', async () => {
+  test('Should return AccessDeniedError if actorRole is not found', async () => {
     const { sut, loadRoleByIdRepositoryStub } = makeSut()
-    jest.spyOn(loadRoleByIdRepositoryStub, 'loadById').mockImplementation(async (id) => {
-      // Logic: Actor.Role > Target.Role
-      // In the implementation, we call LoadRoleById twice.
-      // 1. actorRole (from simple mock setup)
-      // 2. targetRole 
-      // We can distinguish by ID logic in Helper or just return different values by mocking sequentially or by ID input.
-      // Since makeFakeLogin uses 'any_role_id', we better customize it.
-      return makeFakeRole(id.value, 50)
-    })
-
-    const result = await sut.block(validActorId, validTargetId)
-    // Both 50 -> Equal -> Fail
+    jest.spyOn(loadRoleByIdRepositoryStub, 'loadById').mockReturnValueOnce(Promise.resolve(null))
+    const result = await sut.block(VALID_UUID, ANOTHER_UUID)
     expect(result.isLeft()).toBe(true)
     expect(result.value).toEqual(new AccessDeniedError())
   })
 
-  test('Should call UpdateUserStatusRepository if checks pass', async () => {
-    const { sut, loadRoleByIdRepositoryStub, updateUserStatusRepositoryStub, loadLoginByUserIdRepositoryStub } = makeSut()
-
-    // Setup logins with specific role IDs we can track
-    jest.spyOn(loadLoginByUserIdRepositoryStub, 'loadByUserId').mockImplementation(async (userId) => {
-      if (userId === validActorId) return makeFakeLogin(validActorId, validActorRoleId)
-      return makeFakeLogin(validTargetId, validTargetRoleId)
-    })
-
-    jest.spyOn(loadRoleByIdRepositoryStub, 'loadById').mockImplementation(async (id) => {
-      if (id.value === validActorRoleId) return makeFakeRole(validActorRoleId, 100)
-      return makeFakeRole(validTargetRoleId, 10)
-    })
-
-    const updateSpy = jest.spyOn(updateUserStatusRepositoryStub, 'updateStatus')
-
-    const result = await sut.block(validActorId, validTargetId)
-    expect(result.isRight()).toBe(true)
-    expect(updateSpy).toHaveBeenCalledWith(validTargetId, expect.any(Object)) // UserStatus object
+  test('Should return AccessDeniedError if targetRole is not found', async () => {
+    const { sut, loadRoleByIdRepositoryStub } = makeSut()
+    jest.spyOn(loadRoleByIdRepositoryStub, 'loadById')
+      .mockReturnValueOnce(Promise.resolve({ id: Id.create(ROLE_UUID), powerLevel: 10 } as Role))
+      .mockReturnValueOnce(Promise.resolve(null))
+    const result = await sut.block(VALID_UUID, ANOTHER_UUID)
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toEqual(new AccessDeniedError())
   })
 
-  test('Should return left if UserStatus.create returns an error', async () => {
-    const { sut, loadLoginByUserIdRepositoryStub, loadRoleByIdRepositoryStub } = makeSut()
+  test('Should return AccessDeniedError if actorRole powerLevel is less than or equal to targetRole', async () => {
+    const { sut, loadRoleByIdRepositoryStub } = makeSut()
+    jest.spyOn(loadRoleByIdRepositoryStub, 'loadById')
+      .mockReturnValueOnce(Promise.resolve({ id: Id.create(ROLE_UUID), powerLevel: 10 } as Role))
+      .mockReturnValueOnce(Promise.resolve({ id: Id.create(ROLE_UUID), powerLevel: 10 } as Role))
+    const result = await sut.block(VALID_UUID, ANOTHER_UUID)
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toEqual(new AccessDeniedError())
+  })
 
-    // 1. Setup Logins
-    jest.spyOn(loadLoginByUserIdRepositoryStub, 'loadByUserId').mockImplementation(async (userId) => {
-      if (userId === validActorId) return makeFakeLogin(validActorId, validActorRoleId)
-      return makeFakeLogin(validTargetId, validTargetRoleId)
-    })
+  test('Should call UpdateUserStatus with correct values', async () => {
+    const { sut, updateUserStatusRepositoryStub, loadRoleByIdRepositoryStub } = makeSut()
+    jest.spyOn(loadRoleByIdRepositoryStub, 'loadById')
+      .mockReturnValueOnce(Promise.resolve({ id: Id.create(ROLE_UUID), powerLevel: 100 } as Role))
+      .mockReturnValueOnce(Promise.resolve({ id: Id.create(ROLE_UUID), powerLevel: 10 } as Role))
+    const updateSpy = jest.spyOn(updateUserStatusRepositoryStub, 'updateStatus')
+    await sut.block(VALID_UUID, ANOTHER_UUID)
+    const status = UserStatus.create('BLOCKED') as UserStatus
+    expect(updateSpy).toHaveBeenCalledWith(ANOTHER_UUID, status)
+  })
 
-    // 2. Setup Roles (Actor > Target)
-    jest.spyOn(loadRoleByIdRepositoryStub, 'loadById').mockImplementation(async (id) => {
-      if (id.value === validActorRoleId) return makeFakeRole(validActorRoleId, 100)
-      return makeFakeRole(validTargetRoleId, 10)
-    })
+  test('Should return right on success', async () => {
+    const { sut, loadRoleByIdRepositoryStub } = makeSut()
+    jest.spyOn(loadRoleByIdRepositoryStub, 'loadById')
+      .mockReturnValueOnce(Promise.resolve({ id: Id.create(ROLE_UUID), powerLevel: 100 } as Role))
+      .mockReturnValueOnce(Promise.resolve({ id: Id.create(ROLE_UUID), powerLevel: 10 } as Role))
+    const result = await sut.block(VALID_UUID, ANOTHER_UUID)
+    expect(result.isRight()).toBe(true)
+  })
 
-    // 3. Mock UserStatus failure
-    jest.spyOn(UserStatus, 'create').mockReturnValueOnce(new Error('any_error'))
-
-    const response = await sut.block(validActorId, validTargetId)
-
-    expect(response.isLeft()).toBe(true)
-    expect(response.value).toBeInstanceOf(Error)
+  test('Should return AccessDeniedError if UserStatus.create returns Error', async () => {
+    const { sut, loadRoleByIdRepositoryStub } = makeSut()
+    jest.spyOn(loadRoleByIdRepositoryStub, 'loadById')
+      .mockReturnValueOnce(Promise.resolve({ id: Id.create(ROLE_UUID), powerLevel: 100 } as Role))
+      .mockReturnValueOnce(Promise.resolve({ id: Id.create(ROLE_UUID), powerLevel: 10 } as Role))
+    jest.spyOn(UserStatus, 'create').mockReturnValueOnce(new Error('UserStatus Error'))
+    const result = await sut.block(VALID_UUID, ANOTHER_UUID)
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toEqual(new Error('UserStatus Error'))
   })
 })

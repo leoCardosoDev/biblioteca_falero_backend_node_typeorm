@@ -2,7 +2,7 @@ import fastify from 'fastify'
 import swagger from '@fastify/swagger'
 import swaggerUi from '@fastify/swagger-ui'
 
-import { setupRoutes } from './routes'
+import setupRoutes from './routes'
 import { setupMiddlewares } from './middlewares'
 import { swaggerConfig } from './swagger'
 import { errorHandler } from './error-handler'

@@ -40,7 +40,8 @@ export class RoleTypeOrmRepository implements LoadRoleBySlugRepository, LoadRole
       id: Id.create(entity.id), // Assuming Id.create parses UUID string
       slug: entity.slug,
       description: entity.description,
-      permissions
+      permissions,
+      powerLevel: entity.powerLevel
     })
   }
 }

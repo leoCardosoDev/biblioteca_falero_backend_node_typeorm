@@ -9,7 +9,9 @@ export const adaptRoute = (controller: Controller) => {
       body: req.body,
       params: req.params,
       headers: req.headers as HttpHeaders,
-      query: req.query
+      query: req.query,
+      userId: (req as unknown as { userId: string }).userId,
+      role: (req as unknown as { role: string }).role
     }
     const httpResponse = await controller.handle(httpRequest)
     return reply.status(httpResponse.statusCode).send(httpResponse.body)
