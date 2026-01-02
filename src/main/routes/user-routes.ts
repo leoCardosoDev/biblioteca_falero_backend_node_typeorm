@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify'
 
 import { adaptRoute } from '@/main/adapters/fastify-route-adapter'
 import { adaptMiddleware } from '@/main/adapters/fastify-middleware-adapter'
+import { errorSchema } from '@/main/config/error-schema'
 import { makeAddUserController } from '@/main/factories/add-user-controller-factory'
 import { makeAuthMiddleware, makeLibrarianOrAdmin, makeAdminOnly } from '@/main/factories/middlewares'
 import { makeLoadUsersController } from '@/main/factories/load-users-controller-factory'
@@ -15,7 +16,9 @@ const userSchema = {
     id: { type: 'string' },
     name: { type: 'string' },
     email: { type: 'string' },
-    role: { type: 'string', enum: ['admin', 'librarian', 'user'] }
+    role: { type: 'string', enum: ['admin', 'librarian', 'user'] },
+    status: { type: 'string', enum: ['ACTIVE', 'INACTIVE', 'BLOCKED'] },
+    version: { type: 'integer' }
   }
 }
 
@@ -38,8 +41,8 @@ const addUserSchema = {
   },
   response: {
     200: userSchema,
-    400: { type: 'object', properties: { error: { type: 'string' } } },
-    403: { type: 'object', properties: { error: { type: 'string' } } }
+    400: errorSchema,
+    403: errorSchema
   }
 }
 
@@ -53,7 +56,7 @@ const loadUsersSchema = {
       type: 'array',
       items: userSchema
     },
-    403: { type: 'object', properties: { error: { type: 'string' } } }
+    403: errorSchema
   }
 }
 
@@ -90,8 +93,8 @@ const loadUserByIdSchema = {
         }
       }
     },
-    403: { type: 'object', properties: { error: { type: 'string' } } },
-    404: { type: 'object', properties: { error: { type: 'string' } } }
+    403: errorSchema,
+    404: errorSchema
   }
 }
 
@@ -118,16 +121,16 @@ const updateUserSchema = {
   },
   response: {
     200: userSchema,
-    400: { type: 'object', properties: { error: { type: 'string' } } },
-    403: { type: 'object', properties: { error: { type: 'string' } } },
-    404: { type: 'object', properties: { error: { type: 'string' } } }
+    400: errorSchema,
+    403: errorSchema,
+    404: errorSchema
   }
 }
 
 const deleteUserSchema = {
   tags: ['Users'],
   summary: 'Delete a user',
-  description: 'Deletes a user from the system. Requires admin role.',
+  description: 'Deletes a user from the system. Requires admin role. This endpoint performs a Soft Delete.',
   security: [{ bearerAuth: [] }],
   params: {
     type: 'object',
@@ -137,8 +140,8 @@ const deleteUserSchema = {
   },
   response: {
     204: { type: 'null', description: 'User deleted successfully' },
-    403: { type: 'object', properties: { error: { type: 'string' } } },
-    404: { type: 'object', properties: { error: { type: 'string' } } }
+    403: errorSchema,
+    404: errorSchema
   }
 }
 

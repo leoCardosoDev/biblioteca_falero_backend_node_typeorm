@@ -11,7 +11,7 @@ describe('CreateUserLoginValidationFactory', () => {
   test('Should call ValidationComposite with all validations', () => {
     makeCreateUserLoginValidation()
     const validations: Validation[] = []
-    for (const field of ['userId', 'password', 'email']) {
+    for (const field of ['userId', 'password']) {
       validations.push(new RequiredFieldValidation(field))
     }
     expect(ValidationComposite).toHaveBeenCalledWith(validations)

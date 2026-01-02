@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import { adaptRoute } from '@/main/adapters/fastify-route-adapter'
+import { errorSchema } from '@/main/config/error-schema'
 import { makeLoginController } from '@/main/factories/login/login-controller-factory'
 import { makeRefreshTokenController } from '@/main/factories/login/refresh-token-controller-factory'
 
@@ -25,18 +26,8 @@ const loginSchema = {
         role: { type: 'string', description: 'User role' }
       }
     },
-    400: {
-      type: 'object',
-      properties: {
-        error: { type: 'string' }
-      }
-    },
-    401: {
-      type: 'object',
-      properties: {
-        error: { type: 'string' }
-      }
-    }
+    400: errorSchema,
+    401: errorSchema
   }
 }
 
@@ -59,12 +50,7 @@ const refreshTokenSchema = {
         refreshToken: { type: 'string', description: 'New JWT refresh token' }
       }
     },
-    401: {
-      type: 'object',
-      properties: {
-        error: { type: 'string' }
-      }
-    }
+    401: errorSchema
   }
 }
 

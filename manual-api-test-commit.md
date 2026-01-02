@@ -160,6 +160,36 @@ Sem token ou com role MEMBER.
 
 ---
 
+## 4. List Users (LoadUsers)
+
+**Endpoint**: `GET http://localhost:5050/api/users`
+
+**Headers**:
+```
+Authorization: Bearer <accessToken>
+```
+
+### 4.1 Success (200 OK)
+**Response**:
+```json
+[
+  {
+    "id": "any_id",
+    "name": "Maria Silva",
+    "email": "maria.silva@example.com",
+    "rg": "123456789",
+    "cpf": "123.456.789-00",
+    "birthDate": "1990-05-20",
+    "status": "ACTIVE"
+  }
+]
+```
+
+### 4.2 Error: Access Denied (403 Forbidden)
+Sem token ou com role MEMBER.
+
+---
+
 ## 5. Update User (🔒 ADMIN Only)
 
 **Endpoint**: `PUT http://localhost:5050/api/users/:id`
@@ -215,32 +245,3 @@ Requires ADMIN role.
 | `/api/users/:userId/login` | POST | 🔒 LIBRARIAN, ADMIN |
 | `/api/users/:id` | PUT | 🔒 ADMIN |
 | `/api/users/:id` | DELETE | 🔒 ADMIN |
-
----
-
-## 4. List Users (LoadUsers)
-
-**Endpoint**: `GET http://localhost:5050/api/users`
-
-**Headers**:
-```
-Authorization: Bearer <accessToken>
-```
-
-### 4.1 Success (200 OK)
-**Response**:
-```json
-[
-  {
-    "id": "any_id",
-    "name": "Maria Silva",
-    "email": "maria.silva@example.com",
-    "rg": "123456789",
-    "cpf": "123.456.789-00",
-    "birthDate": "1990-05-20"
-  }
-]
-```
-
-### 4.2 Error: Access Denied (403 Forbidden)
-Sem token ou com role MEMBER.

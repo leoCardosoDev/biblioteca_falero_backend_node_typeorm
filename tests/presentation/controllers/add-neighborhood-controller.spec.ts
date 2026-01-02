@@ -54,7 +54,8 @@ describe('AddNeighborhood Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect((httpResponse.body as ErrorResponseBody).error).toHaveProperty('code', 'BAD_REQUEST')
+    expect(httpResponse.body).toBeInstanceOf(Error)
+    expect((httpResponse.body as Error).name).toBe('ZodError')
   })
 
   test('Should call AddNeighborhood with correct values', async () => {
@@ -86,7 +87,7 @@ describe('AddNeighborhood Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
-    expect((httpResponse.body as ErrorResponseBody).error).toHaveProperty('code', 'INTERNAL_ERROR')
+    expect((httpResponse.body as Error).message).toBe('Internal server error')
   })
 
   test('Should return 200 on success', async () => {

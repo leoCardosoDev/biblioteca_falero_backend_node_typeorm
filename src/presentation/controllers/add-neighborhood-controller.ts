@@ -15,7 +15,7 @@ export class AddNeighborhoodController implements Controller {
 
       const validation = schema.safeParse(request.body)
       if (!validation.success) {
-        return badRequest(new Error(JSON.stringify(validation.error.format()))) // Simplified error for now
+        return badRequest(validation.error)
       }
 
       const { name, city_id } = validation.data

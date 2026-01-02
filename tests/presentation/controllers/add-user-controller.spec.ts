@@ -5,16 +5,10 @@ import { Validation } from '@/presentation/protocols/validation'
 import { HttpRequest } from '@/presentation/protocols'
 import { ok } from '@/presentation/helpers/http-helper'
 import { UserAlreadyExistsError } from '@/presentation/errors/user-already-exists-error'
+import { InvalidParamError } from '@/presentation/errors/invalid-param-error'
+import { ServerError } from '@/presentation/errors/server-error'
 import { Id } from '@/domain/value-objects/id'
 import { Name, Email, Rg, Cpf, Address, UserStatus } from '@/domain/value-objects'
-
-type ErrorBody = {
-  error: {
-    code: string
-    message: string
-    timestamp: string
-  }
-}
 
 const makeAddUser = (): AddUser => {
   class AddUserStub implements AddUser {
@@ -99,18 +93,10 @@ describe('AddUser Controller', () => {
 
   test('Should return 400 if Validation returns an error', async () => {
     const { sut, validationStub } = makeSut()
-    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error())
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error('any_error'))
     const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(expect.objectContaining({
-      statusCode: 400,
-      body: expect.objectContaining({
-        error: expect.objectContaining({
-          message: 'Invalid request',
-          code: 'BAD_REQUEST',
-          timestamp: expect.any(String)
-        })
-      })
-    }))
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new Error('any_error'))
   })
 
   test('Should call AddUser with correct values', async () => {
@@ -140,16 +126,8 @@ describe('AddUser Controller', () => {
     const { sut, addUserStub } = makeSut()
     jest.spyOn(addUserStub, 'add').mockReturnValueOnce(Promise.resolve(new UserAlreadyExistsError()))
     const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(expect.objectContaining({
-      statusCode: 403,
-      body: expect.objectContaining({
-        error: expect.objectContaining({
-          code: 'FORBIDDEN',
-          message: 'Access denied',
-          timestamp: expect.any(String)
-        })
-      })
-    }))
+    expect(httpResponse.statusCode).toBe(403)
+    expect(httpResponse.body).toEqual(new UserAlreadyExistsError())
   })
 
   test('Should return 500 if AddUser throws', async () => {
@@ -157,7 +135,7 @@ describe('AddUser Controller', () => {
     jest.spyOn(addUserStub, 'add').mockImplementationOnce(() => { throw new Error() })
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse.statusCode).toBe(500)
-    expect((httpResponse.body as ErrorBody).error.code).toBe('INTERNAL_ERROR')
+    expect(httpResponse.body).toBeInstanceOf(ServerError)
   })
 
   test('Should return 200 on success', async () => {
@@ -190,7 +168,7 @@ describe('AddUser Controller', () => {
     body.email = 'invalid-email'
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect((httpResponse.body as ErrorBody).error.code).toBe('INVALID_PARAM')
+    expect(httpResponse.body).toEqual(new InvalidParamError('email'))
   })
 
   test('Should return 400 if Cpf.create throws', async () => {
@@ -200,7 +178,7 @@ describe('AddUser Controller', () => {
     body.cpf = 'invalid-cpf'
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect((httpResponse.body as ErrorBody).error.code).toBe('INVALID_PARAM')
+    expect(httpResponse.body).toEqual(new InvalidParamError('cpf'))
   })
 
   test('Should return 400 if Name.create returns an error', async () => {
@@ -210,7 +188,7 @@ describe('AddUser Controller', () => {
     body.name = 'A' // Invalid name (too short)
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect((httpResponse.body as ErrorBody).error.code).toBe('INVALID_PARAM')
+    expect(httpResponse.body).toEqual(new InvalidParamError('name'))
   })
 
   test('Should return 400 if Rg.create returns an error', async () => {
@@ -220,7 +198,7 @@ describe('AddUser Controller', () => {
     body.rg = '' // Invalid RG
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect((httpResponse.body as ErrorBody).error.code).toBe('INVALID_PARAM')
+    expect(httpResponse.body).toEqual(new InvalidParamError('rg'))
   })
 
   test('Should return 400 if Address.create returns an error', async () => {
@@ -236,6 +214,6 @@ describe('AddUser Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect((httpResponse.body as ErrorBody).error.code).toBe('INVALID_PARAM')
+    expect(httpResponse.body).toEqual(new InvalidParamError('address'))
   })
 })

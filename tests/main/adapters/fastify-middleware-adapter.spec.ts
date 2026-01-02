@@ -57,6 +57,6 @@ describe('FastifyMiddlewareAdapter', () => {
     } as unknown as FastifyReply
     await sut(request, reply)
     expect(reply.status).toHaveBeenCalledWith(403)
-    expect(reply.send).toHaveBeenCalledWith({ error: 'any_error' })
+    expect(reply.send).toHaveBeenCalledWith(new Error('any_error'))
   })
 })

@@ -8,7 +8,13 @@ import { Id } from '@/domain/value-objects/id'
 import { UserRole } from '@/domain/value-objects/user-role'
 import { UserStatus } from '@/domain/value-objects/user-status'
 import { Email } from '@/domain/value-objects/email'
+
 import { Role } from '@/domain/models/role'
+import { LoadUserByIdRepository } from '@/application/protocols/db/load-user-by-id-repository'
+import { UserWithLogin } from '@/domain/usecases/load-users'
+import { Name } from '@/domain/value-objects/name'
+import { Cpf } from '@/domain/value-objects/cpf'
+import { Rg } from '@/domain/value-objects/rg'
 
 const validLoginId = '550e8400-e29b-41d4-a716-446655440000'
 const validUserId = '550e8400-e29b-41d4-a716-446655440001'
@@ -52,30 +58,50 @@ const makeLoadRoleBySlugRepository = (): LoadRoleBySlugRepository => {
   return new LoadRoleBySlugRepositoryStub()
 }
 
+const makeLoadUserByIdRepository = (): LoadUserByIdRepository => {
+  class LoadUserByIdRepositoryStub implements LoadUserByIdRepository {
+    async loadById(_id: string): Promise<UserWithLogin | null> {
+      return Promise.resolve({
+        id: Id.create(validUserId),
+        name: Name.create('Any Name') as Name,
+        email: Email.create('any_email@mail.com') as Email,
+        rg: Rg.create('123456789') as Rg,
+        cpf: Cpf.create('12345678909') as Cpf,
+        gender: 'male',
+        status: UserStatus.create('ACTIVE') as UserStatus,
+        version: 1
+      })
+    }
+  }
+  return new LoadUserByIdRepositoryStub()
+}
+
 interface SutTypes {
   sut: DbCreateUserLogin
   hasherStub: Hasher
   addLoginRepositoryStub: AddLoginRepository
   loadRoleBySlugRepositoryStub: LoadRoleBySlugRepository
+  loadUserByIdRepositoryStub: LoadUserByIdRepository
 }
 
 const makeSut = (): SutTypes => {
   const hasherStub = makeHasher()
   const addLoginRepositoryStub = makeAddLoginRepository()
   const loadRoleBySlugRepositoryStub = makeLoadRoleBySlugRepository()
-  const sut = new DbCreateUserLogin(hasherStub, addLoginRepositoryStub, loadRoleBySlugRepositoryStub)
+  const loadUserByIdRepositoryStub = makeLoadUserByIdRepository()
+  const sut = new DbCreateUserLogin(hasherStub, addLoginRepositoryStub, loadRoleBySlugRepositoryStub, loadUserByIdRepositoryStub)
   return {
     sut,
     hasherStub,
     addLoginRepositoryStub,
-    loadRoleBySlugRepositoryStub
+    loadRoleBySlugRepositoryStub,
+    loadUserByIdRepositoryStub
   }
 }
 
 describe('DbCreateUserLogin UseCase', () => {
   const fakeLoginData: CreateUserLoginParams = {
     userId: Id.create(validUserId),
-    email: Email.create('any_email@mail.com') as Email,
     password: 'any_password',
     role: UserRole.create('ADMIN') as UserRole,
     status: UserStatus.create('active') as UserStatus
@@ -93,6 +119,20 @@ describe('DbCreateUserLogin UseCase', () => {
     jest.spyOn(hasherStub, 'hash').mockReturnValueOnce(Promise.reject(new Error()))
     const promise = sut.create(fakeLoginData)
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call LoadUserByIdRepository with correct id', async () => {
+    const { sut, loadUserByIdRepositoryStub } = makeSut()
+    const loadSpy = jest.spyOn(loadUserByIdRepositoryStub, 'loadById')
+    await sut.create(fakeLoginData)
+    expect(loadSpy).toHaveBeenCalledWith(validUserId)
+  })
+
+  test('Should throw if LoadUserByIdRepository returns null', async () => {
+    const { sut, loadUserByIdRepositoryStub } = makeSut()
+    jest.spyOn(loadUserByIdRepositoryStub, 'loadById').mockResolvedValueOnce(null)
+    const promise = sut.create(fakeLoginData)
+    await expect(promise).rejects.toThrow(`User ${validUserId} not found`)
   })
 
   test('Should call LoadRoleBySlugRepository with correct slug', async () => {
@@ -116,6 +156,7 @@ describe('DbCreateUserLogin UseCase', () => {
     const { role: _, ...expectedData } = fakeLoginData
     expect(addSpy).toHaveBeenCalledWith({
       ...expectedData,
+      email: Email.create('any_email@mail.com'), // Email comes from user repository
       passwordHash: 'hashed_password',
       roleId: Id.create(validRoleId)
     })

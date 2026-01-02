@@ -149,6 +149,15 @@ Authorization: Bearer <accessToken>
 }
 ```
 
+**Expected Response:**
+```json
+{
+  "id": "...",
+  "userId": "...",
+  "email": "..."
+}
+```
+
 ### 3.2 Error: Missing Password (400 Bad Request)
 **Body (JSON)**:
 ```json
@@ -171,7 +180,20 @@ Authorization: Bearer <accessToken>
 ```
 
 ### 4.1 Success (200 OK)
-**Response**: JSON Array of users.
+**Response**:
+```json
+[
+  {
+    "id": "any_id",
+    "name": "Maria Silva",
+    "email": "maria.silva@example.com",
+    "rg": "123456789",
+    "cpf": "123.456.789-00",
+    "birthDate": "1990-05-20",
+    "status": "ACTIVE"
+  }
+]
+```
 
 ### 4.2 Error: Access Denied (403 Forbidden)
 Requires ADMIN or LIBRARIAN role.

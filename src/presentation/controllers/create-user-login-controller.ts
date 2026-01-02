@@ -5,7 +5,7 @@ import { Password } from '@/domain/value-objects/password'
 import { UserRole } from '@/domain/value-objects/user-role'
 import { UserStatus } from '@/domain/value-objects/user-status'
 import { Id } from '@/domain/value-objects/id'
-import { Email } from '@/domain/value-objects/email'
+import { InvalidParamError } from '@/presentation/errors'
 
 export class CreateUserLoginController implements Controller {
   constructor(
@@ -24,35 +24,31 @@ export class CreateUserLoginController implements Controller {
         return badRequest(error)
       }
 
-      const { userId, password, email } = requestData as { userId: string; password: string; email: string }
-      let emailVO: Email
-      try {
-        emailVO = Email.create(email)
-      } catch (error) {
-        return badRequest(error as Error)
-      }
+      const { userId, password } = requestData as { userId: string; password: string }
 
       const passwordOrError = Password.create(password)
       if (passwordOrError.isLeft()) {
-        return badRequest(passwordOrError.value)
+        return badRequest(new InvalidParamError('password'))
       }
-      const passwordVO = passwordOrError.value
 
       let idVO: Id
       try {
         idVO = Id.create(userId)
-      } catch (error) {
-        return badRequest(error as Error)
+      } catch (_error) {
+        return badRequest(new InvalidParamError('userId'))
       }
 
       const login = await this.createUserLogin.create({
         userId: idVO,
-        email: emailVO as Email,
         password,
         role: UserRole.create('MEMBER') as UserRole,
         status: UserStatus.create('ACTIVE') as UserStatus
       })
-      return ok(login)
+      return ok({
+        id: login.id.value,
+        userId: login.userId.value,
+        email: login.email.value
+      })
     } catch (error) {
       console.error('CreateUserLoginController Error:', error)
       return serverError(error as Error)

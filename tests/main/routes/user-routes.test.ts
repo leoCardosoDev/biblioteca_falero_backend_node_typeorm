@@ -52,6 +52,13 @@ describe('User Routes', () => {
         }
       })
       expect(response.statusCode).toBe(403)
+      expect(response.json()).toEqual({
+        error: {
+          type: 'SECURITY',
+          code: 'ACCESS_DENIED',
+          message: 'Access denied'
+        }
+      })
     })
 
     test('Should return 403 if user role is MEMBER', async () => {
@@ -69,6 +76,13 @@ describe('User Routes', () => {
         }
       })
       expect(response.statusCode).toBe(403)
+      expect(response.json()).toEqual({
+        error: {
+          type: 'SECURITY',
+          code: 'ACCESS_DENIED',
+          message: 'Access denied'
+        }
+      })
     })
 
     test('Should return 200 on success with valid token', async () => {
@@ -96,6 +110,13 @@ describe('User Routes', () => {
         url: '/api/users'
       })
       expect(response.statusCode).toBe(403)
+      expect(response.json()).toEqual({
+        error: {
+          type: 'SECURITY',
+          code: 'ACCESS_DENIED',
+          message: 'Access denied'
+        }
+      })
     })
 
     test('Should return 403 if user role is MEMBER', async () => {
@@ -106,6 +127,13 @@ describe('User Routes', () => {
         headers: { authorization: `Bearer ${accessToken}` }
       })
       expect(response.statusCode).toBe(403)
+      expect(response.json()).toEqual({
+        error: {
+          type: 'SECURITY',
+          code: 'ACCESS_DENIED',
+          message: 'Access denied'
+        }
+      })
     })
 
     test('Should return 200 on success with valid token', async () => {
@@ -139,6 +167,13 @@ describe('User Routes', () => {
         payload: { name: 'updated_name' }
       })
       expect(response.statusCode).toBe(403)
+      expect(response.json()).toEqual({
+        error: {
+          type: 'SECURITY',
+          code: 'ACCESS_DENIED',
+          message: 'Access denied'
+        }
+      })
     })
 
     test('Should return 404 if user does not exist', async () => {
@@ -150,6 +185,13 @@ describe('User Routes', () => {
         payload: { name: 'non_existent_user' }
       })
       expect(response.statusCode).toBe(404)
+      expect(response.json()).toEqual({
+        error: {
+          type: 'REPOSITORY',
+          code: 'NOT_FOUND',
+          message: 'User not found'
+        }
+      })
     })
 
     test('Should return 200 on success', async () => {
@@ -182,6 +224,13 @@ describe('User Routes', () => {
         headers: { authorization: `Bearer ${accessToken}` }
       })
       expect(response.statusCode).toBe(403)
+      expect(response.json()).toEqual({
+        error: {
+          type: 'SECURITY',
+          code: 'ACCESS_DENIED',
+          message: 'Access denied'
+        }
+      })
     })
 
     test('Should return 204 on success', async () => {

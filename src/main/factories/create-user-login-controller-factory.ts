@@ -4,6 +4,7 @@ import { makeCreateUserLoginValidation } from './create-user-login-validation-fa
 import { DbCreateUserLogin } from '@/application/usecases/db-create-user-login'
 import { LoginTypeOrmRepository } from '@/infra/db/typeorm/login-repository'
 import { RoleTypeOrmRepository } from '@/infra/db/typeorm/role-repository'
+import { UserTypeOrmRepository } from '@/infra/db/typeorm/user-repository'
 import { BcryptAdapter } from '@/infra/cryptography/bcrypt-adapter'
 
 export const makeCreateUserLoginController = (): Controller => {
@@ -11,6 +12,7 @@ export const makeCreateUserLoginController = (): Controller => {
   const bcryptAdapter = new BcryptAdapter(salt)
   const loginTypeOrmRepository = new LoginTypeOrmRepository()
   const roleTypeOrmRepository = new RoleTypeOrmRepository()
-  const dbCreateUserLogin = new DbCreateUserLogin(bcryptAdapter, loginTypeOrmRepository, roleTypeOrmRepository)
+  const userTypeOrmRepository = new UserTypeOrmRepository()
+  const dbCreateUserLogin = new DbCreateUserLogin(bcryptAdapter, loginTypeOrmRepository, roleTypeOrmRepository, userTypeOrmRepository)
   return new CreateUserLoginController(makeCreateUserLoginValidation(), dbCreateUserLogin)
 }

@@ -49,7 +49,7 @@ describe('CreateUserLogin Routes', () => {
         name: 'Target User',
         email: 'target@mail.com',
         rg: '123456789',
-        cpf: '12345678900',
+        cpf: '12345678909',
         gender: 'male',
         status: 'ACTIVE'
       }),
@@ -58,7 +58,7 @@ describe('CreateUserLogin Routes', () => {
         name: 'Auth User',
         email: 'auth@mail.com',
         rg: '987654321',
-        cpf: '98765432100',
+        cpf: '52998224725',
         gender: 'female',
         status: 'ACTIVE'
       })
@@ -94,7 +94,7 @@ describe('CreateUserLogin Routes', () => {
         name: 'Target User',
         email: 'target@mail.com',
         rg: '123456789',
-        cpf: '12345678900',
+        cpf: '12345678909',
         gender: 'male',
         status: 'ACTIVE'
       }),
@@ -103,7 +103,7 @@ describe('CreateUserLogin Routes', () => {
         name: 'Auth User',
         email: 'auth@mail.com',
         rg: '987654321',
-        cpf: '98765432100',
+        cpf: '52998224725',
         gender: 'female',
         status: 'ACTIVE'
       })
@@ -116,8 +116,7 @@ describe('CreateUserLogin Routes', () => {
         method: 'POST',
         url: '/api/users/550e8400-e29b-41d4-a716-446655440001/login',
         payload: {
-          password: 'Abcdefg1!',
-          email: 'target@mail.com'
+          password: 'Abcdefg1!'
         }
       })
       expect(response.statusCode).toBe(403)
@@ -130,8 +129,7 @@ describe('CreateUserLogin Routes', () => {
         url: '/api/users/550e8400-e29b-41d4-a716-446655440001/login',
         headers: { authorization: `Bearer ${accessToken}` },
         payload: {
-          password: 'Abcdefg1!',
-          email: 'target@mail.com'
+          password: 'Abcdefg1!'
         }
       })
       expect(response.statusCode).toBe(200)
@@ -144,10 +142,21 @@ describe('CreateUserLogin Routes', () => {
         url: '/api/users/550e8400-e29b-41d4-a716-446655440001/login',
         headers: { authorization: `Bearer ${accessToken}` },
         payload: {
-          email: 'target@mail.com'
         }
       })
       expect(response.statusCode).toBe(400)
+      expect(response.json()).toEqual({
+        error: {
+          type: 'VALIDATION',
+          code: 'INVALID_PARAMETERS',
+          message: 'One or more fields are invalid.',
+          details: [{
+            field: 'password',
+            issue: 'required',
+            message: "must have required property 'password'"
+          }]
+        }
+      })
     })
   })
 })

@@ -59,12 +59,12 @@ describe('FastifyRouteAdapter', () => {
       status: jest.fn().mockReturnThis(),
       send: jest.fn().mockReturnThis()
     } as unknown as FastifyReply
-    await sut(request, reply)
+    const httpResponse = await sut(request, reply)
     expect(reply.status).toHaveBeenCalledWith(400)
-    expect(reply.send).toHaveBeenCalledWith({ error: 'any_error' })
+    expect(reply.send).toHaveBeenCalledWith(new Error('any_error'))
   })
 
-  test('Should log error and return 500 if controller returns 500', async () => {
+  test('Should return 500 if controller returns 500', async () => {
     const controllerStub = makeController()
     const error = new Error('server_error')
     error.stack = 'any_stack'
@@ -72,7 +72,6 @@ describe('FastifyRouteAdapter', () => {
       statusCode: 500,
       body: error
     }))
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { })
     const sut = adaptRoute(controllerStub)
     const request = { body: {}, params: {} } as FastifyRequest
     const reply = {
@@ -80,9 +79,7 @@ describe('FastifyRouteAdapter', () => {
       send: jest.fn().mockReturnThis()
     } as unknown as FastifyReply
     await sut(request, reply)
-    expect(consoleSpy).toHaveBeenCalledWith('[SERVER ERROR]', 'any_stack')
     expect(reply.status).toHaveBeenCalledWith(500)
-    expect(reply.send).toHaveBeenCalledWith({ error: 'server_error' })
-    consoleSpy.mockRestore()
+    expect(reply.send).toHaveBeenCalledWith(error)
   })
 })

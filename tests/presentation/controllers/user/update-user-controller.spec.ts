@@ -10,6 +10,7 @@ import { Rg } from '@/domain/value-objects/rg'
 import { Address } from '@/domain/value-objects/address'
 import { notFound } from '@/presentation/helpers/http-helper'
 import { NotFoundError } from '@/domain/errors'
+import { MissingParamError, ServerError } from '@/presentation/errors'
 import { UserStatus } from '@/domain/value-objects/user-status'
 
 const makeFakeUser = (): UserModel => ({
@@ -61,7 +62,7 @@ describe('UpdateUser Controller', () => {
       body: { name: 'any_name' }
     }) as { statusCode: number; body: { error: { code: string } } }
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body.error.code).toBe('MISSING_PARAM')
+    expect(httpResponse.body).toEqual(new MissingParamError('id'))
   })
 
   test('Should call UpdateUser with correct values', async () => {
@@ -142,7 +143,7 @@ describe('UpdateUser Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest) as { statusCode: number; body: { error: { code: string } } }
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body.error.code).toBe('INTERNAL_ERROR')
+    expect(httpResponse.body).toBeInstanceOf(ServerError)
   })
 
   test('Should return 400 if id is invalid', async () => {

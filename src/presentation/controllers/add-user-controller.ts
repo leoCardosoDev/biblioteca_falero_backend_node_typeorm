@@ -7,6 +7,7 @@ import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { Address, AddressProps } from '@/domain/value-objects/address'
 import { UserStatus } from '@/domain/value-objects/user-status'
+import { InvalidParamError } from '@/presentation/errors'
 
 export class AddUserController implements Controller {
   constructor(
@@ -31,31 +32,29 @@ export class AddUserController implements Controller {
       }
 
       const nameVO = Name.create(name)
-      if (nameVO instanceof Error) return badRequest(nameVO)
+      if (nameVO instanceof Error) return badRequest(new InvalidParamError('name'))
 
       let emailVO: Email
       try {
         emailVO = Email.create(email)
-      } catch (e) {
-        return badRequest(e as Error)
+      } catch (_error) {
+        return badRequest(new InvalidParamError('email'))
       }
 
       const rgVO = Rg.create(rg)
-      if (rgVO instanceof Error) return badRequest(rgVO)
+      if (rgVO instanceof Error) return badRequest(new InvalidParamError('rg'))
 
       let cpfVO: Cpf
       try {
         cpfVO = Cpf.create(cpf)
-      } catch (e) {
-        return badRequest(e as Error)
+      } catch (_error) {
+        return badRequest(new InvalidParamError('cpf'))
       }
-
-
 
       let addressVO: Address | undefined
       if (address) {
         const addressResult = Address.create(address)
-        if (addressResult instanceof Error) return badRequest(addressResult)
+        if (addressResult instanceof Error) return badRequest(new InvalidParamError('address'))
         addressVO = addressResult
       }
 
@@ -64,7 +63,7 @@ export class AddUserController implements Controller {
       const userOrError = await this.addUser.add({
         name: nameVO,
         email: emailVO,
-        rg: rgVO,
+        rg: rgVO as Rg,
         cpf: cpfVO,
         gender,
         phone,

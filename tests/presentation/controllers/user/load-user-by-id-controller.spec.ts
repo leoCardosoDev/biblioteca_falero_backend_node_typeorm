@@ -11,6 +11,7 @@ import { Cpf } from '@/domain/value-objects/cpf'
 import { UserRole } from '@/domain/value-objects/user-role'
 import { UserStatus } from '@/domain/value-objects/user-status'
 import { UserWithLogin } from '@/domain/usecases/load-users'
+import { NotFoundError } from '@/presentation/errors/not-found-error'
 
 const makeFakeUser = (): UserModel => ({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
@@ -71,12 +72,8 @@ describe('LoadUserById Controller', () => {
     jest.spyOn(loadUserByIdStub, 'load').mockResolvedValueOnce(null)
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse.statusCode).toBe(404)
-    expect(httpResponse.body).toEqual(expect.objectContaining({
-      error: expect.objectContaining({
-        code: 'NOT_FOUND',
-        message: 'Resource not found'
-      })
-    }))
+    expect(httpResponse.body).toBeInstanceOf(NotFoundError)
+    expect((httpResponse.body as Error).message).toBe('User not found')
   })
 
   test('Should return 200 on success', async () => {
@@ -172,11 +169,7 @@ describe('LoadUserById Controller', () => {
     jest.spyOn(loadUserByIdStub, 'load').mockRejectedValueOnce(error)
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(expect.objectContaining({
-      error: expect.objectContaining({
-        code: 'INTERNAL_ERROR'
-      })
-    }))
+    expect((httpResponse.body as Error).name).toBe('ServerError')
   })
 })
 
