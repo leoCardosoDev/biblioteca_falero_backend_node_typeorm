@@ -27,12 +27,19 @@ export const swaggerConfig: FastifyDynamicSwaggerOptions = {
         }
       },
       schemas: {
+        Error: {
+          type: 'object',
+          properties: {
+            error: { type: 'string' }
+          }
+        },
         Role: {
           type: 'object',
           properties: {
             id: { type: 'string', format: 'uuid' },
             slug: { type: 'string', example: 'admin' },
             description: { type: 'string' },
+            powerLevel: { type: 'integer', example: 100 },
             createdAt: { type: 'string', format: 'date-time' },
             updatedAt: { type: 'string', format: 'date-time' }
           }

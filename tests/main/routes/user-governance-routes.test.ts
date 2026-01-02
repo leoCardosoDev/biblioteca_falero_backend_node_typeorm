@@ -40,7 +40,7 @@ describe('User Governance Routes', () => {
     test('Should return 403 if no access token is provided', async () => {
       const response = await app.inject({
         method: 'PATCH',
-        url: '/api/users/any_id/status',
+        url: '/api/users/550e8400-e29b-41d4-a716-446655440000/status',
         payload: { status: 'BLOCKED' }
       })
       expect(response.statusCode).toBe(403)
@@ -111,8 +111,8 @@ describe('User Governance Routes', () => {
     test('Should return 403 if no access token is provided', async () => {
       const response = await app.inject({
         method: 'PATCH',
-        url: '/api/users/any_id/role',
-        payload: { roleId: 'any_role_id' }
+        url: '/api/users/550e8400-e29b-41d4-a716-446655440000/role',
+        payload: { roleId: '550e8400-e29b-41d4-a716-446655440000' }
       })
       expect(response.statusCode).toBe(403)
     })

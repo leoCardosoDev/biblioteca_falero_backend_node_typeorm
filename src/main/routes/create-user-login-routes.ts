@@ -7,7 +7,7 @@ import { makeCreateUserLoginController } from '@/main/factories/create-user-logi
 import { makeAuthMiddleware, makeLibrarianOrAdmin } from '@/main/factories/middlewares'
 
 const createUserLoginSchema = {
-  tags: ['User Login'],
+  tags: ['Users'],
   summary: 'Create login credentials for a user',
   description: 'Creates login credentials (username/password) for an existing user. Requires librarian or admin role.',
   security: [{ bearerAuth: [] }],

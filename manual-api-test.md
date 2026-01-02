@@ -73,13 +73,9 @@ npm run seed:users
 ```json
 {
   "accessToken": "ey...",
-  "user": {
-    "id": "...",
-    "name": "Admin User",
-    "email": "admin@falero.com",
-    "status": "ACTIVE",
-    "version": 0
-  }
+  "refreshToken": "ey...",
+  "name": "Admin User",
+  "role": "ADMIN"
 }
 ```
 
