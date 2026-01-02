@@ -1,4 +1,4 @@
-import { DbAddNeighborhood } from './db-add-neighborhood'
+import { DbAddNeighborhood } from '@/application/usecases/db-add-neighborhood'
 import { AddNeighborhoodRepository } from '@/application/protocols/db/neighborhood/add-neighborhood-repository'
 import { NeighborhoodModel } from '@/domain/models/neighborhood'
 

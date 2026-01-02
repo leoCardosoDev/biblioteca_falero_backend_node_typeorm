@@ -2,7 +2,7 @@ import { HttpRequest } from '@/presentation/protocols'
 import { forbidden, ok } from '@/presentation/helpers'
 import { AccessDeniedError } from '@/presentation/errors'
 
-import { RequireRoleMiddleware } from './require-role-middleware'
+import { RequireRoleMiddleware } from '@/presentation/middlewares/require-role-middleware'
 
 const makeFakeRequest = (role: string = 'MEMBER'): HttpRequest => ({
   userId: 'any_user_id',

@@ -7,10 +7,12 @@ import { ok } from '@/presentation/helpers/http-helper'
 import { Id } from '@/domain/value-objects/id'
 import { UserRole } from '@/domain/value-objects/user-role'
 import { UserStatus } from '@/domain/value-objects/user-status'
+import { Email } from '@/domain/value-objects/email'
 
 const makeFakeRequest = (): HttpRequest => ({
   params: { id: '550e8400-e29b-41d4-a716-446655440000' },
   body: {
+    email: 'any_email@mail.com',
     password: 'any_password',
     role: 'ADMIN',
     status: 'active'
@@ -20,9 +22,10 @@ const makeFakeRequest = (): HttpRequest => ({
 const makeFakeLogin = (): LoginModel => ({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000') as Id,
   userId: Id.create('550e8400-e29b-41d4-a716-446655440001') as Id,
+  email: Email.create('any_email@mail.com') as Email,
   password: 'any_password',
-  role: UserRole.create('ADMIN') as UserRole,
-  status: UserStatus.create('active') as UserStatus
+  roleId: Id.create('550e8400-e29b-41d4-a716-446655440002') as Id,
+  isActive: true
 })
 
 const makeAddUserLogin = (): AddUserLogin => {
@@ -147,6 +150,7 @@ describe('AddUserLogin Controller', () => {
     await sut.handle(makeFakeRequest())
     expect(addSpy).toHaveBeenCalledWith({
       userId: expect.any(Id),
+      email: expect.any(Email),
       password: 'any_password',
       role: expect.any(UserRole),
       status: expect.any(UserStatus)
@@ -173,7 +177,7 @@ describe('AddUserLogin Controller', () => {
     expect(httpResponse).toEqual(ok({
       id: '550e8400-e29b-41d4-a716-446655440000',
       userId: '550e8400-e29b-41d4-a716-446655440001',
-      role: 'ADMIN',
+      roleId: '550e8400-e29b-41d4-a716-446655440002',
       status: 'ACTIVE'
     }))
   })

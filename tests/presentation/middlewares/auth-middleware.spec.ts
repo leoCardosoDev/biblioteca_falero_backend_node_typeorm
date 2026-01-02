@@ -3,7 +3,7 @@ import { forbidden, ok, serverError } from '@/presentation/helpers'
 import { AccessDeniedError } from '@/presentation/errors'
 import { Decrypter } from '@/application/protocols/cryptography/decrypter'
 import { Role, TokenPayload } from '@/domain/models'
-import { AuthMiddleware } from './auth-middleware'
+import { AuthMiddleware } from '@/presentation/middlewares/auth-middleware'
 
 type SutTypes = {
   sut: AuthMiddleware

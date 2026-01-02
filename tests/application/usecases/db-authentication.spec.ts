@@ -115,7 +115,7 @@ const makeLoadRoleByIdRepository = (): LoadRoleByIdRepository => {
     async loadById(id: Id): Promise<Role | null> {
       return Promise.resolve(Role.create({
         id: id,
-        slug: 'admin',
+        slug: 'ADMIN',
         description: 'Administrator'
       }))
     }
@@ -200,7 +200,7 @@ describe('DbAuthentication UseCase', () => {
     const { sut, encrypterStub } = makeSut()
     const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
     await sut.auth(makeFakeAuthentication())
-    expect(encryptSpy).toHaveBeenCalledWith({ id: VALID_ID, role: 'admin' })
+    expect(encryptSpy).toHaveBeenCalledWith({ id: VALID_ID, role: 'ADMIN' })
   })
 
   test('Should throw if Encrypter throws', async () => {
@@ -262,7 +262,7 @@ describe('DbAuthentication UseCase', () => {
     expect(result?.accessToken).toBe('any_token')
     expect(result?.refreshToken).toBeDefined()
     expect(result?.name).toBe('any_email@mail.com')
-    expect(result?.role).toBe('admin')
+    expect(result?.role).toBe('ADMIN')
   })
 
   test('Should default role to MEMBER if account.roleId is missing (unlikely given mandatory, but if logic allows)', async () => {

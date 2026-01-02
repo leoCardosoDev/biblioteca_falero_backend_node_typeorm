@@ -6,6 +6,7 @@ import { badRequest, ok, serverError } from '@/presentation/helpers/http-helper'
 import { Id } from '@/domain/value-objects/id'
 import { UserRole } from '@/domain/value-objects/user-role'
 import { UserStatus } from '@/domain/value-objects/user-status'
+import { Email } from '@/domain/value-objects/email'
 
 export class AddUserLoginController implements Controller {
   constructor(
@@ -21,7 +22,7 @@ export class AddUserLoginController implements Controller {
       }
 
       const { id } = httpRequest.params as { id: string }
-      const { password, role, status } = httpRequest.body as { password: string, role: string, status: string }
+      const { email, password, role, status } = httpRequest.body as { email: string, password: string, role: string, status: string }
 
       let userIdOrError: Id
       try {
@@ -40,8 +41,14 @@ export class AddUserLoginController implements Controller {
         return badRequest(statusOrError)
       }
 
+      const emailOrError = Email.create(email)
+      if (emailOrError instanceof Error) {
+        return badRequest(emailOrError)
+      }
+
       const login = await this.addUserLogin.add({
         userId: userIdOrError,
+        email: emailOrError,
         password,
         role: roleOrError,
         status: statusOrError
@@ -50,8 +57,8 @@ export class AddUserLoginController implements Controller {
       return ok({
         id: login.id.value,
         userId: login.userId.value,
-        role: login.role.value,
-        status: login.status.value
+        roleId: login.roleId.value,
+        status: login.isActive ? 'ACTIVE' : 'INACTIVE'
       })
     } catch (error) {
       return serverError(error as Error)

@@ -1,5 +1,5 @@
-import { DomainEvents, SaveDomainEventRepository } from './domain-events'
-import { DomainEvent } from './domain-event'
+import { DomainEvents, SaveDomainEventRepository } from '@/domain/events/domain-events'
+import { DomainEvent } from '@/domain/events/domain-event'
 
 class SaveDomainEventRepositorySpy implements SaveDomainEventRepository {
   events: DomainEvent[] = []

@@ -44,7 +44,7 @@ const makeLoadRoleBySlugRepository = (): LoadRoleBySlugRepository => {
     async loadBySlug(_slug: string): Promise<Role | null> {
       return Promise.resolve(Role.create({
         id: Id.create(validRoleId),
-        slug: 'admin',
+        slug: 'ADMIN',
         description: 'Administrator'
       }))
     }
@@ -77,7 +77,7 @@ describe('DbCreateUserLogin UseCase', () => {
     userId: Id.create(validUserId),
     email: Email.create('any_email@mail.com') as Email,
     password: 'any_password',
-    role: UserRole.create('admin') as UserRole,
+    role: UserRole.create('ADMIN') as UserRole,
     status: UserStatus.create('active') as UserStatus
   }
 

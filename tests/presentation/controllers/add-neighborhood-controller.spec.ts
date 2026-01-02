@@ -1,5 +1,5 @@
 import { AddNeighborhood, AddNeighborhoodParams } from '@/domain/usecases/add-neighborhood'
-import { AddNeighborhoodController } from './add-neighborhood-controller'
+import { AddNeighborhoodController } from '@/presentation/controllers/add-neighborhood-controller'
 import { HttpRequest } from '@/presentation/protocols'
 import { NeighborhoodModel } from '@/domain/models/neighborhood'
 import { Id } from '@/domain/value-objects/id'
