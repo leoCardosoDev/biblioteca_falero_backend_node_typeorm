@@ -13,6 +13,21 @@ describe('Role Entity', () => {
     expect(sut.permissions).toEqual([])
   })
 
+  test('Should create a Role with powerLevel', () => {
+    const sut = Role.create({
+      slug: 'admin',
+      powerLevel: 100
+    })
+    expect(sut.powerLevel).toBe(100)
+  })
+
+  test('Should default powerLevel to 0 if not provided', () => {
+    const sut = Role.create({
+      slug: 'member'
+    })
+    expect(sut.powerLevel).toBe(0)
+  })
+
   test('Should add permission', () => {
     const sut = Role.create({ slug: 'admin' })
     const permission = Permission.create({ slug: 'users:read' })

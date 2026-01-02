@@ -94,9 +94,15 @@ const run = async (): Promise<void> => {
     // Attempt to find or create role
     let role = await roleRepository.findOne({ where: { slug: item.loginData.role.toUpperCase() } })
     if (!role) {
+      const powerLevels: Record<string, number> = {
+        ADMIN: 100,
+        LIBRARIAN: 50,
+        MEMBER: 10
+      }
       role = roleRepository.create({
         slug: item.loginData.role.toUpperCase(),
-        description: `Default ${item.loginData.role} role`
+        description: `Default ${item.loginData.role} role`,
+        powerLevel: powerLevels[item.loginData.role.toUpperCase()] ?? 0
       })
       await roleRepository.save(role)
     }

@@ -12,6 +12,9 @@ export class RoleTypeOrmEntity {
   @Column()
   description!: string
 
+  @Column({ name: 'power_level', type: 'int', default: 0 })
+  powerLevel!: number
+
   @ManyToMany(() => PermissionTypeOrmEntity)
   @JoinTable({
     name: 'role_permissions',

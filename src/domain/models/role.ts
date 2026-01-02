@@ -6,6 +6,7 @@ export type RoleProps = {
   slug: string
   description?: string
   permissions?: Permission[]
+  powerLevel?: number
 }
 
 export class Role {
@@ -13,7 +14,8 @@ export class Role {
     public readonly id: Id,
     public readonly slug: string,
     private _description: string,
-    private _permissions: Permission[]
+    private _permissions: Permission[],
+    private _powerLevel: number
   ) { }
 
   static create(props: RoleProps): Role {
@@ -21,7 +23,8 @@ export class Role {
       props.id ?? Id.generate(),
       props.slug,
       props.description ?? '',
-      props.permissions ?? []
+      props.permissions ?? [],
+      props.powerLevel ?? 0
     )
   }
 
@@ -31,6 +34,10 @@ export class Role {
 
   get permissions(): Permission[] {
     return this._permissions
+  }
+
+  get powerLevel(): number {
+    return this._powerLevel
   }
 
   addPermission(permission: Permission): void {
