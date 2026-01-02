@@ -11,7 +11,10 @@ import { IsNull } from 'typeorm'
 import { Email } from '@/domain/value-objects/email'
 import { UserStatusEnum } from '@/domain/value-objects/user-status'
 
-export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository {
+import { LoadLoginByUserIdRepository } from '@/application/protocols/db/load-login-by-user-id-repository'
+import { UpdateLoginRoleRepository } from '@/application/protocols/db/update-login-role-repository'
+
+export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadLoginByUserIdRepository, UpdateLoginRoleRepository {
 
   async add(data: Omit<AddUserLoginParams, 'role'> & { passwordHash: string, roleId: Id }): Promise<LoginModel> {
     const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
@@ -46,9 +49,27 @@ export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountBy
     return undefined
   }
 
+  async loadByUserId(userId: string): Promise<LoginModel | undefined> {
+    const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+    const login = await repository.findOne({
+      where: { userId, deletedAt: IsNull() },
+      relations: ['user']
+    })
+    if (login && login.user) {
+      return this.toDomain(login, Email.create(login.user.email))
+    }
+    return undefined
+  }
+
   async updateAccessToken(id: string, token: string): Promise<void> {
     const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
     await repository.update({ id }, { accessToken: token })
+  }
+
+  async updateRole(userId: string, roleId: string): Promise<void> {
+    const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+    // We update based on userId as per interface
+    await repository.update({ userId }, { roleId })
   }
 
   private toDomain(entity: LoginTypeOrmEntity, email: Email): Login {

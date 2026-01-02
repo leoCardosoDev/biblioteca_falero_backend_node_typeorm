@@ -653,4 +653,14 @@ describe('UserTypeOrmRepository', () => {
     expect(users.length).toBe(1)
     expect(users[0].login).toBeUndefined()
   })
+
+  test('Should update the user status on updateStatus success', async () => {
+    const sut = makeSut()
+    const user = await sut.add(makeUserData())
+    await sut.updateStatus(user.id.value, UserStatus.create('inactive') as UserStatus)
+
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const dbUser = await userRepo.findOne({ where: { id: user.id.value } })
+    expect(dbUser?.status).toBe('INACTIVE')
+  })
 })

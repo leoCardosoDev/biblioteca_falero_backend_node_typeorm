@@ -234,4 +234,76 @@ describe('LoginTypeOrmRepository', () => {
     const account = await sut.loadByEmail('inactive@mail.com')
     expect(account).toBeUndefined()
   })
+
+  test('Should update the login role on updateRole success', async () => {
+    const sut = makeSut()
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = userRepo.create({
+      name: 'any_name',
+      email: 'role_update@mail.com',
+      rg: 'any_rg',
+      cpf: 'any_cpf',
+      gender: 'male',
+      status: 'ACTIVE'
+    })
+    await userRepo.save(user)
+
+    // Seed target role
+    const roleRepo = TypeOrmHelper.getRepository(RoleTypeOrmEntity)
+    await roleRepo.save(roleRepo.create({
+      id: '550e8400-e29b-41d4-a716-446655440001',
+      slug: 'admin',
+      description: 'Admin'
+    }))
+
+    const addLoginParams = {
+      userId: Id.create(user.id),
+      email: Email.create('role_update@mail.com') as Email,
+      password: 'any_password',
+      passwordHash: 'hashed_password',
+      roleId: Id.create('550e8400-e29b-41d4-a716-446655440002'),
+      status: UserStatus.create('active') as UserStatus
+    }
+    const login = await sut.add(addLoginParams)
+
+    await sut.updateRole(user.id, '550e8400-e29b-41d4-a716-446655440001')
+
+    const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+    const dbLogin = await loginRepo.findOneBy({ id: login.id.value })
+    expect(dbLogin?.roleId).toBe('550e8400-e29b-41d4-a716-446655440001')
+  })
+
+  test('Should return a login on loadByUserId success', async () => {
+    const sut = makeSut()
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = userRepo.create({
+      name: 'any_name',
+      email: 'load_by_id@mail.com',
+      rg: 'any_rg',
+      cpf: 'any_cpf',
+      gender: 'male',
+      status: 'ACTIVE'
+    })
+    await userRepo.save(user)
+
+    const addLoginParams = {
+      userId: Id.create(user.id),
+      email: Email.create('load_by_id@mail.com') as Email,
+      password: 'any_password',
+      passwordHash: 'hashed_password',
+      roleId: Id.create('550e8400-e29b-41d4-a716-446655440002'),
+      status: UserStatus.create('active') as UserStatus
+    }
+    await sut.add(addLoginParams)
+
+    const login = await sut.loadByUserId(user.id)
+    expect(login).toBeTruthy()
+    expect(login?.userId.value).toBe(user.id)
+  })
+
+  test('Should return undefined if loadByUserId fails', async () => {
+    const sut = makeSut()
+    const login = await sut.loadByUserId('invalid_id')
+    expect(login).toBeUndefined()
+  })
 })

@@ -5,6 +5,7 @@ import { LoadUserByCpfRepository } from '@/application/protocols/db/load-user-by
 import { LoadUsersRepository } from '@/application/protocols/db/load-users-repository'
 import { LoadUserByIdRepository } from '@/application/protocols/db/load-user-by-id-repository'
 import { UpdateUserRepository } from '@/application/protocols/db/update-user-repository'
+import { UpdateUserStatusRepository } from '@/application/protocols/db/update-user-status-repository'
 import { DeleteUserRepository } from '@/application/protocols/db/delete-user-repository'
 import { UserWithLogin } from '@/domain/usecases/load-users'
 import { AddUserParams } from '@/domain/usecases/add-user'
@@ -15,7 +16,7 @@ import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
 import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
 import { Id, Email, Cpf, Name, Rg, Address, UserRole, UserStatus, UserStatusEnum } from '@/domain/value-objects'
 
-export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmailRepository, LoadUserByCpfRepository, LoadUsersRepository, LoadUserByIdRepository, UpdateUserRepository, DeleteUserRepository {
+export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmailRepository, LoadUserByCpfRepository, LoadUsersRepository, LoadUserByIdRepository, UpdateUserRepository, DeleteUserRepository, UpdateUserStatusRepository {
   private toUserModel(entity: UserTypeOrmEntity): UserModel | null {
     try {
       // Validate Name (returns Error on failure)
@@ -208,5 +209,10 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
   async delete(id: string): Promise<void> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     await userRepo.update(id, { deletedAt: new Date(), status: UserStatusEnum.INACTIVE })
+  }
+
+  async updateStatus(userId: string, status: UserStatus): Promise<void> {
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    await userRepo.update(userId, { status: status.value })
   }
 }
