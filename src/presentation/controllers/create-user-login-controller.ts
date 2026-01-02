@@ -1,10 +1,7 @@
 import { Controller, HttpRequest, HttpResponse, Validation } from '@/presentation/protocols'
 import { badRequest, serverError, ok } from '@/presentation/helpers'
 import { CreateUserLogin } from '@/domain/usecases/create-user-login'
-import { Password } from '@/domain/value-objects/password'
-import { UserRole } from '@/domain/value-objects/user-role'
-import { UserStatus } from '@/domain/value-objects/user-status'
-import { Id } from '@/domain/value-objects/id'
+import { Password, UserRole, UserStatus, Id } from '@/domain/value-objects'
 import { InvalidParamError } from '@/presentation/errors'
 
 export class CreateUserLoginController implements Controller {
@@ -50,7 +47,6 @@ export class CreateUserLoginController implements Controller {
         email: login.email.value
       })
     } catch (error) {
-      console.error('CreateUserLoginController Error:', error)
       return serverError(error as Error)
     }
   }

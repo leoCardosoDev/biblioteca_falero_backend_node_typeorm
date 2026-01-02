@@ -5,7 +5,7 @@ import path from 'path'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
 import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
-import { SessionTypeOrmEntity } from '@/infra/db/typeorm/entities/session-entity'
+
 import { RoleTypeOrmEntity } from '@/infra/db/typeorm/entities/role-entity'
 import { BcryptAdapter } from '@/infra/cryptography/bcrypt-adapter'
 import env from '@/main/config/env'

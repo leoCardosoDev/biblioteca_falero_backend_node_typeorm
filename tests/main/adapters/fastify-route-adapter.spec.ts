@@ -59,7 +59,7 @@ describe('FastifyRouteAdapter', () => {
       status: jest.fn().mockReturnThis(),
       send: jest.fn().mockReturnThis()
     } as unknown as FastifyReply
-    const httpResponse = await sut(request, reply)
+    await sut(request, reply)
     expect(reply.status).toHaveBeenCalledWith(400)
     expect(reply.send).toHaveBeenCalledWith(new Error('any_error'))
   })

@@ -7,20 +7,13 @@ import { LoadUserByIdRepository } from '@/application/protocols/db/load-user-by-
 import { UpdateUserRepository } from '@/application/protocols/db/update-user-repository'
 import { DeleteUserRepository } from '@/application/protocols/db/delete-user-repository'
 import { UserWithLogin } from '@/domain/usecases/load-users'
-import { UserRole } from '@/domain/value-objects/user-role'
-import { UserStatus, UserStatusEnum } from '@/domain/value-objects/user-status'
 import { AddUserParams } from '@/domain/usecases/add-user'
 import { UpdateUserParams } from '@/domain/usecases/update-user'
 import { UserModel } from '@/domain/models/user'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
 import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
-import { Id } from '@/domain/value-objects/id'
-import { Email } from '@/domain/value-objects/email'
-import { Cpf } from '@/domain/value-objects/cpf'
-import { Name } from '@/domain/value-objects/name'
-import { Rg } from '@/domain/value-objects/rg'
-import { Address } from '@/domain/value-objects/address'
+import { Id, Email, Cpf, Name, Rg, Address, UserRole, UserStatus, UserStatusEnum } from '@/domain/value-objects'
 
 export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmailRepository, LoadUserByCpfRepository, LoadUsersRepository, LoadUserByIdRepository, UpdateUserRepository, DeleteUserRepository {
   private toUserModel(entity: UserTypeOrmEntity): UserModel | null {
@@ -28,14 +21,12 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
       // Validate Name (returns Error on failure)
       const nameOrError = Name.create(entity.name)
       if (!(nameOrError instanceof Name)) {
-        console.error(`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: Invalid Name - "${entity.name}"`)
         return null
       }
 
       // Validate Rg (returns Error on failure)
       const rgOrError = Rg.create(entity.rg)
       if (!(rgOrError instanceof Rg)) {
-        console.error(`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: Invalid RG - "${entity.rg}"`)
         return null
       }
 
@@ -63,7 +54,6 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
 
       const statusOrError = UserStatus.create(entity.status)
       if (statusOrError instanceof Error) {
-        console.error(`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: Invalid Status - "${entity.status}"`)
         return null
       }
 
@@ -80,9 +70,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
         deletedAt: entity.deletedAt,
         version: entity.version
       }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error)
-      console.error(`[DATA CORRUPTION] Failed to reconstitute User ${entity.id}: ${errorMessage}`)
+    } catch (_error) {
       return null
     }
   }

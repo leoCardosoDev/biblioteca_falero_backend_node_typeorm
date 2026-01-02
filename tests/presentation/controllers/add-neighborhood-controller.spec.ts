@@ -31,11 +31,7 @@ const makeSut = (): SutTypes => {
   }
 }
 
-interface ErrorResponseBody {
-  error: {
-    code: string
-  }
-}
+
 
 interface SuccessResponseBody {
   id: string
