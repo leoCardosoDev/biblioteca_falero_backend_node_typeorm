@@ -4,9 +4,10 @@ import { BlockUser, BlockUserResult } from '@/domain/usecases/block-user'
 import { PromoteUser, PromoteUserResult } from '@/domain/usecases/promote-user'
 import { Validation } from '@/presentation/protocols/validation'
 import { HttpRequest } from '@/presentation/protocols'
-import { badRequest, noContent, serverError } from '@/presentation/helpers/http-helper'
+import { badRequest, noContent, serverError, forbidden } from '@/presentation/helpers/http-helper'
 import { MissingParamError } from '@/presentation/errors/missing-param-error'
 import { InvalidParamError } from '@/presentation/errors/invalid-param-error'
+import { AccessDeniedError } from '@/domain/errors/access-denied-error'
 import { right, left } from '@/shared/either'
 
 const makeBlockUser = (): BlockUser => {
@@ -144,6 +145,13 @@ describe('UserGovernance Controllers', () => {
       expect(httpResponse).toEqual(serverError(new Error()))
     })
 
+    test('Should return 403 if BlockUser returns AccessDeniedError', async () => {
+      const { sut, blockUserStub } = makeSutStatus()
+      jest.spyOn(blockUserStub, 'block').mockReturnValueOnce(Promise.resolve(left(new AccessDeniedError())))
+      const httpResponse = await sut.handle(makeFakeRequestStatus())
+      expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
+    })
+
     test('Should return 204 on success', async () => {
       const { sut } = makeSutStatus()
       const httpResponse = await sut.handle(makeFakeRequestStatus())
@@ -196,6 +204,13 @@ describe('UserGovernance Controllers', () => {
       jest.spyOn(promoteUserStub, 'promote').mockImplementationOnce(() => { throw new Error() })
       const httpResponse = await sut.handle(makeFakeRequestRole())
       expect(httpResponse).toEqual(serverError(new Error()))
+    })
+
+    test('Should return 403 if PromoteUser returns AccessDeniedError', async () => {
+      const { sut, promoteUserStub } = makeSutRole()
+      jest.spyOn(promoteUserStub, 'promote').mockReturnValueOnce(Promise.resolve(left(new AccessDeniedError())))
+      const httpResponse = await sut.handle(makeFakeRequestRole())
+      expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
     })
 
     test('Should return 204 on success', async () => {
