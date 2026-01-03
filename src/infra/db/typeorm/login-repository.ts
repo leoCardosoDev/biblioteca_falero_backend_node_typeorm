@@ -28,7 +28,11 @@ export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountBy
     })
     const saved = await repository.save(loginEntity)
     // We need email to return Domain Login. 'data' has email.
-    return this.toDomain(saved, data.email)
+    const result = this.toDomain(saved, data.email)
+    if (!result) {
+      throw new Error('Failed to create login: data corruption detected after save')
+    }
+    return result
   }
 
   async loadByEmail(email: string): Promise<LoginModel | undefined> {
@@ -43,7 +47,7 @@ export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountBy
       const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
       const login = await repository.findOne({ where: { userId: user.id } })
       if (login) {
-        return this.toDomain(login, Email.create(user.email))
+        return this.toDomain(login, Email.create(user.email)) ?? undefined
       }
     }
     return undefined
@@ -56,7 +60,7 @@ export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountBy
       relations: ['user']
     })
     if (login && login.user) {
-      return this.toDomain(login, Email.create(login.user.email))
+      return this.toDomain(login, Email.create(login.user.email)) ?? undefined
     }
     return undefined
   }
@@ -72,14 +76,29 @@ export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountBy
     await repository.update({ userId }, { roleId })
   }
 
-  private toDomain(entity: LoginTypeOrmEntity, email: Email): Login {
-    return Login.create({
-      id: Id.create(entity.id),
-      userId: Id.create(entity.userId),
-      roleId: entity.roleId ? Id.create(entity.roleId) : Id.generate(), // Should have roleId
-      email: email,
-      passwordHash: entity.password,
-      isActive: entity.status === 'ACTIVE' // basic mapping
-    })
+  private toDomain(entity: LoginTypeOrmEntity, email: Email): Login | null {
+    try {
+      if (!entity.roleId) return null
+
+      const roleIdOrError = Id.create(entity.roleId)
+      if (roleIdOrError instanceof Error) return null
+
+      const userIdOrError = Id.create(entity.userId)
+      if (userIdOrError instanceof Error) return null
+
+      const idOrError = Id.create(entity.id)
+      if (idOrError instanceof Error) return null
+
+      return Login.create({
+        id: idOrError,
+        userId: userIdOrError,
+        roleId: roleIdOrError,
+        email: email,
+        passwordHash: entity.password,
+        isActive: entity.status === 'ACTIVE'
+      })
+    } catch (_error) {
+      return null
+    }
   }
 }

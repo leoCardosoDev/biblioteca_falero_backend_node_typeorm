@@ -153,7 +153,7 @@ describe('LoginTypeOrmRepository', () => {
     expect(login.roleId.value).toBe('550e8400-e29b-41d4-a716-446655440002')
   })
 
-  test('Should return login with default values if role and status are null in DB', async () => {
+  test('Should return undefined if roleId is missing in DB', async () => {
     const sut = makeSut()
     const userId = '550e8400-e29b-41d4-a716-446655440002'
     const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
@@ -171,17 +171,13 @@ describe('LoginTypeOrmRepository', () => {
     const loginEntity = loginRepo.create({
       userId,
       password: 'any_password',
-      roleId: undefined,
-      status: undefined
+      roleId: undefined, // Role is missing
+      status: 'active'
     } as unknown as LoginTypeOrmEntity)
     await loginRepo.save(loginEntity)
 
     const result = await sut.loadByEmail('default_values@mail.com')
-    expect(result).toBeTruthy()
-    // Default mapping logic: roleId is generated (random) if missing
-    expect(result?.roleId.value).toBeTruthy()
-    // isActive is entity.status === 'ACTIVE' -> undefined !== 'ACTIVE' -> false
-    expect(result?.isActive).toBe(false)
+    expect(result).toBeUndefined()
   })
 
   test('Should return undefined if loadByEmail finds user but is soft deleted', async () => {
