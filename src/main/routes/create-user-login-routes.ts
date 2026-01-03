@@ -14,7 +14,7 @@ const createUserLoginSchema = {
   params: {
     type: 'object',
     properties: {
-      userId: { type: 'string', description: 'User ID' }
+      userId: { type: 'string', description: 'Target User ID (UUID)' }
     }
   },
   body: {
