@@ -8,10 +8,11 @@ import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 // removed BirthDate import
 import { Address } from '@/domain/value-objects/address'
-import { notFound } from '@/presentation/helpers/http-helper'
+import { notFound, badRequest } from '@/presentation/helpers/http-helper'
 import { NotFoundError } from '@/domain/errors'
 import { MissingParamError, ServerError } from '@/presentation/errors'
 import { UserStatus } from '@/domain/value-objects/user-status'
+import { Validation } from '@/presentation/protocols'
 
 const makeFakeUser = (): UserModel => ({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
@@ -33,17 +34,29 @@ const makeUpdateUser = (): UpdateUser => {
   return new UpdateUserStub()
 }
 
+const makeValidation = (): Validation => {
+  class ValidationStub implements Validation {
+    validate(_input: Record<string, unknown>): Error | undefined {
+      return undefined
+    }
+  }
+  return new ValidationStub()
+}
+
 interface SutTypes {
   sut: UpdateUserController
   updateUserStub: UpdateUser
+  validationStub: Validation
 }
 
 const makeSut = (): SutTypes => {
   const updateUserStub = makeUpdateUser()
-  const sut = new UpdateUserController(updateUserStub)
+  const validationStub = makeValidation()
+  const sut = new UpdateUserController(validationStub, updateUserStub)
   return {
     sut,
-    updateUserStub
+    updateUserStub,
+    validationStub
   }
 }
 
@@ -57,12 +70,36 @@ describe('UpdateUser Controller', () => {
   })
 
   test('Should return 400 if no id is provided', async () => {
-    const { sut } = makeSut()
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new MissingParamError('id'))
     const httpResponse = await sut.handle({
       body: { name: 'any_name' }
     }) as { statusCode: number; body: { error: { code: string } } }
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('id'))
+  })
+
+  test('Should call Validation with correct values', async () => {
+    const { sut, validationStub } = makeSut()
+    const validateSpy = jest.spyOn(validationStub, 'validate')
+    const httpRequest = {
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: {
+        name: 'updated_name'
+      }
+    }
+    await sut.handle(httpRequest)
+    expect(validateSpy).toHaveBeenCalledWith({
+      id: '550e8400-e29b-41d4-a716-446655440000',
+      name: 'updated_name'
+    })
+  })
+
+  test('Should return 400 if Validation returns an error', async () => {
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error('any_error'))
+    const httpResponse = await sut.handle({ params: { id: 'any_id' }, body: {} })
+    expect(httpResponse).toEqual(badRequest(new Error('any_error')))
   })
 
   test('Should call UpdateUser with correct values', async () => {

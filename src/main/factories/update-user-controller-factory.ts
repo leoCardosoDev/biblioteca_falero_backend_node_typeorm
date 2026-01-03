@@ -3,8 +3,10 @@ import { UpdateUserController } from '@/presentation/controllers/user/update-use
 import { DbUpdateUser } from '@/application/usecases/db-update-user'
 import { UserTypeOrmRepository } from '@/infra/db/typeorm/user-repository'
 
+import { makeUpdateUserValidation } from '@/main/factories/update-user-validation-factory'
+
 export const makeUpdateUserController = (): Controller => {
   const userTypeOrmRepository = new UserTypeOrmRepository()
   const dbUpdateUser = new DbUpdateUser(userTypeOrmRepository)
-  return new UpdateUserController(dbUpdateUser)
+  return new UpdateUserController(makeUpdateUserValidation(), dbUpdateUser)
 }

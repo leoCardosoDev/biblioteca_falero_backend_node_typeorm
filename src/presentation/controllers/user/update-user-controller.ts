@@ -1,8 +1,6 @@
-import { Controller } from '@/presentation/protocols/controller'
-import { HttpResponse } from '@/presentation/protocols/http'
+import { Controller, HttpRequest, HttpResponse, Validation } from '@/presentation/protocols'
 import { UpdateUser } from '@/domain/usecases/update-user'
 import { ok, serverError, badRequest, notFound } from '@/presentation/helpers/http-helper'
-import { MissingParamError } from '@/presentation/errors'
 import { NotFoundError } from '@/domain/errors'
 import { Id } from '@/domain/value-objects/id'
 import { Email } from '@/domain/value-objects/email'
@@ -12,15 +10,25 @@ import { Rg } from '@/domain/value-objects/rg'
 import { Address, AddressProps } from '@/domain/value-objects/address'
 
 export class UpdateUserController implements Controller {
-  constructor(private readonly updateUser: UpdateUser) { }
+  constructor(
+    private readonly validation: Validation,
+    private readonly updateUser: UpdateUser
+  ) { }
 
-  async handle(_request: unknown): Promise<HttpResponse> {
+  async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const { params, body } = _request as { params?: { id: string }, body?: Record<string, unknown> }
-      const { id } = params || {}
-      if (!id) {
-        return badRequest(new MissingParamError('id'))
+      const requestData = {
+        ...(httpRequest.body as Record<string, unknown>),
+        ...(httpRequest.params as Record<string, unknown>)
       }
+
+      const error = this.validation.validate(requestData)
+      if (error) {
+        return badRequest(error)
+      }
+
+      const { id } = requestData as { id: string }
+      const body = httpRequest.body as Record<string, unknown>
 
       let idVO: Id
       try {
