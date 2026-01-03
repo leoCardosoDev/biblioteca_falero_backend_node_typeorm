@@ -38,21 +38,21 @@ describe('DbAddNeighborhood UseCase', () => {
   test('Should call findByNameAndCity with correct values', async () => {
     const { sut, addNeighborhoodRepositoryStub } = makeSut()
     const findSpy = jest.spyOn(addNeighborhoodRepositoryStub, 'findByNameAndCity')
-    await sut.add({ name: 'any_name', cityId: '550e8400-e29b-41d4-a716-446655440003' })
-    expect(findSpy).toHaveBeenCalledWith('any_name', '550e8400-e29b-41d4-a716-446655440003')
+    await sut.add({ name: '  any_name  ', cityId: '550e8400-e29b-41d4-a716-446655440003' }) // Input with spaces
+    expect(findSpy).toHaveBeenCalledWith('ANY_NAME', '550e8400-e29b-41d4-a716-446655440003') // Expect normalized
   })
 
   test('Should return existing neighborhood if findByNameAndCity returns one', async () => {
     const { sut, addNeighborhoodRepositoryStub } = makeSut()
     jest.spyOn(addNeighborhoodRepositoryStub, 'findByNameAndCity').mockReturnValueOnce(Promise.resolve({
       id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
-      name: 'existing_name',
+      name: 'EXISTING_NAME',
       cityId: Id.create('550e8400-e29b-41d4-a716-446655440001')
     }))
     const result = await sut.add({ name: 'any_name', cityId: '550e8400-e29b-41d4-a716-446655440003' })
     expect(result).toEqual({
       id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
-      name: 'existing_name',
+      name: 'EXISTING_NAME',
       cityId: Id.create('550e8400-e29b-41d4-a716-446655440001')
     })
   })
@@ -60,18 +60,28 @@ describe('DbAddNeighborhood UseCase', () => {
   test('Should call add with correct values if neighborhood does not exist', async () => {
     const { sut, addNeighborhoodRepositoryStub } = makeSut()
     const addSpy = jest.spyOn(addNeighborhoodRepositoryStub, 'add')
-    await sut.add({ name: 'any_name', cityId: '550e8400-e29b-41d4-a716-446655440003' })
-    expect(addSpy).toHaveBeenCalledWith('any_name', '550e8400-e29b-41d4-a716-446655440003')
+    await sut.add({ name: '  any_name  ', cityId: '550e8400-e29b-41d4-a716-446655440003' })
+    expect(addSpy).toHaveBeenCalledWith('ANY_NAME', '550e8400-e29b-41d4-a716-446655440003')
   })
 
   test('Should return the created neighborhood on success', async () => {
     const { sut } = makeSut()
-    const result = await sut.add({ name: 'any_name', cityId: '550e8400-e29b-41d4-a716-446655440003' })
+    // Mock add to return what was passed (or similar) - strict expectation in repositoryStub is static though.
+    // The stub returns "name" passed to it. In makeAddNeighborhoodRepositoryStub:
+    // async add(name: string, cityId: string) { return { name, ... } }
+
+    const result = await sut.add({ name: '  any_name  ', cityId: '550e8400-e29b-41d4-a716-446655440003' })
     expect(result).toEqual({
       id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
-      name: 'any_name',
+      name: 'ANY_NAME',
       cityId: Id.create('550e8400-e29b-41d4-a716-446655440003')
     })
+  })
+
+  test('Should throw if Neighborhood VO creation fails', async () => {
+    const { sut } = makeSut()
+    const promise = sut.add({ name: '', cityId: '550e8400-e29b-41d4-a716-446655440003' })
+    await expect(promise).rejects.toThrow()
   })
 
   test('Should throw if repository throws', async () => {
