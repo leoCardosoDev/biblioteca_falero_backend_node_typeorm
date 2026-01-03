@@ -1,13 +1,10 @@
-import { CreateUserLoginController } from '@/presentation/controllers/create-user-login-controller'
-import { InvalidParamError, MissingParamError, ServerError } from '@/presentation/errors'
-import { Validation } from '@/presentation/protocols'
-import { CreateUserLogin, CreateUserLoginParams } from '@/domain/usecases/create-user-login'
-import { Login, LoginModel } from '@/domain/models/login'
+import { CreateUserLoginController } from '@/presentation/controllers'
+import { CreateUserLogin, CreateUserLoginParams } from '@/domain/usecases'
+import { Validation } from '@/presentation/protocols/validation'
+import { MissingParamError, InvalidParamError, ServerError } from '@/presentation/errors'
+import { Login, LoginModel } from '@/domain/models'
 import { HttpRequest } from '@/presentation/protocols'
-import { Id } from '@/domain/value-objects/id'
-import { UserRole } from '@/domain/value-objects/user-role'
-import { UserStatus } from '@/domain/value-objects/user-status'
-import { Email } from '@/domain/value-objects/email'
+import { Id, UserRole, UserStatus, Email } from '@/domain/value-objects'
 
 const makeCreateUserLogin = (): CreateUserLogin => {
   class CreateUserLoginStub implements CreateUserLogin {
@@ -138,7 +135,39 @@ describe('CreateUserLogin Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest) as { statusCode: number; body: { error: { message: string } } }
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toBeInstanceOf(InvalidParamError)
+    expect(httpResponse.body).toEqual(new InvalidParamError('password'))
+  })
+
+  test('Should return 400 if an invalid role is provided (Line 44)', async () => {
+    const { sut, createUserLoginStub } = makeSut()
+    jest.spyOn(createUserLoginStub, 'create')
+    const httpResponse = await sut.handle({
+      body: {
+        userId: '550e8400-e29b-41d4-a716-446655440001', // Valid UUID
+        password: 'Abcdefg1!', // Valid Password to pass first check
+        role: 'INVALID_ROLE' // Role that doesn't exist
+      }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+    const body = httpResponse.body as Error
+    expect(body).toBeInstanceOf(Error)
+    expect(body.name).toBe('InvalidParamError')
+  })
+
+  test('Should return 400 if an invalid status is provided (Line 53)', async () => {
+    const { sut, createUserLoginStub } = makeSut()
+    jest.spyOn(createUserLoginStub, 'create')
+    const httpResponse = await sut.handle({
+      body: {
+        userId: '550e8400-e29b-41d4-a716-446655440001', // Valid UUID
+        password: 'Abcdefg1!', // Valid Password
+        status: 'INVALID_STATUS'
+      }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+    const body = httpResponse.body as Error
+    expect(body).toBeInstanceOf(Error)
+    expect(body.name).toBe('InvalidParamError')
   })
 
   test('Should return 400 if ID.create throws', async () => {
@@ -149,5 +178,4 @@ describe('CreateUserLogin Controller', () => {
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toBeInstanceOf(InvalidParamError)
   })
-
 })

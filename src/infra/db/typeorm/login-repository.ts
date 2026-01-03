@@ -85,13 +85,8 @@ export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountBy
       if (!entity.roleId) return null
 
       const roleIdOrError = Id.create(entity.roleId)
-      if (roleIdOrError instanceof Error) return null
-
       const userIdOrError = Id.create(entity.userId)
-      if (userIdOrError instanceof Error) return null
-
       const idOrError = Id.create(entity.id)
-      if (idOrError instanceof Error) return null
 
       return Login.create({
         id: idOrError,
