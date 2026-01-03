@@ -1,9 +1,5 @@
-import { Controller } from '@/presentation/protocols/controller'
-import { HttpRequest, HttpResponse } from '@/presentation/protocols/http'
-import { LoadUserById } from '@/domain/usecases/load-user-by-id'
-import { ok, notFound, serverError } from '@/presentation/helpers/http-helper'
-import { NotFoundError } from '@/presentation/errors/not-found-error'
-import { UserMapper } from '@/presentation/dtos/user-mapper'
+import { Controller, HttpRequest, HttpResponse, ok, notFound, serverError, NotFoundError, UserMapper } from '@/presentation'
+import { LoadUserById } from '@/domain'
 
 export class LoadUserByIdController implements Controller {
   constructor(private readonly loadUserById: LoadUserById) { }

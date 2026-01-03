@@ -1,10 +1,5 @@
-import { CreateUserLogin, CreateUserLoginParams } from '@/domain/usecases/create-user-login'
-import { Hasher } from '@/application/protocols/cryptography/hasher'
-import { AddLoginRepository } from '@/application/protocols/db/add-login-repository'
-import { LoadRoleBySlugRepository } from '@/application/protocols/db/load-role-by-slug-repository'
-import { LoadUserByIdRepository } from '@/application/protocols/db/load-user-by-id-repository'
-import { LoginModel } from '@/domain/models/login'
-import { UserStatus } from '@/domain/value-objects/user-status'
+import { Hasher, AddLoginRepository, LoadRoleBySlugRepository, LoadUserByIdRepository } from '@/application/protocols'
+import { CreateUserLogin, CreateUserLoginParams, LoginModel, UserStatus } from '@/domain'
 
 export class DbCreateUserLogin implements CreateUserLogin {
   constructor(

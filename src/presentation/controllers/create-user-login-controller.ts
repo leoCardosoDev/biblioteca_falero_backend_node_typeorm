@@ -1,8 +1,5 @@
-import { Controller, HttpRequest, HttpResponse, Validation } from '@/presentation/protocols'
-import { badRequest, serverError, ok } from '@/presentation/helpers'
-import { CreateUserLogin } from '@/domain/usecases/create-user-login'
-import { Password, UserRole, UserStatus, Id } from '@/domain/value-objects'
-import { InvalidParamError } from '@/presentation/errors'
+import { Controller, HttpRequest, HttpResponse, Validation, badRequest, serverError, ok, InvalidParamError } from '@/presentation'
+import { CreateUserLogin, Password, UserRole, UserStatus, Id } from '@/domain'
 
 export class CreateUserLoginController implements Controller {
   constructor(

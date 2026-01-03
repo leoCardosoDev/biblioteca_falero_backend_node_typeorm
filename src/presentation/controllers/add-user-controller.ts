@@ -1,14 +1,5 @@
-import { Controller, HttpRequest, HttpResponse, Validation } from '@/presentation/protocols'
-import { badRequest, serverError, ok, forbidden } from '@/presentation/helpers'
-import { AddUser } from '@/domain/usecases/add-user'
-import { Email } from '@/domain/value-objects/email'
-import { Cpf } from '@/domain/value-objects/cpf'
-import { Name } from '@/domain/value-objects/name'
-import { Rg } from '@/domain/value-objects/rg'
-import { Address, AddressProps } from '@/domain/value-objects/address'
-import { UserStatus } from '@/domain/value-objects/user-status'
-import { InvalidParamError } from '@/presentation/errors'
-import { UserMapper } from '@/presentation/dtos/user-mapper'
+import { Controller, HttpRequest, HttpResponse, Validation, badRequest, serverError, ok, forbidden, InvalidParamError, UserMapper } from '@/presentation'
+import { AddUser, Email, Cpf, Name, Rg, Address, AddressProps, UserStatus } from '@/domain'
 
 export class AddUserController implements Controller {
   constructor(

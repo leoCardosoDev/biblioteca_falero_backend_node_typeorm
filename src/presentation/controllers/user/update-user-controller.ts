@@ -1,14 +1,5 @@
-import { Controller, HttpRequest, HttpResponse, Validation } from '@/presentation/protocols'
-import { UpdateUser } from '@/domain/usecases/update-user'
-import { ok, serverError, badRequest, notFound } from '@/presentation/helpers/http-helper'
-import { NotFoundError } from '@/domain/errors'
-import { Id } from '@/domain/value-objects/id'
-import { Email } from '@/domain/value-objects/email'
-import { Cpf } from '@/domain/value-objects/cpf'
-import { Name } from '@/domain/value-objects/name'
-import { Rg } from '@/domain/value-objects/rg'
-import { Address, AddressProps } from '@/domain/value-objects/address'
-import { UserMapper } from '@/presentation/dtos/user-mapper'
+import { Controller, HttpRequest, HttpResponse, Validation, ok, serverError, badRequest, notFound, UserMapper } from '@/presentation'
+import { UpdateUser, NotFoundError, Id, Email, Cpf, Name, Rg, Address, AddressProps } from '@/domain'
 
 export class UpdateUserController implements Controller {
   constructor(

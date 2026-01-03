@@ -1,8 +1,5 @@
-import { Controller } from '@/presentation/protocols/controller'
-import { HttpResponse } from '@/presentation/protocols/http'
-import { DeleteUser } from '@/domain/usecases/delete-user'
-import { serverError, badRequest, noContent } from '@/presentation/helpers/http-helper'
-import { MissingParamError } from '@/presentation/errors'
+import { Controller, HttpResponse, serverError, badRequest, noContent, MissingParamError } from '@/presentation'
+import { DeleteUser } from '@/domain'
 
 export class DeleteUserController implements Controller {
   constructor(private readonly deleteUser: DeleteUser) { }

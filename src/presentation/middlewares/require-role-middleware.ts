@@ -1,7 +1,5 @@
 
-import { AccessDeniedError } from '@/presentation/errors'
-import { forbidden, ok } from '@/presentation/helpers'
-import { HttpRequest, HttpResponse, Middleware } from '@/presentation/protocols'
+import { HttpRequest, HttpResponse, Middleware, forbidden, ok, AccessDeniedError } from '@/presentation'
 
 export class RequireRoleMiddleware implements Middleware {
   constructor(private readonly allowedRoles: string[]) { }

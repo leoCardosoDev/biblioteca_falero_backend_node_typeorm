@@ -1,10 +1,5 @@
-
-import { Controller, HttpRequest, HttpResponse, Validation } from '@/presentation/protocols'
-import { BlockUser } from '@/domain/usecases/block-user'
-import { PromoteUser } from '@/domain/usecases/promote-user'
-import { badRequest, noContent, serverError, forbidden } from '@/presentation/helpers/http-helper'
-import { InvalidParamError, MissingParamError } from '@/presentation/errors'
-import { AccessDeniedError } from '@/domain/errors/access-denied-error'
+import { Controller, HttpRequest, HttpResponse, Validation, badRequest, noContent, serverError, forbidden, InvalidParamError, MissingParamError } from '@/presentation'
+import { BlockUser, PromoteUser, AccessDeniedError } from '@/domain'
 
 export class UpdateUserStatusController implements Controller {
   constructor(

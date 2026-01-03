@@ -1,7 +1,5 @@
-import { Decrypter } from '@/application/protocols/cryptography/decrypter'
-import { AccessDeniedError } from '@/presentation/errors'
-import { forbidden, ok, serverError } from '@/presentation/helpers'
-import { HttpRequest, HttpResponse, Middleware } from '@/presentation/protocols'
+import { HttpRequest, HttpResponse, Middleware, forbidden, ok, serverError, AccessDeniedError } from '@/presentation'
+import { Decrypter } from '@/application/protocols'
 
 export class AuthMiddleware implements Middleware {
   constructor(private readonly decrypter: Decrypter) { }

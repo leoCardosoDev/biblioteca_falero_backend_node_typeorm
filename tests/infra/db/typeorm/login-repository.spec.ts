@@ -1,7 +1,6 @@
 import { Repository, DataSource } from 'typeorm'
-import { TypeOrmHelper, LoginTypeOrmRepository } from '@/infra/db/typeorm'
-import { LoginTypeOrmEntity, UserTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity } from '@/infra/db/typeorm/entities'
-import { Id, Email, UserStatus } from '@/domain/value-objects'
+import { TypeOrmHelper, LoginTypeOrmRepository, LoginTypeOrmEntity, UserTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity } from '@/infra'
+import { Id, Email, UserStatus } from '@/domain'
 
 describe('LoginTypeOrmRepository', () => {
   let dataSource: DataSource

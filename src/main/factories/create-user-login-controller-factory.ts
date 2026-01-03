@@ -1,11 +1,7 @@
-import { CreateUserLoginController } from '@/presentation/controllers/create-user-login-controller'
-import { Controller } from '@/presentation/protocols'
+import { CreateUserLoginController, Controller } from '@/presentation'
+import { DbCreateUserLogin } from '@/application/usecases'
+import { LoginTypeOrmRepository, RoleTypeOrmRepository, UserTypeOrmRepository, BcryptAdapter } from '@/infra'
 import { makeCreateUserLoginValidation } from './create-user-login-validation-factory'
-import { DbCreateUserLogin } from '@/application/usecases/db-create-user-login'
-import { LoginTypeOrmRepository } from '@/infra/db/typeorm/login-repository'
-import { RoleTypeOrmRepository } from '@/infra/db/typeorm/role-repository'
-import { UserTypeOrmRepository } from '@/infra/db/typeorm/user-repository'
-import { BcryptAdapter } from '@/infra/cryptography/bcrypt-adapter'
 
 export const makeCreateUserLoginController = (): Controller => {
   const salt = 12

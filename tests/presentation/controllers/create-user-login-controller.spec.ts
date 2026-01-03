@@ -1,10 +1,5 @@
-import { CreateUserLoginController } from '@/presentation/controllers'
-import { CreateUserLogin, CreateUserLoginParams } from '@/domain/usecases'
-import { Validation } from '@/presentation/protocols/validation'
-import { MissingParamError, InvalidParamError, ServerError } from '@/presentation/errors'
-import { Login, LoginModel } from '@/domain/models'
-import { HttpRequest } from '@/presentation/protocols'
-import { Id, UserRole, UserStatus, Email } from '@/domain/value-objects'
+import { CreateUserLoginController, Validation, MissingParamError, InvalidParamError, ServerError, HttpRequest } from '@/presentation'
+import { CreateUserLogin, CreateUserLoginParams, Login, LoginModel, Id, UserRole, UserStatus, Email } from '@/domain'
 
 const makeCreateUserLogin = (): CreateUserLogin => {
   class CreateUserLoginStub implements CreateUserLogin {

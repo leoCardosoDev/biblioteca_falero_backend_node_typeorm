@@ -1,7 +1,5 @@
-import { Controller } from '@/presentation/protocols/controller'
-import { HttpResponse } from '@/presentation/protocols/http'
-import { LoadUsers } from '@/domain/usecases/load-users'
-import { ok, serverError } from '@/presentation/helpers/http-helper'
+import { Controller, HttpResponse, ok, serverError } from '@/presentation'
+import { LoadUsers } from '@/domain'
 
 export class LoadUsersController implements Controller {
   constructor(private readonly loadUsers: LoadUsers) { }
