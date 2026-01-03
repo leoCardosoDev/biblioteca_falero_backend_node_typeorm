@@ -38,7 +38,7 @@ export class DbAuthentication implements Authentication {
       role = roleEntity.slug
     }
 
-    const accessToken = await this.encrypter.encrypt({ id: account.id.value, role: role.toUpperCase() })
+    const accessToken = await this.encrypter.encrypt({ id: account.userId.value, role: role.toUpperCase() })
     await this.updateAccessTokenRepository.updateAccessToken(account.id.value, accessToken)
 
     const refreshToken = crypto.randomBytes(32).toString('hex')
