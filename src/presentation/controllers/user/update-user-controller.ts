@@ -8,6 +8,7 @@ import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { Address, AddressProps } from '@/domain/value-objects/address'
+import { UserMapper } from '@/presentation/dtos/user-mapper'
 
 export class UpdateUserController implements Controller {
   constructor(
@@ -79,25 +80,7 @@ export class UpdateUserController implements Controller {
       if (!user) {
         return notFound(new NotFoundError('User'))
       }
-      return ok({
-        id: user.id.value,
-        name: user.name.value,
-        email: user.email.value,
-        rg: user.rg.value,
-        cpf: user.cpf.value,
-        gender: user.gender,
-        phone: user.phone,
-        status: user.status.value,
-        version: user.version,
-        address: user.address ? {
-          street: user.address.street,
-          number: user.address.number,
-          complement: user.address.complement,
-          neighborhoodId: user.address.neighborhoodId,
-          cityId: user.address.cityId,
-          zipCode: user.address.zipCode
-        } : undefined
-      })
+      return ok(UserMapper.toDTO(user))
     } catch (error) {
       return serverError(error as Error)
     }

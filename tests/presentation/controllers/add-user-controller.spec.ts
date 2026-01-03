@@ -150,6 +150,7 @@ describe('AddUser Controller', () => {
       gender: 'any_gender',
       phone: '123456789',
       status: 'ACTIVE',
+      version: 1,
       address: {
         street: 'Any Street',
         number: '123',
@@ -157,7 +158,8 @@ describe('AddUser Controller', () => {
         neighborhoodId: 'any_neighborhood_id',
         cityId: 'any_city_id',
         zipCode: '12345678'
-      }
+      },
+      login: undefined
     }))
   })
 

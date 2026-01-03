@@ -91,7 +91,7 @@ describe('LoadUserById Controller', () => {
       status: 'ACTIVE',
       version: 1,
       address: undefined,
-      login: null
+      login: undefined
     })
   })
 
@@ -129,7 +129,7 @@ describe('LoadUserById Controller', () => {
         cityId: 'any_city',
         zipCode: 'any_zipCode'
       },
-      login: null
+      login: undefined
     })
   })
 

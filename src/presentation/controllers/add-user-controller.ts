@@ -8,6 +8,7 @@ import { Rg } from '@/domain/value-objects/rg'
 import { Address, AddressProps } from '@/domain/value-objects/address'
 import { UserStatus } from '@/domain/value-objects/user-status'
 import { InvalidParamError } from '@/presentation/errors'
+import { UserMapper } from '@/presentation/dtos/user-mapper'
 
 export class AddUserController implements Controller {
   constructor(
@@ -73,24 +74,7 @@ export class AddUserController implements Controller {
       if (userOrError instanceof Error) {
         return forbidden(userOrError)
       }
-      return ok({
-        id: userOrError.id.value,
-        name: userOrError.name.value,
-        email: userOrError.email.value,
-        rg: userOrError.rg.value,
-        cpf: userOrError.cpf.value,
-        gender: userOrError.gender,
-        phone: userOrError.phone,
-        status: userOrError.status.value,
-        address: userOrError.address ? {
-          street: userOrError.address.street,
-          number: userOrError.address.number,
-          complement: userOrError.address.complement,
-          neighborhoodId: userOrError.address.neighborhoodId,
-          cityId: userOrError.address.cityId,
-          zipCode: userOrError.address.zipCode
-        } : undefined
-      })
+      return ok(UserMapper.toDTO(userOrError))
     } catch (error) {
       return serverError(error as Error)
     }
