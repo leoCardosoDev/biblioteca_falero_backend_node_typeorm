@@ -66,8 +66,28 @@ describe('CreateUserLogin Controller', () => {
     expect(createSpy).toHaveBeenCalledWith({
       userId: Id.create('550e8400-e29b-41d4-a716-446655440001'),
       password: 'Abcdefg1!',
-      role: UserRole.create('MEMBER'),
-      status: UserStatus.create('ACTIVE')
+      role: undefined,
+      status: undefined
+    })
+  })
+
+  test('Should call CreateUserLogin with provided role and status', async () => {
+    const { sut, createUserLoginStub } = makeSut()
+    const createSpy = jest.spyOn(createUserLoginStub, 'create')
+    const httpRequest = {
+      body: {
+        userId: '550e8400-e29b-41d4-a716-446655440001',
+        password: 'Abcdefg1!',
+        role: 'ADMIN',
+        status: 'INACTIVE'
+      }
+    }
+    await sut.handle(httpRequest)
+    expect(createSpy).toHaveBeenCalledWith({
+      userId: Id.create('550e8400-e29b-41d4-a716-446655440001'),
+      password: 'Abcdefg1!',
+      role: UserRole.create('ADMIN'),
+      status: UserStatus.create('INACTIVE')
     })
   })
 

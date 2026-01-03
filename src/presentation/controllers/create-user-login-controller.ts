@@ -35,11 +35,31 @@ export class CreateUserLoginController implements Controller {
         return badRequest(new InvalidParamError('userId'))
       }
 
+      let roleVO: UserRole | undefined
+      const { role, status } = httpRequest.body as { role?: string, status?: string }
+
+      if (role) {
+        const roleOrError = UserRole.create(role)
+        if (roleOrError instanceof Error) {
+          return badRequest(new InvalidParamError('role'))
+        }
+        roleVO = roleOrError
+      }
+
+      let statusVO: UserStatus | undefined
+      if (status) {
+        const statusOrError = UserStatus.create(status)
+        if (statusOrError instanceof Error) {
+          return badRequest(new InvalidParamError('status'))
+        }
+        statusVO = statusOrError
+      }
+
       const login = await this.createUserLogin.create({
         userId: idVO,
         password,
-        role: UserRole.create('MEMBER') as UserRole,
-        status: UserStatus.create('ACTIVE') as UserStatus
+        role: roleVO,
+        status: statusVO
       })
       return ok({
         id: login.id.value,
