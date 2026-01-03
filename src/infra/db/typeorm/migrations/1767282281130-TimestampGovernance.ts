@@ -54,8 +54,12 @@ export class TimestampGovernance1767282281130 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE \`neighborhood\` MODIFY \`created_at\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)`);
 
         // Re-add indices / Constraints if needed
-        await queryRunner.query(`CREATE UNIQUE INDEX \`IDX_d2dd8af8dc964bf1375377ae32\` ON \`city\` (\`name\`, \`state_id\`)`);
-        await queryRunner.query(`CREATE UNIQUE INDEX \`IDX_58e79c3c54d8d023a38091a167\` ON \`neighborhood\` (\`name\`, \`city_id\`)`);
+        try {
+            await queryRunner.query(`CREATE UNIQUE INDEX \`IDX_d2dd8af8dc964bf1375377ae32\` ON \`city\` (\`name\`, \`state_id\`)`);
+        } catch (_e) { /* ignore */ }
+        try {
+            await queryRunner.query(`CREATE UNIQUE INDEX \`IDX_58e79c3c54d8d023a38091a167\` ON \`neighborhood\` (\`name\`, \`city_id\`)`);
+        } catch (_e) { /* ignore */ }
 
         // Re-add FK constraints. (TypeORM typically drops/adds constraints when modifying columns, we need to ensure they exist)
         // Since we didn't drop the columns, the existing constraints might still be there. 
