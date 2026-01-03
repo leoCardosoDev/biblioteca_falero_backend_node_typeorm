@@ -39,18 +39,22 @@ export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountBy
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const user = await userRepo.findOne({ where: { email, deletedAt: IsNull() } })
 
-    if (user) {
-      if (user.status !== UserStatusEnum.ACTIVE) {
-        return undefined
-      }
-
-      const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
-      const login = await repository.findOne({ where: { userId: user.id } })
-      if (login) {
-        return this.toDomain(login, Email.create(user.email)) ?? undefined
-      }
+    if (!user) {
+      return undefined
     }
-    return undefined
+
+    if (user.status !== UserStatusEnum.ACTIVE) {
+      return undefined
+    }
+
+    const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+    const login = await repository.findOne({ where: { userId: user.id } })
+
+    if (!login) {
+      return undefined
+    }
+
+    return this.toDomain(login, Email.create(user.email)) ?? undefined
   }
 
   async loadByUserId(userId: string): Promise<LoginModel | undefined> {
