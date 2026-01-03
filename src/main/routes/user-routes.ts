@@ -68,7 +68,7 @@ const loadUserByIdSchema = {
   params: {
     type: 'object',
     properties: {
-      id: { type: 'string', description: 'User ID' }
+      id: { type: 'string', description: 'Target User ID (UUID)' }
     }
   },
   response: {
@@ -106,7 +106,7 @@ const updateUserSchema = {
   params: {
     type: 'object',
     properties: {
-      id: { type: 'string', description: 'User ID' }
+      id: { type: 'string', description: 'Target User ID (UUID)' }
     }
   },
   body: {
@@ -135,7 +135,7 @@ const deleteUserSchema = {
   params: {
     type: 'object',
     properties: {
-      id: { type: 'string', description: 'User ID' }
+      id: { type: 'string', description: 'Target User ID (UUID)' }
     }
   },
   response: {

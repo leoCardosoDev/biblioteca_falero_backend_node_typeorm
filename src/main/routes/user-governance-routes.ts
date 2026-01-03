@@ -14,7 +14,7 @@ const updateUserStatusSchema = {
   params: {
     type: 'object',
     properties: {
-      id: { type: 'string', format: 'uuid', description: 'User ID' }
+      id: { type: 'string', format: 'uuid', description: 'Target User ID (UUID)' }
     }
   },
   body: {
@@ -39,7 +39,7 @@ const updateUserRoleSchema = {
   params: {
     type: 'object',
     properties: {
-      id: { type: 'string', format: 'uuid', description: 'User ID' }
+      id: { type: 'string', format: 'uuid', description: 'Target User ID (UUID)' }
     }
   },
   body: {

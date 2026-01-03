@@ -235,7 +235,8 @@ Requires ADMIN role.
 
 **Endpoint**: `PATCH http://localhost:5050/api/users/:id/status`
 
-> ⚠️ Este endpoint altera o status de acesso do usuário. "BLOCKED" impede login.
+> ⚠️ Este endpoint altera o status de acesso do usuário. "BLOCKED" impede login. 
+> O `:id` deve ser o UUID do usuário que você deseja bloquear/ativar.
 
 **Headers**:
 ```
@@ -262,12 +263,16 @@ Authorization: Bearer <accessToken>
 
 ### 7.3 Error: Access Denied (403 Forbidden)
 Se tentar bloquear um usuário com `powerLevel` maior ou igual ao seu (ex: LIBRARIAN tentando bloquear ADMIN).
+A API valida o `userId` (ator) extraído do token contra o `:id` passado na URL.
 
 ---
 
 ## 8. Promote User (🔒 ADMIN Only)
 
 **Endpoint**: `PATCH http://localhost:5050/api/users/:id/role`
+
+> ⚠️ Este endpoint altera o papel (role) do usuário. 
+> O `:id` deve ser o UUID do usuário que você deseja promover/alterar o cargo.
 
 **Headers**:
 ```
