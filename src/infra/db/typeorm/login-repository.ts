@@ -16,7 +16,7 @@ import { UpdateLoginRoleRepository } from '@/application/protocols/db/update-log
 
 export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadLoginByUserIdRepository, UpdateLoginRoleRepository {
 
-  async add(data: Omit<AddUserLoginParams, 'role'> & { passwordHash: string, roleId: Id }): Promise<LoginModel> {
+  async add(data: Omit<AddUserLoginParams, 'role' | 'actorId'> & { passwordHash: string, roleId: Id }): Promise<LoginModel> {
     const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
     const loginEntity = repository.create({
       userId: data.userId.value,

@@ -5,6 +5,7 @@ import { UserStatus } from '@/domain/value-objects/user-status'
 import { Email } from '@/domain/value-objects/email'
 
 export interface AddUserLoginParams {
+  actorId: string
   userId: Id
   email: Email
   password: string

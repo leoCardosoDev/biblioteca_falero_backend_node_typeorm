@@ -3,5 +3,5 @@ import { LoginModel } from '@/domain/models/login'
 import { Id } from '@/domain/value-objects/id'
 
 export interface AddLoginRepository {
-  add: (data: Omit<AddUserLoginParams, 'role'> & { passwordHash: string, roleId: Id }) => Promise<LoginModel>
+  add: (data: Omit<AddUserLoginParams, 'role' | 'actorId'> & { passwordHash: string, roleId: Id }) => Promise<LoginModel>
 }
