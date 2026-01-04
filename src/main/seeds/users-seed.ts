@@ -92,35 +92,49 @@ const run = async (): Promise<void> => {
   const bcryptAdapter = new BcryptAdapter(12)
 
   for (const item of users) {
-    const existingUser = await userRepository.findOne({ where: { email: item.userData.email } })
+    let savedUser = await userRepository.findOne({ where: { email: item.userData.email } })
 
-    if (existingUser) {
-      console.log(`⚠️ User ${item.userData.email} already exists. Skipping...`)
-      continue
+    if (!savedUser) {
+      const user = userRepository.create(item.userData)
+      savedUser = await userRepository.save(user)
+      console.log(`✅ User created: ${savedUser.name} (${item.loginData.role})`)
+    } else {
+      console.log(`⚠️ User ${item.userData.email} already exists. Checking login...`)
     }
 
-    const user = userRepository.create(item.userData)
-    const savedUser = await userRepository.save(user)
-    console.log(`✅ User created: ${savedUser.name} (${item.loginData.role})`)
+    // Check if login exists
+    const existingLogin = await loginRepository.findOne({ where: { userId: savedUser.id } })
 
-    const hashedPassword = await bcryptAdapter.hash(item.loginData.password)
+    if (!existingLogin) {
+      console.log(`⚠️ Login missing for ${savedUser.email}. Creating...`)
+      const hashedPassword = await bcryptAdapter.hash(item.loginData.password)
 
-    // Attempt to find existing role
-    const role = await roleRepository.findOne({ where: { slug: item.loginData.role.toUpperCase() } })
+      // Attempt to find existing role
+      const role = await roleRepository.findOne({ where: { slug: item.loginData.role.toUpperCase() } })
 
-    if (!role) {
-      throw new Error(`❌ Role ${item.loginData.role} not found. Please run 'npm run seed:roles' first.`)
+      if (!role) {
+        throw new Error(`❌ Role ${item.loginData.role} not found. Please run 'npm run seed:roles' first.`)
+      }
+
+      const login = loginRepository.create({
+        userId: savedUser.id,
+        password: hashedPassword,
+        roleId: role.id,
+        status: 'ACTIVE'
+      })
+
+      await loginRepository.save(login)
+      console.log(`✅ Login created for ${savedUser.email}`)
+    } else {
+      console.log(`ℹ️ Login searching... found for ${savedUser.email}`)
+      // Optional: Update role if needed
+      // const role = await roleRepository.findOne({ where: { slug: item.loginData.role.toUpperCase() } })
+      // if (role && existingLogin.roleId !== role.id) {
+      //    existingLogin.roleId = role.id;
+      //    await loginRepository.save(existingLogin)
+      //    console.log(`🔄 Role updated for ${savedUser.email}`)
+      // }
     }
-
-    const login = loginRepository.create({
-      userId: savedUser.id,
-      password: hashedPassword,
-      roleId: role.id,
-      status: 'ACTIVE'
-    })
-
-    await loginRepository.save(login)
-    console.log(`✅ Login created for ${savedUser.email}`)
   }
 
   await TypeOrmHelper.disconnect()

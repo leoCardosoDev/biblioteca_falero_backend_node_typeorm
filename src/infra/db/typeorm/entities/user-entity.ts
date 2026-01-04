@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, VersionColumn } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, VersionColumn, OneToMany } from 'typeorm'
 
 export const dateTransformer = {
   to: (value: string) => value,
@@ -65,4 +65,7 @@ export class UserTypeOrmEntity {
 
   @VersionColumn()
   version!: number
+
+  @OneToMany('LoginTypeOrmEntity', 'user')
+  logins?: unknown[]
 }

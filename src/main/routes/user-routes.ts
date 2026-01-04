@@ -16,9 +16,20 @@ const userSchema = {
     id: { type: 'string' },
     name: { type: 'string' },
     email: { type: 'string' },
-    role: { type: 'string', enum: ['admin', 'librarian', 'user'] },
+    rg: { type: 'string' },
+    cpf: { type: 'string' },
+    gender: { type: 'string' },
+    phone: { type: 'string' },
     status: { type: 'string', enum: ['ACTIVE', 'INACTIVE', 'BLOCKED'] },
-    version: { type: 'integer' }
+    version: { type: 'integer' },
+    login: {
+      type: 'object',
+      properties: {
+        role: { type: 'string' },
+        status: { type: 'string' }
+      },
+      nullable: true
+    }
   }
 }
 

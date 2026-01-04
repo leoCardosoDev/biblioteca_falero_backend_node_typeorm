@@ -119,8 +119,8 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
 
     const users = await userRepo.createQueryBuilder('user')
-      .leftJoinAndMapOne('user.tempLogin', LoginTypeOrmEntity, 'login', 'login.userId = user.id')
-      .leftJoinAndSelect('login.role', 'role')
+      .leftJoinAndSelect('user.logins', 'login')
+      .leftJoinAndSelect('login.role', 'loginRole')
       .where('user.deletedAt IS NULL')
       .getMany()
 
@@ -129,7 +129,14 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
     for (const user of users) {
       const userModel = this.toUserModel(user)
       if (userModel) {
-        const loginEntity = (user as unknown as Record<string, unknown>).tempLogin as LoginTypeOrmEntity | undefined
+        // Find the specific login (assuming the one joined is relevant, but standard OneToMany loads all)
+        // With createQueryBuilder join, if we condition it...
+
+        // Actually, since we joined 'user.logins', 'user.logins' (mapped property) will contain the results.
+        // But since we didn't add the mapping property to the class properly typed as LoginTypeOrmEntity[], 
+        // we used 'any[]' there.
+
+        const loginEntity = (user as unknown as { logins: LoginTypeOrmEntity[] }).logins?.[0]
 
         let loginVO: { role: UserRole, status: UserStatus } | undefined
 

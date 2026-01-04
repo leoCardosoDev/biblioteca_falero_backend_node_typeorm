@@ -1,19 +1,20 @@
 
 import 'reflect-metadata'
 import { DataSource } from 'typeorm'
-import { UserTypeOrmEntity as User, City, State } from '@/infra/db/typeorm/entities'
+import * as Entities from '@/infra/db/typeorm/entities'
+
+const { UserTypeOrmEntity: User, City } = Entities
 
 describe('Timestamp Governance Verification', () => {
   let dataSource: DataSource
 
   beforeAll(async () => {
-    // Setup test connection (simplified for this context)
-    // In a real scenario, we'd use a test DB config
+    // Setup test connection
     dataSource = new DataSource({
       type: 'sqlite',
       database: ':memory:',
       dropSchema: true,
-      entities: [User, City, State],
+      entities: Object.values(Entities).filter(e => typeof e === 'function'),
       synchronize: true,
       logging: false
     })
