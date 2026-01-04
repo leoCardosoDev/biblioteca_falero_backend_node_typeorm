@@ -49,7 +49,12 @@ export class AddUserLoginController implements Controller {
         return badRequest(new InvalidParamError('email'))
       }
 
+      if (!httpRequest.userId) {
+        return serverError(new Error('User ID not found in request'))
+      }
+
       const login = await this.addUserLogin.add({
+        actorId: httpRequest.userId,
         userId: userIdOrError,
         email: emailVO,
         password,

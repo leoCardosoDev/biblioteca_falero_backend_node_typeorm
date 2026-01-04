@@ -12,6 +12,7 @@ import { InvalidParamError } from '@/presentation/errors/invalid-param-error'
 import { ServerError } from '@/presentation/errors/server-error'
 
 const makeFakeRequest = (): HttpRequest => ({
+  userId: 'any_user_id',
   params: { id: '550e8400-e29b-41d4-a716-446655440000' },
   body: {
     email: 'any_email@mail.com',
@@ -132,12 +133,22 @@ describe('AddUserLogin Controller', () => {
     const addSpy = jest.spyOn(addUserLoginStub, 'add')
     await sut.handle(makeFakeRequest())
     expect(addSpy).toHaveBeenCalledWith({
+      actorId: 'any_user_id',
       userId: expect.any(Id),
       email: expect.any(Email),
       password: 'any_password',
       role: expect.any(UserRole),
       status: expect.any(UserStatus)
     })
+  })
+
+  test('Should return 500 if NO User ID (actor) is found in request', async () => {
+    const { sut } = makeSut()
+    const request = makeFakeRequest()
+    delete request.userId
+    const httpResponse = await sut.handle(request)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toBeInstanceOf(ServerError)
   })
 
   test('Should return 500 if AddUserLogin throws', async () => {
@@ -176,4 +187,3 @@ describe('AddUserLogin Controller', () => {
     }))
   })
 })
-
