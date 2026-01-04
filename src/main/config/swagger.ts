@@ -37,7 +37,7 @@ export const swaggerConfig: FastifyDynamicSwaggerOptions = {
           type: 'object',
           properties: {
             id: { type: 'string', format: 'uuid' },
-            slug: { type: 'string', example: 'admin' },
+            slug: { type: 'string', enum: ['ADMIN', 'LIBRARIAN', 'PROFESSOR', 'STUDENT'], example: 'ADMIN' },
             description: { type: 'string' },
             powerLevel: { type: 'integer', example: 100 },
             createdAt: { type: 'string', format: 'date-time' },
