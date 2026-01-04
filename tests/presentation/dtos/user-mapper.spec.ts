@@ -30,7 +30,7 @@ describe('UserMapper', () => {
         zipCode: '12345678'
       } as Address, // Mocking Address simply
       login: {
-        role: UserRole.create('MEMBER') as UserRole,
+        role: UserRole.create('STUDENT') as UserRole,
         status: UserStatus.create('ACTIVE') as UserStatus
       }
     }
@@ -56,7 +56,7 @@ describe('UserMapper', () => {
         zipCode: '12345678'
       },
       login: {
-        role: 'MEMBER',
+        role: 'STUDENT',
         status: 'ACTIVE'
       }
     })

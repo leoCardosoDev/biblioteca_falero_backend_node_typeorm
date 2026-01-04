@@ -1,6 +1,6 @@
-import { InvalidUserRoleError } from '../errors'
+import { InvalidUserRoleError } from '@/domain/errors'
 
-export type UserRoleTypes = 'ADMIN' | 'LIBRARIAN' | 'MEMBER'
+export type UserRoleTypes = 'ADMIN' | 'LIBRARIAN' | 'PROFESSOR' | 'STUDENT'
 
 export class UserRole {
   private readonly role: UserRoleTypes
@@ -22,7 +22,16 @@ export class UserRole {
   }
 
   private static validate(role: string): boolean {
-    const validRoles = ['ADMIN', 'LIBRARIAN', 'MEMBER']
+    const validRoles = ['ADMIN', 'LIBRARIAN', 'PROFESSOR', 'STUDENT']
     return validRoles.includes(role)
+  }
+
+  get powerLevel(): number {
+    switch (this.role) {
+      case 'ADMIN': return 100
+      case 'LIBRARIAN': return 50
+      case 'PROFESSOR': return 10
+      default: return 0 // STUDENT
+    }
   }
 }
