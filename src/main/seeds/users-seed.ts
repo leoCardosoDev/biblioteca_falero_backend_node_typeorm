@@ -16,7 +16,7 @@ const users = [
       name: 'Leo Cardoso',
       email: 'admin@falero.com',
       rg: '12345678',
-      cpf: '20073296031',
+      cpf: '52899890050',
       gender: 'MALE',
       phone: '5511999999999'
     },
@@ -30,7 +30,7 @@ const users = [
       name: 'Librarian User',
       email: 'librarian@falero.com',
       rg: '87654321',
-      cpf: '93271203024',
+      cpf: '34735363009',
       gender: 'FEMALE',
       phone: '5511888888888'
     },
@@ -41,16 +41,30 @@ const users = [
   },
   {
     userData: {
-      name: 'Member User',
-      email: 'user@falero.com',
+      name: 'Professor User',
+      email: 'professor@falero.com',
+      rg: '99887766',
+      cpf: '47737619038',
+      gender: 'MALE',
+      phone: '5511666666666'
+    },
+    loginData: {
+      role: 'PROFESSOR',
+      password: '_Falero@professor2025'
+    }
+  },
+  {
+    userData: {
+      name: 'Student User',
+      email: 'student@falero.com',
       rg: '11223344',
-      cpf: '17480131062',
+      cpf: '69899428000',
       gender: 'OTHER',
       phone: '5511777777777'
     },
     loginData: {
-      role: 'MEMBER',
-      password: '_Falero@member2025'
+      role: 'STUDENT',
+      password: '_Falero@student2025'
     }
   }
 ]
@@ -91,20 +105,11 @@ const run = async (): Promise<void> => {
 
     const hashedPassword = await bcryptAdapter.hash(item.loginData.password)
 
-    // Attempt to find or create role
-    let role = await roleRepository.findOne({ where: { slug: item.loginData.role.toUpperCase() } })
+    // Attempt to find existing role
+    const role = await roleRepository.findOne({ where: { slug: item.loginData.role.toUpperCase() } })
+
     if (!role) {
-      const powerLevels: Record<string, number> = {
-        ADMIN: 100,
-        LIBRARIAN: 50,
-        MEMBER: 10
-      }
-      role = roleRepository.create({
-        slug: item.loginData.role.toUpperCase(),
-        description: `Default ${item.loginData.role} role`,
-        powerLevel: powerLevels[item.loginData.role.toUpperCase()] ?? 0
-      })
-      await roleRepository.save(role)
+      throw new Error(`❌ Role ${item.loginData.role} not found. Please run 'npm run seed:roles' first.`)
     }
 
     const login = loginRepository.create({

@@ -21,8 +21,10 @@
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "prepare": "husky",
-    "seed:users": "npm run down && npm run up && node dist/main/seeds/users-seed.js",
+    "seed:users": "node dist/main/seeds/users-seed.js",
+    "seed:roles": "node dist/main/seeds/roles-seed.js",
     "seed:cities": "npm run up && node dist/main/seeds/city-seed.js",
+    "seed:all": "npm run down && npm run up && npm run seed:roles && npm run seed:users",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:run": "typeorm-ts-node-commonjs migration:run -d src/infra/db/typeorm/data-source.ts",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/infra/db/typeorm/data-source.ts"
