@@ -265,12 +265,12 @@ describe('DbAuthentication UseCase', () => {
     expect(result?.role).toBe('ADMIN')
   })
 
-  test('Should default role to MEMBER if account.roleId is missing (unlikely given mandatory, but if logic allows)', async () => {
+  test('Should default role to STUDENT if account.roleId is missing (unlikely given mandatory, but if logic allows)', async () => {
     const { sut, loadRoleByIdRepositoryStub } = makeSut()
     // Mimic no role found
     jest.spyOn(loadRoleByIdRepositoryStub, 'loadById').mockResolvedValueOnce(null)
     const result = await sut.auth(makeFakeAuthentication())
-    expect(result?.role).toBe('MEMBER')
+    expect(result?.role).toBe('STUDENT')
   })
 
 })

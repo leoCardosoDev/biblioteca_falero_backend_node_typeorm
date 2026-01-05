@@ -110,7 +110,7 @@ describe('AddUser Controller', () => {
       rg: Rg.create('123456789') as Rg,
       gender: 'any_gender',
       phone: '123456789',
-      status: UserStatus.create('ACTIVE') as UserStatus,
+      status: UserStatus.create('INACTIVE') as UserStatus,
       address: Address.create({
         street: 'Any Street',
         number: '123',

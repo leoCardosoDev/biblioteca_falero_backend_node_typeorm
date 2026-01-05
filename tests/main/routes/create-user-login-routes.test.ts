@@ -32,7 +32,7 @@ describe('CreateUserLogin Routes', () => {
     const roleRepo = dataSource.getRepository(RoleTypeOrmEntity)
     await roleRepo.save([
       roleRepo.create({
-        slug: 'MEMBER',
+        slug: 'STUDENT',
         description: 'Member Role'
       }),
       roleRepo.create({
@@ -77,7 +77,7 @@ describe('CreateUserLogin Routes', () => {
     const roleRepo = dataSource.getRepository(RoleTypeOrmEntity)
     await roleRepo.save([
       roleRepo.create({
-        slug: 'MEMBER',
+        slug: 'STUDENT',
         description: 'Member Role'
       }),
       roleRepo.create({

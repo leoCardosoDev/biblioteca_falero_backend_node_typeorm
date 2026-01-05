@@ -4,7 +4,7 @@ import { AccessDeniedError } from '@/presentation/errors'
 
 import { RequireRoleMiddleware } from '@/presentation/middlewares/require-role-middleware'
 
-const makeFakeRequest = (role: string = 'MEMBER'): HttpRequest => ({
+const makeFakeRequest = (role: string = 'STUDENT'): HttpRequest => ({
   userId: 'any_user_id',
   role
 })
@@ -33,7 +33,7 @@ describe('RequireRoleMiddleware', () => {
 
   test('Should return 403 if user role is not in allowed roles', async () => {
     const sut = new RequireRoleMiddleware(['ADMIN'])
-    const httpResponse = await sut.handle(makeFakeRequest('MEMBER'))
+    const httpResponse = await sut.handle(makeFakeRequest('STUDENT'))
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
   })
 
@@ -51,7 +51,7 @@ describe('RequireRoleMiddleware', () => {
 
   test('Should return 200 if allowed roles is empty (any authenticated user)', async () => {
     const sut = new RequireRoleMiddleware([])
-    const httpResponse = await sut.handle(makeFakeRequest('MEMBER'))
-    expect(httpResponse).toEqual(ok({ userId: 'any_user_id', role: 'MEMBER' }))
+    const httpResponse = await sut.handle(makeFakeRequest('STUDENT'))
+    expect(httpResponse).toEqual(ok({ userId: 'any_user_id', role: 'STUDENT' }))
   })
 })

@@ -31,8 +31,8 @@ describe('UserRole Value Object', () => {
     expect((role as UserRole).value).toBe('ADMIN')
   })
 
-  test('Should return an error if role is invalid (e.g., MEMBER)', () => {
-    const role = UserRole.create('MEMBER')
+  test('Should return an error if role is invalid (e.g., INVALID_ROLE_TEST)', () => {
+    const role = UserRole.create('INVALID_ROLE_TEST')
     expect(role).toBeInstanceOf(Error)
     expect((role as Error).message).toBe('Invalid User Role')
   })

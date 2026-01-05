@@ -19,7 +19,7 @@ export class JwtAdapter implements Encrypter, Decrypter {
     }
     return {
       id: decoded.id,
-      role: decoded.role ?? 'MEMBER'
+      role: decoded.role ?? 'STUDENT'
     }
   }
 }

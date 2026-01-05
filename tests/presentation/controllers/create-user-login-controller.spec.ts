@@ -93,6 +93,37 @@ describe('CreateUserLogin Controller', () => {
     expect(httpResponse.body).toBeInstanceOf(ServerError)
   })
 
+  test('Should return 400 if CreateUserLogin throws "not found" error', async () => {
+    const { sut, createUserLoginStub } = makeSut()
+    jest.spyOn(createUserLoginStub, 'create').mockImplementationOnce(async () => {
+      return Promise.reject(new Error('User not found'))
+    })
+    const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: Error }
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new InvalidParamError('User not found'))
+  })
+
+  test('Should return 500 if CreateUserLogin throws a non-Error object', async () => {
+    const { sut, createUserLoginStub } = makeSut()
+    jest.spyOn(createUserLoginStub, 'create').mockImplementationOnce(async () => {
+
+      return Promise.reject('Generic String Error')
+    })
+    const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: { error: { code: string } } }
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toBeInstanceOf(ServerError)
+  })
+
+  test('Should return 400 if CreateUserLogin throws "missing" error', async () => {
+    const { sut, createUserLoginStub } = makeSut()
+    jest.spyOn(createUserLoginStub, 'create').mockImplementationOnce(async () => {
+      return Promise.reject(new Error('Some resource missing'))
+    })
+    const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: Error }
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new InvalidParamError('Some resource missing'))
+  })
+
   test('Should return 200 if valid data is provided', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest()) as { statusCode: number; body: unknown }

@@ -32,7 +32,7 @@ export class DbAuthentication implements Authentication {
       return undefined
     }
 
-    let role = 'MEMBER'
+    let role = 'STUDENT'
     const roleEntity = await this.loadRoleByIdRepository.loadById(account.roleId)
     if (roleEntity) {
       role = roleEntity.slug

@@ -2,7 +2,7 @@ import { HttpRequest } from '@/presentation/protocols'
 import { forbidden, ok, serverError } from '@/presentation/helpers'
 import { AccessDeniedError } from '@/presentation/errors'
 import { Decrypter } from '@/application/protocols/cryptography/decrypter'
-import { Role, TokenPayload } from '@/domain/models'
+import { TokenPayload } from '@/domain/models'
 import { AuthMiddleware } from '@/presentation/middlewares/auth-middleware'
 
 type SutTypes = {
@@ -13,7 +13,7 @@ type SutTypes = {
 const makeDecrypter = (): Decrypter => {
   class DecrypterStub implements Decrypter {
     async decrypt(_ciphertext: string): Promise<TokenPayload | undefined> {
-      return await Promise.resolve({ id: 'any_id', role: Role.MEMBER })
+      return await Promise.resolve({ id: 'any_id', role: 'STUDENT' })
     }
   }
   return new DecrypterStub()
@@ -77,6 +77,6 @@ describe('AuthMiddleware', () => {
   test('Should return 200 with userId and role on success', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(ok({ userId: 'any_id', role: Role.MEMBER }))
+    expect(httpResponse).toEqual(ok({ userId: 'any_id', role: 'STUDENT' }))
   })
 })

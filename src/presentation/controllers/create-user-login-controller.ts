@@ -64,6 +64,11 @@ export class CreateUserLoginController implements Controller {
         email: login.email.value
       })
     } catch (error) {
+      if (error instanceof Error) {
+        if (error.message.includes('not found') || error.message.includes('missing')) {
+          return badRequest(new InvalidParamError(error.message))
+        }
+      }
       return serverError(error as Error)
     }
   }

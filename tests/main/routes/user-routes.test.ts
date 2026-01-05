@@ -61,8 +61,8 @@ describe('User Routes', () => {
       })
     })
 
-    test('Should return 403 if user role is MEMBER', async () => {
-      const accessToken = makeAccessToken('MEMBER')
+    test('Should return 403 if user role is STUDENT', async () => {
+      const accessToken = makeAccessToken('STUDENT')
       const response = await app.inject({
         method: 'POST',
         url: '/api/users',
@@ -119,8 +119,8 @@ describe('User Routes', () => {
       })
     })
 
-    test('Should return 403 if user role is MEMBER', async () => {
-      const accessToken = makeAccessToken('MEMBER')
+    test('Should return 403 if user role is STUDENT', async () => {
+      const accessToken = makeAccessToken('STUDENT')
       const response = await app.inject({
         method: 'GET',
         url: '/api/users',

@@ -61,7 +61,7 @@ export class SessionTypeOrmRepository implements
     return {
       id: Id.create(result.user_id) as Id,
       name: result.user_name,
-      role: result.role_slug ?? 'MEMBER'
+      role: result.role_slug ?? 'STUDENT'
     }
   }
 

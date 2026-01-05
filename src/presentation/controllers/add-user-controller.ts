@@ -50,7 +50,7 @@ export class AddUserController implements Controller {
         addressVO = addressResult
       }
 
-      const statusVO = UserStatus.create('ACTIVE') as UserStatus
+      const statusVO = UserStatus.create('INACTIVE') as UserStatus
 
       const userOrError = await this.addUser.add({
         name: nameVO,

@@ -145,7 +145,7 @@ describe('SessionTypeOrmRepository', () => {
       expect(result).toBeNull()
     })
 
-    test('Should return user info with default role MEMBER if no login found', async () => {
+    test('Should return user info with default role STUDENT if no login found', async () => {
       const user = await makeUser()
       const session = await sut.save({
         userId: Id.create(user.id) as Id,
@@ -158,7 +158,7 @@ describe('SessionTypeOrmRepository', () => {
       expect(loadedUser).toBeTruthy()
       expect(loadedUser?.id.value).toBe(user.id)
       expect(loadedUser?.name).toBe(user.name)
-      expect(loadedUser?.role).toBe('MEMBER')
+      expect(loadedUser?.role).toBe('STUDENT')
     })
   })
 

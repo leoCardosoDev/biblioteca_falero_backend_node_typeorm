@@ -8,7 +8,7 @@ jest.mock('jsonwebtoken', () => ({
     return 'any_token'
   },
   verify(): { id: string, role: string } {
-    return { id: 'any_value', role: 'MEMBER' }
+    return { id: 'any_value', role: 'STUDENT' }
   }
 }))
 
@@ -52,7 +52,7 @@ describe('Jwt Adapter', () => {
     test('Should return TokenPayload on verify success', async () => {
       const sut = makeSut()
       const value = await sut.decrypt('any_token')
-      expect(value).toEqual({ id: 'any_value', role: 'MEMBER' })
+      expect(value).toEqual({ id: 'any_value', role: 'STUDENT' })
     })
 
     test('Should return undefined if decoded id is missing', async () => {
@@ -62,11 +62,11 @@ describe('Jwt Adapter', () => {
       expect(value).toBeUndefined()
     })
 
-    test('Should default to MEMBER role if role is missing', async () => {
+    test('Should default to STUDENT role if role is missing', async () => {
       const sut = makeSut()
       jest.spyOn(jwt, 'verify').mockImplementationOnce(() => ({ id: 'any_id' }))
       const value = await sut.decrypt('any_token')
-      expect(value).toEqual({ id: 'any_id', role: 'MEMBER' })
+      expect(value).toEqual({ id: 'any_id', role: 'STUDENT' })
     })
 
     test('Should throw if verify throws', async () => {
