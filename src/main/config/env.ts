@@ -6,5 +6,6 @@ export default {
   mysqlUser: process.env.MYSQL_USER ?? 'root',
   mysqlPassword: process.env.MYSQL_PASSWORD ?? 'root',
   mysqlDb: process.env.MYSQL_DATABASE ?? 'biblioteca',
-  port: process.env.PORT ?? 5050
+  port: process.env.PORT ?? 5050,
+  redisUrl: process.env.REDIS_URL ?? 'redis://localhost:6379'
 }
