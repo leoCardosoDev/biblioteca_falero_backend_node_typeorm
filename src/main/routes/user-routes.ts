@@ -29,6 +29,18 @@ const userSchema = {
         status: { type: 'string' }
       },
       nullable: true
+    },
+    address: {
+      type: 'object',
+      properties: {
+        street: { type: 'string' },
+        number: { type: 'string' },
+        complement: { type: 'string' },
+        neighborhoodId: { type: 'string' },
+        cityId: { type: 'string' },
+        zipCode: { type: 'string' }
+      },
+      nullable: true
     }
   }
 }
@@ -47,7 +59,21 @@ const addUserSchema = {
       rg: { type: 'string', description: 'User RG document' },
       cpf: { type: 'string', description: 'User CPF document' },
       gender: { type: 'string', description: 'User gender' },
-      phone: { type: 'string', description: 'User phone number' }
+      phone: { type: 'string', description: 'User phone number' },
+      address: {
+        type: 'object',
+        properties: {
+          street: { type: 'string' },
+          number: { type: 'string' },
+          complement: { type: 'string' },
+          neighborhood: { type: 'string' },
+          city: { type: 'string' },
+          state: { type: 'string' },
+          zipCode: { type: 'string' },
+          neighborhoodId: { type: 'string' },
+          cityId: { type: 'string' }
+        }
+      }
     }
   },
   response: {
