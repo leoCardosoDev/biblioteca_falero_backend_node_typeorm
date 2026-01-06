@@ -1,5 +1,5 @@
-import { AddUser, AddUserParams, AddUserRepoParams } from '@/domain/usecases/add-user'
-import { UserModel } from '@/domain/models/user'
+import { AddUser, AddUserParams } from '@/domain/usecases/add-user'
+import { User } from '@/domain/models/user'
 import { AddUserRepository } from '@/application/protocols/add-user-repository'
 import { LoadUserByEmailRepository } from '@/application/protocols/db/load-user-by-email-repository'
 import { LoadUserByCpfRepository } from '@/application/protocols/db/load-user-by-cpf-repository'
@@ -17,7 +17,7 @@ export class DbAddUser implements AddUser {
     private readonly getOrCreateGeoEntityService: GetOrCreateGeoEntityService
   ) { }
 
-  async add(userData: AddUserParams): Promise<UserModel | Error> {
+  async add(userData: AddUserParams): Promise<User | Error> {
     const userByEmail = await this.loadUserByEmailRepository.loadByEmail(userData.email.value)
     if (userByEmail) {
       return new EmailInUseError()
@@ -57,22 +57,18 @@ export class DbAddUser implements AddUser {
       addressVO = addressOrError
     }
 
-    const repoInitData: AddUserRepoParams = {
-      ...userData,
-      address: addressVO
-    }
-
-    const user = await this.addUserRepository.add(repoInitData)
-
-    DomainEvents.markAggregateForDispatch(user.id.value, {
-      aggregateId: user.id.value,
-      type: 'UserCreated',
-      payload: {
-        userId: user.id.value,
-        email: user.email.value
-      },
-      createdAt: new Date()
+    const user = User.create({
+      name: userData.name,
+      email: userData.email,
+      rg: userData.rg,
+      cpf: userData.cpf,
+      gender: userData.gender,
+      phone: userData.phone,
+      address: addressVO,
+      status: userData.status
     })
+
+    await this.addUserRepository.add(user)
 
     await DomainEvents.dispatchEventsForAggregate(user.id.value, this.saveDomainEventRepository)
 

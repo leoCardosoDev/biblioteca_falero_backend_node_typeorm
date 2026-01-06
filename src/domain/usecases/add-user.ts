@@ -1,4 +1,5 @@
 import { UserModel } from '@/domain/models/user'
+import { Id } from '@/domain/value-objects/id'
 import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
@@ -32,6 +33,7 @@ export interface AddUserParams {
 
 // Input for Repository (Strict)
 export interface AddUserRepoParams {
+  id: Id
   name: Name
   email: Email
   rg: Rg

@@ -1,6 +1,6 @@
 import { DbAddUser } from '@/application/usecases/db-add-user'
 import { AddUserRepository } from '@/application/protocols/add-user-repository'
-import { UserModel } from '@/domain/models/user'
+import { User, UserModel } from '@/domain/models/user'
 import { AddUserParams, AddUserRepoParams } from '@/domain/usecases/add-user'
 import { LoadUserByEmailRepository } from '@/application/protocols/db/load-user-by-email-repository'
 import { LoadUserByCpfRepository } from '@/application/protocols/db/load-user-by-cpf-repository'
@@ -14,12 +14,12 @@ import { UserStatus } from '@/domain/value-objects/user-status'
 import { DomainEvents, SaveDomainEventRepository } from '@/domain/events/domain-events'
 import { GetOrCreateGeoEntityService, GeoIdsDTO, AddressDTO } from '@/domain/services/geo/get-or-create-geo-entity-service'
 
-const makeFakeUser = (): UserModel => ({
+const makeFakeUser = (): User => User.create({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
   name: Name.create('valid_name') as Name,
   email: Email.create('valid_email@mail.com'),
   rg: Rg.create('123456789') as Rg,
-  cpf: Cpf.create('529.982.247-25'),
+  cpf: Cpf.create('529.982.247-25') as Cpf,
   gender: 'any_gender',
   version: 1,
   status: UserStatus.create('ACTIVE') as UserStatus
@@ -111,7 +111,7 @@ const makeFakeUserData = (): AddUserParams => ({
   name: Name.create('valid_name') as Name,
   email: Email.create('valid_email@mail.com'),
   rg: Rg.create('123456789') as Rg,
-  cpf: Cpf.create('529.982.247-25'),
+  cpf: Cpf.create('529.982.247-25') as Cpf,
   gender: 'any_gender',
   status: UserStatus.create('ACTIVE') as UserStatus
 })
@@ -216,23 +216,26 @@ describe('DbAddUser UseCase', () => {
     const markSpy = jest.spyOn(DomainEvents, 'markAggregateForDispatch')
     const dispatchSpy = jest.spyOn(DomainEvents, 'dispatchEventsForAggregate')
     const userData = makeFakeUserData()
-    const fakeUser = makeFakeUser()
-    await sut.add(userData)
-    expect(markSpy).toHaveBeenCalledWith(fakeUser.id.value, expect.objectContaining({
-      aggregateId: fakeUser.id.value,
+
+    // Capture the result to get the generated ID
+    const result = await sut.add(userData) as User
+
+    expect(markSpy).toHaveBeenCalledWith(result.id.value, expect.objectContaining({
+      aggregateId: result.id.value,
       type: 'UserCreated',
       payload: {
-        userId: fakeUser.id.value,
-        email: fakeUser.email.value
+        userId: result.id.value,
+        email: result.email.value
       }
     }))
-    expect(dispatchSpy).toHaveBeenCalledWith(fakeUser.id.value, saveDomainEventRepositoryStub)
+    expect(dispatchSpy).toHaveBeenCalledWith(result.id.value, saveDomainEventRepositoryStub)
   })
 
   test('Should return an account on success', async () => {
     const { sut } = makeSut()
-    const account = await sut.add(makeFakeUserData())
-    expect(account).toEqual(makeFakeUser())
+    const account = await sut.add(makeFakeUserData()) as User
+    expect(account).toBeInstanceOf(User)
+    expect(account.email.value).toEqual('valid_email@mail.com')
   })
 
   test('Should return Error if Address has no IDs and no Names (GeoService skipped)', async () => {
