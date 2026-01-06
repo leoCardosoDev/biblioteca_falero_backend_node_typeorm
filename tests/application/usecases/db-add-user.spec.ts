@@ -1,7 +1,7 @@
 import { DbAddUser } from '@/application/usecases/db-add-user'
 import { AddUserRepository } from '@/application/protocols/add-user-repository'
 import { UserModel } from '@/domain/models/user'
-import { AddUserParams } from '@/domain/usecases/add-user'
+import { AddUserParams, AddUserRepoParams } from '@/domain/usecases/add-user'
 import { LoadUserByEmailRepository } from '@/application/protocols/db/load-user-by-email-repository'
 import { LoadUserByCpfRepository } from '@/application/protocols/db/load-user-by-cpf-repository'
 import { EmailInUseError, CpfInUseError } from '@/domain/errors'
@@ -12,6 +12,7 @@ import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { UserStatus } from '@/domain/value-objects/user-status'
 import { DomainEvents, SaveDomainEventRepository } from '@/domain/events/domain-events'
+import { GetOrCreateGeoEntityService, GeoIdsDTO, AddressDTO } from '@/domain/services/geo/get-or-create-geo-entity-service'
 
 const makeFakeUser = (): UserModel => ({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
@@ -44,7 +45,7 @@ const makeLoadUserByCpfRepository = (): LoadUserByCpfRepository => {
 
 const makeAddUserRepository = (): AddUserRepository => {
   class AddUserRepositoryStub implements AddUserRepository {
-    async add(_data: AddUserParams): Promise<UserModel> {
+    async add(_data: AddUserRepoParams): Promise<UserModel> {
       return Promise.resolve(makeFakeUser())
     }
   }
@@ -60,12 +61,27 @@ const makeSaveDomainEventRepository = (): SaveDomainEventRepository => {
   return new SaveDomainEventRepositoryStub()
 }
 
+class GetOrCreateGeoEntityServiceSpy {
+  params: AddressDTO | undefined
+  result: GeoIdsDTO = {
+    stateId: 'any_state_id',
+    cityId: 'any_city_id',
+    neighborhoodId: 'any_neighborhood_id'
+  }
+
+  async perform(dto: AddressDTO): Promise<GeoIdsDTO> {
+    this.params = dto
+    return this.result
+  }
+}
+
 interface SutTypes {
   sut: DbAddUser
   addUserRepositoryStub: AddUserRepository
   loadUserByEmailRepositoryStub: LoadUserByEmailRepository
   loadUserByCpfRepositoryStub: LoadUserByCpfRepository
   saveDomainEventRepositoryStub: SaveDomainEventRepository
+  getOrCreateGeoEntityServiceSpy: GetOrCreateGeoEntityServiceSpy
 }
 
 const makeSut = (): SutTypes => {
@@ -73,18 +89,21 @@ const makeSut = (): SutTypes => {
   const loadUserByEmailRepositoryStub = makeLoadUserByEmailRepository()
   const loadUserByCpfRepositoryStub = makeLoadUserByCpfRepository()
   const saveDomainEventRepositoryStub = makeSaveDomainEventRepository()
+  const getOrCreateGeoEntityServiceSpy = new GetOrCreateGeoEntityServiceSpy()
   const sut = new DbAddUser(
     addUserRepositoryStub,
     loadUserByEmailRepositoryStub,
     loadUserByCpfRepositoryStub,
-    saveDomainEventRepositoryStub
+    saveDomainEventRepositoryStub,
+    getOrCreateGeoEntityServiceSpy as unknown as GetOrCreateGeoEntityService
   )
   return {
     sut,
     addUserRepositoryStub,
     loadUserByEmailRepositoryStub,
     loadUserByCpfRepositoryStub,
-    saveDomainEventRepositoryStub
+    saveDomainEventRepositoryStub,
+    getOrCreateGeoEntityServiceSpy
   }
 }
 
@@ -131,7 +150,10 @@ describe('DbAddUser UseCase', () => {
     const addSpy = jest.spyOn(addUserRepositoryStub, 'add')
     const userData = makeFakeUserData()
     await sut.add(userData)
-    expect(addSpy).toHaveBeenCalledWith(userData)
+    expect(addSpy).toHaveBeenCalledWith(expect.objectContaining({
+      email: userData.email,
+      name: userData.name
+    }))
   })
 
   test('Should throw if AddUserRepository throws', async () => {
@@ -139,6 +161,54 @@ describe('DbAddUser UseCase', () => {
     jest.spyOn(addUserRepositoryStub, 'add').mockReturnValueOnce(Promise.reject(new Error()))
     const promise = sut.add(makeFakeUserData())
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call GetOrCreateGeoEntityService if address is provided without IDs', async () => {
+    const { sut, getOrCreateGeoEntityServiceSpy } = makeSut()
+    const userData = makeFakeUserData()
+    userData.address = {
+      street: 'any_street',
+      number: '123',
+      zipCode: '12345678',
+      city: 'any_city',
+      neighborhood: 'any_neighborhood',
+      state: 'SP'
+    }
+    await sut.add(userData)
+    expect(getOrCreateGeoEntityServiceSpy.params).toEqual({
+      uf: 'SP',
+      city: 'any_city',
+      neighborhood: 'any_neighborhood'
+    })
+  })
+
+  test('Should NOT call GetOrCreateGeoEntityService if address has IDs', async () => {
+    const { sut, getOrCreateGeoEntityServiceSpy } = makeSut()
+    const userData = makeFakeUserData()
+    userData.address = {
+      street: 'any_street',
+      number: '123',
+      zipCode: '12345678',
+      cityId: 'any_id',
+      neighborhoodId: 'any_id'
+    }
+    const executeSpy = jest.spyOn(getOrCreateGeoEntityServiceSpy, 'perform')
+    await sut.add(userData)
+    expect(executeSpy).not.toHaveBeenCalled()
+  })
+
+  test('Should return Error if Address creation fails (e.g. invalid zip)', async () => {
+    const { sut } = makeSut()
+    const userData = makeFakeUserData()
+    userData.address = {
+      street: 'any_street',
+      number: '123',
+      zipCode: 'invalid', // invalid zip
+      cityId: 'any_id',
+      neighborhoodId: 'any_id'
+    }
+    const response = await sut.add(userData)
+    expect(response).toBeInstanceOf(Error)
   })
 
   test('Should call DomainEvents with correct values', async () => {
@@ -163,5 +233,21 @@ describe('DbAddUser UseCase', () => {
     const { sut } = makeSut()
     const account = await sut.add(makeFakeUserData())
     expect(account).toEqual(makeFakeUser())
+  })
+
+  test('Should return Error if Address has no IDs and no Names (GeoService skipped)', async () => {
+    const { sut, getOrCreateGeoEntityServiceSpy } = makeSut()
+    const userData = makeFakeUserData()
+    userData.address = {
+      street: 'any_street',
+      number: '123',
+      zipCode: '12345678',
+      // No IDs, No Names
+    } as AddUserParams['address']
+    const executeSpy = jest.spyOn(getOrCreateGeoEntityServiceSpy, 'perform')
+    const response = await sut.add(userData)
+    expect(executeSpy).not.toHaveBeenCalled()
+    // It should fail because neighborhoodId is required and become ''
+    expect(response).toBeInstanceOf(Error)
   })
 })

@@ -1,16 +1,29 @@
-import { RedisCacheAdapter } from '@/infra/cache/redis-cache-adapter'
+import type { RedisCacheAdapter as RedisCacheAdapterType } from '@/infra/cache/redis-cache-adapter'
 import Redis from 'ioredis'
 
-jest.mock('ioredis')
+jest.mock('ioredis', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      set: jest.fn(),
+      get: jest.fn(),
+      quit: jest.fn()
+    }
+  })
+})
 
 describe('RedisCacheAdapter', () => {
-  let sut: RedisCacheAdapter
+  let sut: RedisCacheAdapterType
   let client: jest.Mocked<Redis>
 
-  beforeEach(() => {
-    (Redis as unknown as jest.Mock).mockClear()
+  beforeEach(async () => {
+    jest.resetModules()
+    jest.clearAllMocks()
+
+    // Dynamically import to ensure we get a fresh module with the mocked ioredis
+    const { RedisCacheAdapter } = await import('@/infra/cache/redis-cache-adapter')
+
     sut = new RedisCacheAdapter()
-    client = (Redis as unknown as jest.Mock).mock.instances[0] as jest.Mocked<Redis>
+    client = sut.clientInstance as jest.Mocked<Redis>
   })
 
   describe('set()', () => {
@@ -51,5 +64,22 @@ describe('RedisCacheAdapter', () => {
       const result = await sut.get(key)
       expect(result).toBeNull()
     })
+  })
+
+  test('Should not create a new Redis client if it is already instantiated', async () => {
+    jest.resetModules()
+    jest.clearAllMocks()
+
+    // We must re-import mocked redis to get the reference that will be used in the reset module context
+    const { default: Redis } = await import('ioredis')
+    const { RedisCacheAdapter } = await import('@/infra/cache/redis-cache-adapter')
+
+    // First instantiation - should call Redis
+    new RedisCacheAdapter()
+
+    // Second instantiation - should reuse client
+    new RedisCacheAdapter()
+
+    expect(Redis).toHaveBeenCalledTimes(1)
   })
 })

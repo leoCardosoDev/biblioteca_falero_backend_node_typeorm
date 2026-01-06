@@ -1,5 +1,6 @@
 import { Controller, HttpRequest, HttpResponse, Validation, badRequest, serverError, ok, forbidden, InvalidParamError, UserMapper } from '@/presentation'
-import { AddUser, Email, Cpf, Name, Rg, Address, AddressProps, UserStatus } from '@/domain'
+import { AddUser, Email, Cpf, Name, Rg, AddUserAddressInput, UserStatus } from '@/domain'
+import { InvalidAddressError } from '@/domain/errors'
 
 export class AddUserController implements Controller {
   constructor(
@@ -20,7 +21,7 @@ export class AddUserController implements Controller {
         cpf: string
         gender: string
         phone?: string
-        address?: AddressProps
+        address?: AddUserAddressInput
       }
 
       const nameVO = Name.create(name)
@@ -43,13 +44,6 @@ export class AddUserController implements Controller {
         return badRequest(new InvalidParamError('cpf'))
       }
 
-      let addressVO: Address | undefined
-      if (address) {
-        const addressResult = Address.create(address)
-        if (addressResult instanceof Error) return badRequest(new InvalidParamError('address'))
-        addressVO = addressResult
-      }
-
       const statusVO = UserStatus.create('INACTIVE') as UserStatus
 
       const userOrError = await this.addUser.add({
@@ -59,10 +53,14 @@ export class AddUserController implements Controller {
         cpf: cpfVO,
         gender,
         phone,
-        address: addressVO,
+        address,
         status: statusVO
       })
+
       if (userOrError instanceof Error) {
+        if (userOrError instanceof InvalidAddressError) {
+          return badRequest(userOrError)
+        }
         return forbidden(userOrError)
       }
       return ok(UserMapper.toDTO(userOrError))

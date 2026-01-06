@@ -1,7 +1,7 @@
 import { AddressDTO, AddressGateway } from '@/domain/gateways/address-gateway'
 import { HttpClient } from '@/application/protocols/http/http-client'
 
-type ViaCepResponse = {
+export type ViaCepResponse = {
   cep: string
   logradouro: string
   complemento: string

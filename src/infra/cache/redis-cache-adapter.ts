@@ -3,25 +3,38 @@ import Redis from 'ioredis'
 import env from '@/main/config/env'
 
 export class RedisCacheAdapter implements CacheRepository {
-  private readonly client: Redis
+  private static client: Redis
 
   constructor() {
-    this.client = new Redis(env.redisUrl)
+    if (!RedisCacheAdapter.client) {
+      RedisCacheAdapter.client = new Redis(env.redisUrl)
+    }
+  }
+
+  get clientInstance(): Redis {
+    return RedisCacheAdapter.client
   }
 
   async set(key: string, value: unknown, ttl?: number): Promise<void> {
     if (ttl) {
-      await this.client.set(key, JSON.stringify(value), 'EX', ttl)
+      await this.clientInstance.set(key, JSON.stringify(value), 'EX', ttl)
     } else {
-      await this.client.set(key, JSON.stringify(value))
+      await this.clientInstance.set(key, JSON.stringify(value))
     }
   }
 
   async get(key: string): Promise<unknown> {
-    const value = await this.client.get(key)
+    const value = await this.clientInstance.get(key)
     if (value) {
       return JSON.parse(value)
     }
     return null
+  }
+
+  static async disconnect(): Promise<void> {
+    if (this.client) {
+      await this.client.quit()
+      this.client = undefined as unknown as Redis
+    }
   }
 }
