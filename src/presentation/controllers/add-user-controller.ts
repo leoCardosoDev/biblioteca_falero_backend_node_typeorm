@@ -1,5 +1,5 @@
-import { Controller, HttpRequest, HttpResponse, Validation, badRequest, serverError, ok, forbidden, InvalidParamError, UserMapper } from '@/presentation'
-import { AddUser, Email, Cpf, Name, Rg, AddUserAddressInput, UserStatus } from '@/domain'
+import { Controller, HttpRequest, HttpResponse, Validation, badRequest, serverError, ok, forbidden, UserMapper } from '@/presentation'
+import { AddUser, AddUserAddressInput } from '@/domain'
 import { InvalidAddressError } from '@/domain/errors'
 
 export class AddUserController implements Controller {
@@ -24,41 +24,19 @@ export class AddUserController implements Controller {
         address?: AddUserAddressInput
       }
 
-      const nameVO = Name.create(name)
-      if (nameVO instanceof Error) return badRequest(new InvalidParamError('name'))
-
-      let emailVO: Email
-      try {
-        emailVO = Email.create(email)
-      } catch (_error) {
-        return badRequest(new InvalidParamError('email'))
-      }
-
-      const rgVO = Rg.create(rg)
-      if (rgVO instanceof Error) return badRequest(new InvalidParamError('rg'))
-
-      let cpfVO: Cpf
-      try {
-        cpfVO = Cpf.create(cpf)
-      } catch (_error) {
-        return badRequest(new InvalidParamError('cpf'))
-      }
-
-      const statusVO = UserStatus.create('INACTIVE') as UserStatus
-
       const userOrError = await this.addUser.add({
-        name: nameVO,
-        email: emailVO,
-        rg: rgVO as Rg,
-        cpf: cpfVO,
+        name,
+        email,
+        rg,
+        cpf,
         gender,
         phone,
         address,
-        status: statusVO
+        status: 'INACTIVE'
       })
 
       if (userOrError instanceof Error) {
-        if (userOrError instanceof InvalidAddressError) {
+        if (userOrError instanceof InvalidAddressError || userOrError.name.startsWith('Invalid') || userOrError.name.includes('Required')) {
           return badRequest(userOrError)
         }
         return forbidden(userOrError)

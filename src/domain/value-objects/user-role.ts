@@ -34,4 +34,7 @@ export class UserRole {
       default: return 0 // STUDENT
     }
   }
+  static restore(role: string): UserRole {
+    return new UserRole(role.toUpperCase() as UserRoleTypes)
+  }
 }

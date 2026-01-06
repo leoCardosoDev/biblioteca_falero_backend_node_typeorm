@@ -22,4 +22,7 @@ export class Email {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return emailRegex.test(email)
   }
+  static restore(email: string): Email {
+    return new Email(email)
+  }
 }

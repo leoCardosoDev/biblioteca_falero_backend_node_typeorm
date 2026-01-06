@@ -7,6 +7,14 @@ import { EmailInUseError, CpfInUseError } from '@/domain/errors'
 import { DomainEvents, SaveDomainEventRepository } from '@/domain/events/domain-events'
 import { GetOrCreateGeoEntityService } from '@/domain/services/geo/get-or-create-geo-entity-service'
 import { Address } from '@/domain/value-objects/address'
+import { Name } from '@/domain/value-objects/name'
+import { Email } from '@/domain/value-objects/email'
+import { Cpf } from '@/domain/value-objects/cpf'
+import { Rg } from '@/domain/value-objects/rg'
+import { UserStatus } from '@/domain/value-objects/user-status'
+
+
+type AddressParams = AddUserParams['address']
 
 export class DbAddUser implements AddUser {
   constructor(
@@ -18,54 +26,58 @@ export class DbAddUser implements AddUser {
   ) { }
 
   async add(userData: AddUserParams): Promise<User | Error> {
-    const userByEmail = await this.loadUserByEmailRepository.loadByEmail(userData.email.value)
+    const nameOrError = Name.create(userData.name)
+    if (nameOrError instanceof Error) {
+      return nameOrError
+    }
+
+    let emailOrError: Email | Error
+    try {
+      emailOrError = Email.create(userData.email)
+    } catch (error) {
+      return error as Error
+    }
+
+    const rgOrError = Rg.create(userData.rg)
+    if (rgOrError instanceof Error) {
+      return rgOrError
+    }
+
+    let cpfOrError: Cpf | Error
+    try {
+      cpfOrError = Cpf.create(userData.cpf)
+    } catch (error) {
+      return error as Error
+    }
+
+    const statusOrError = UserStatus.create(userData.status)
+    if (statusOrError instanceof Error) {
+      return statusOrError
+    }
+
+    const userByEmail = await this.loadUserByEmailRepository.loadByEmail((emailOrError as Email).value)
     if (userByEmail) {
       return new EmailInUseError()
     }
-    const userByCpf = await this.loadUserByCpfRepository.loadByCpf(userData.cpf.value)
+    const userByCpf = await this.loadUserByCpfRepository.loadByCpf((cpfOrError as Cpf).value)
     if (userByCpf) {
       return new CpfInUseError()
     }
 
-    let addressVO: Address | undefined
-
-    if (userData.address) {
-      let { cityId, neighborhoodId } = userData.address
-
-      if ((!cityId || !neighborhoodId) && userData.address.city && userData.address.neighborhood && userData.address.state) {
-        const geoIds = await this.getOrCreateGeoEntityService.perform({
-          uf: userData.address.state,
-          city: userData.address.city,
-          neighborhood: userData.address.neighborhood
-        })
-        cityId = geoIds.cityId
-        neighborhoodId = geoIds.neighborhoodId
-      }
-
-      const addressOrError = Address.create({
-        street: userData.address.street,
-        number: userData.address.number,
-        complement: userData.address.complement,
-        zipCode: userData.address.zipCode,
-        cityId: cityId || '',
-        neighborhoodId: neighborhoodId || ''
-      })
-
-      if (addressOrError instanceof Error) {
-        return addressOrError
-      }
-      addressVO = addressOrError
+    const addressVOOrError = await this.resolveAddress(userData.address)
+    if (addressVOOrError instanceof Error) {
+      return addressVOOrError
     }
 
     const user = User.create({
-      name: userData.name,
-      email: userData.email,
-      rg: userData.rg,
-      cpf: userData.cpf,
+      name: nameOrError,
+      email: emailOrError,
+      rg: rgOrError,
+      cpf: cpfOrError,
       gender: userData.gender,
       phone: userData.phone,
-      address: addressVO,
-      status: userData.status
+      address: addressVOOrError,
+      status: statusOrError
     })
 
     await this.addUserRepository.add(user)
@@ -73,5 +85,38 @@ export class DbAddUser implements AddUser {
     await DomainEvents.dispatchEventsForAggregate(user.id.value, this.saveDomainEventRepository)
 
     return user
+  }
+
+  private async resolveAddress(addressData: AddressParams): Promise<Address | undefined | Error> {
+    if (!addressData) {
+      return undefined
+    }
+
+    let { cityId, neighborhoodId } = addressData
+
+    if (this.shouldLookUpGeoEntities(addressData)) {
+      const geoIds = await this.getOrCreateGeoEntityService.perform({
+        uf: addressData.state!, // Validated by shouldLookUpGeoEntities
+        city: addressData.city!,
+        neighborhood: addressData.neighborhood!
+      })
+      cityId = geoIds.cityId
+      neighborhoodId = geoIds.neighborhoodId
+    }
+
+    return Address.create({
+      street: addressData.street,
+      number: addressData.number,
+      complement: addressData.complement,
+      zipCode: addressData.zipCode,
+      cityId: cityId || '',
+      neighborhoodId: neighborhoodId || ''
+    })
+  }
+
+  private shouldLookUpGeoEntities(address: NonNullable<AddressParams>): boolean {
+    const missingIds = !address.cityId || !address.neighborhoodId
+    const hasGeoNames = !!(address.city && address.neighborhood && address.state)
+    return missingIds && hasGeoNames
   }
 }

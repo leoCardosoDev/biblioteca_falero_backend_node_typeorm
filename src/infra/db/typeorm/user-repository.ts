@@ -10,70 +10,45 @@ import { DeleteUserRepository } from '@/application/protocols/db/delete-user-rep
 import { UserWithLogin } from '@/domain/usecases/load-users'
 import { AddUserParams } from '@/domain/usecases/add-user'
 import { UpdateUserParams } from '@/domain/usecases/update-user'
-import { UserModel } from '@/domain/models/user'
+import { User, UserModel } from '@/domain/models/user'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
 import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
 import { Id, Email, Cpf, Name, Rg, Address, UserRole, UserStatus, UserStatusEnum } from '@/domain/value-objects'
 
 export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmailRepository, LoadUserByCpfRepository, LoadUsersRepository, LoadUserByIdRepository, UpdateUserRepository, DeleteUserRepository, UpdateUserStatusRepository {
-  private toUserModel(entity: UserTypeOrmEntity): UserModel | null {
-    try {
-      // Validate Name (returns Error on failure)
-      const nameOrError = Name.create(entity.name)
-      if (!(nameOrError instanceof Name)) {
-        return null
-      }
-
-      // Validate Rg (returns Error on failure)
-      const rgOrError = Rg.create(entity.rg)
-      if (!(rgOrError instanceof Rg)) {
-        return null
-      }
-
-
-      // Validate Email (throws on failure)
-      const email = Email.create(entity.email)
-
-      // Validate Cpf (throws on failure)
-      const cpf = Cpf.create(entity.cpf)
-
-      let address: Address | undefined
-      if (entity.addressStreet && entity.addressNumber && entity.addressNeighborhoodId && entity.addressCityId && entity.addressZipCode) {
-        const addressResult = Address.create({
-          street: entity.addressStreet,
-          number: entity.addressNumber,
-          complement: entity.addressComplement,
-          neighborhoodId: entity.addressNeighborhoodId,
-          cityId: entity.addressCityId,
-          zipCode: entity.addressZipCode
-        })
-        if (addressResult instanceof Address) {
-          address = addressResult
-        }
-      }
-
-      const statusOrError = UserStatus.create(entity.status)
-      if (statusOrError instanceof Error) {
-        return null
-      }
-
-      return {
-        id: Id.create(entity.id),
-        name: nameOrError,
-        email,
-        rg: rgOrError,
-        cpf,
-        gender: entity.gender,
-        phone: entity.phone,
-        address,
-        status: statusOrError,
-        deletedAt: entity.deletedAt,
-        version: entity.version
-      }
-    } catch (_error) {
-      return null
+  private toUserModel(entity: UserTypeOrmEntity): UserModel {
+    // console.log('Converting entity:', entity.name)
+    let address: Address | undefined
+    if (entity.addressStreet && entity.addressNumber && entity.addressNeighborhoodId && entity.addressCityId && entity.addressZipCode) {
+      // console.log('Restoring address')
+      address = Address.restore({
+        street: entity.addressStreet,
+        number: entity.addressNumber,
+        complement: entity.addressComplement,
+        neighborhoodId: entity.addressNeighborhoodId,
+        cityId: entity.addressCityId,
+        zipCode: entity.addressZipCode
+      })
     }
+
+    // console.log('Restoring ID')
+    const id = Id.restore(entity.id)
+
+    // console.log('Restoring User')
+    return User.restore({
+      id,
+      name: Name.restore(entity.name),
+      email: Email.restore(entity.email),
+      rg: Rg.restore(entity.rg),
+      cpf: Cpf.restore(entity.cpf),
+      gender: entity.gender,
+      phone: entity.phone,
+      address,
+      status: UserStatus.restore(entity.status),
+      deletedAt: entity.deletedAt,
+      version: entity.version
+    }, id)
   }
 
   async add(data: AddUserParams): Promise<UserModel> {
@@ -94,25 +69,21 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
       status: data.status.value // Ensure status is saved as string
     })
     await userRepo.save(user)
-    const result = this.toUserModel(user)
-    if (!result) {
-      throw new Error('Failed to create user: data corruption detected after save')
-    }
-    return result
+    return this.toUserModel(user)
   }
 
   async loadByEmail(email: string): Promise<UserModel | undefined> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const user = await userRepo.findOne({ where: { email, deletedAt: IsNull() } })
     if (!user) return undefined
-    return this.toUserModel(user) ?? undefined
+    return this.toUserModel(user)
   }
 
   async loadByCpf(cpf: string): Promise<UserModel | undefined> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const user = await userRepo.findOne({ where: { cpf, deletedAt: IsNull() } })
     if (!user) return undefined
-    return this.toUserModel(user) ?? undefined
+    return this.toUserModel(user)
   }
 
   async loadAll(): Promise<UserWithLogin[]> {
@@ -128,35 +99,22 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
 
     for (const user of users) {
       const userModel = this.toUserModel(user)
-      if (userModel) {
-        // Find the specific login (assuming the one joined is relevant, but standard OneToMany loads all)
-        // With createQueryBuilder join, if we condition it...
 
-        // Actually, since we joined 'user.logins', 'user.logins' (mapped property) will contain the results.
-        // But since we didn't add the mapping property to the class properly typed as LoginTypeOrmEntity[], 
-        // we used 'any[]' there.
+      const loginEntity = (user as unknown as { logins: LoginTypeOrmEntity[] }).logins?.[0]
 
-        const loginEntity = (user as unknown as { logins: LoginTypeOrmEntity[] }).logins?.[0]
+      let loginVO: { role: UserRole, status: UserStatus } | undefined
 
-        let loginVO: { role: UserRole, status: UserStatus } | undefined
-
-        if (loginEntity && loginEntity.role && loginEntity.status) {
-          const roleOrError = UserRole.create(loginEntity.role.slug)
-          const statusOrError = UserStatus.create(loginEntity.status)
-
-          if (!(roleOrError instanceof Error) && !(statusOrError instanceof Error)) {
-            loginVO = {
-              role: roleOrError,
-              status: statusOrError
-            }
-          }
+      if (loginEntity && loginEntity.role && loginEntity.status) {
+        loginVO = {
+          role: UserRole.restore(loginEntity.role.slug),
+          status: UserStatus.restore(loginEntity.status)
         }
-
-        usersWithLogin.push({
-          ...userModel,
-          login: loginVO
-        })
       }
+
+      usersWithLogin.push({
+        ...userModel,
+        login: loginVO
+      })
     }
     return usersWithLogin
   }
@@ -169,13 +127,12 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
 
     const loginEntity = await loginRepo.findOne({ where: { userId: id }, relations: ['role'] })
     const userModel = this.toUserModel(userEntity)
-    if (!userModel) return null
 
     return {
       ...userModel,
       login: loginEntity && loginEntity.role ? {
-        role: UserRole.create(loginEntity.role.slug) as UserRole,
-        status: UserStatus.create(loginEntity.status!) as UserStatus
+        role: UserRole.restore(loginEntity.role.slug),
+        status: UserStatus.restore(loginEntity.status!)
       } : undefined
     }
   }
@@ -206,11 +163,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
     }
 
     await userRepo.save(user)
-    const result = this.toUserModel(user)
-    if (!result) {
-      throw new Error('Failed to update user: data corruption detected after save')
-    }
-    return result
+    return this.toUserModel(user)
   }
 
   async delete(id: string): Promise<void> {

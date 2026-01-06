@@ -77,6 +77,10 @@ export class User {
 
     return user
   }
+
+  static restore(props: UserProps, id: Id): User {
+    return new User(props, id)
+  }
 }
 
 // Keep for backward compatibility if needed, or alias

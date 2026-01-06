@@ -13,6 +13,8 @@ import { Rg } from '@/domain/value-objects/rg'
 import { UserStatus } from '@/domain/value-objects/user-status'
 import { DomainEvents, SaveDomainEventRepository } from '@/domain/events/domain-events'
 import { GetOrCreateGeoEntityService, GeoIdsDTO, AddressDTO } from '@/domain/services/geo/get-or-create-geo-entity-service'
+import { InvalidNameError, InvalidEmailError, InvalidRgError, InvalidUserStatusError } from '@/domain/errors'
+import { InvalidCpfError } from '@/domain/errors/invalid-cpf-error'
 
 const makeFakeUser = (): User => User.create({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
@@ -108,12 +110,12 @@ const makeSut = (): SutTypes => {
 }
 
 const makeFakeUserData = (): AddUserParams => ({
-  name: Name.create('valid_name') as Name,
-  email: Email.create('valid_email@mail.com'),
-  rg: Rg.create('123456789') as Rg,
-  cpf: Cpf.create('529.982.247-25') as Cpf,
+  name: 'valid_name',
+  email: 'valid_email@mail.com',
+  rg: '123456789',
+  cpf: '529.982.247-25',
   gender: 'any_gender',
-  status: UserStatus.create('ACTIVE') as UserStatus
+  status: 'ACTIVE'
 })
 
 describe('DbAddUser UseCase', () => {
@@ -151,8 +153,8 @@ describe('DbAddUser UseCase', () => {
     const userData = makeFakeUserData()
     await sut.add(userData)
     expect(addSpy).toHaveBeenCalledWith(expect.objectContaining({
-      email: userData.email,
-      name: userData.name
+      email: expect.objectContaining({ value: userData.email }),
+      name: expect.objectContaining({ value: userData.name })
     }))
   })
 
@@ -252,5 +254,45 @@ describe('DbAddUser UseCase', () => {
     expect(executeSpy).not.toHaveBeenCalled()
     // It should fail because neighborhoodId is required and become ''
     expect(response).toBeInstanceOf(Error)
+  })
+
+  test('Should return InvalidParamError if name is invalid', async () => {
+    const { sut } = makeSut()
+    const userData = makeFakeUserData()
+    userData.name = 'a'
+    const response = await sut.add(userData)
+    expect(response).toEqual(new InvalidNameError('a'))
+  })
+
+  test('Should return InvalidParamError if email is invalid', async () => {
+    const { sut } = makeSut()
+    const userData = makeFakeUserData()
+    userData.email = 'invalid_email'
+    const response = await sut.add(userData)
+    expect(response).toEqual(new InvalidEmailError())
+  })
+
+  test('Should return InvalidParamError if rg is invalid', async () => {
+    const { sut } = makeSut()
+    const userData = makeFakeUserData()
+    userData.rg = 'invalid_rg'
+    const response = await sut.add(userData)
+    expect(response).toEqual(new InvalidRgError('invalid_rg'))
+  })
+
+  test('Should return InvalidParamError if cpf is invalid', async () => {
+    const { sut } = makeSut()
+    const userData = makeFakeUserData()
+    userData.cpf = 'invalid_cpf'
+    const response = await sut.add(userData)
+    expect(response).toEqual(new InvalidCpfError())
+  })
+
+  test('Should return InvalidParamError if status is invalid', async () => {
+    const { sut } = makeSut()
+    const userData = makeFakeUserData()
+    userData.status = 'invalid_status'
+    const response = await sut.add(userData)
+    expect(response).toEqual(new InvalidUserStatusError())
   })
 })

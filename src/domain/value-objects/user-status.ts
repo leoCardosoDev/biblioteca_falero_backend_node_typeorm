@@ -30,4 +30,7 @@ export class UserStatus {
   static validate(status: string): boolean {
     return Object.values(UserStatusEnum).includes(status as UserStatusEnum)
   }
+  static restore(status: string): UserStatus {
+    return new UserStatus(status.toUpperCase() as UserStatusTypes)
+  }
 }

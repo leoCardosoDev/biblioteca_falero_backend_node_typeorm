@@ -18,4 +18,7 @@ export class Name {
     }
     return new Name(trimmed)
   }
+  static restore(name: string): Name {
+    return new Name(name)
+  }
 }

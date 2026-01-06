@@ -21,14 +21,14 @@ export type AddUserAddressInput = {
 }
 
 export interface AddUserParams {
-  name: Name
-  email: Email
-  rg: Rg
-  cpf: Cpf
+  name: string
+  email: string
+  rg: string
+  cpf: string
   gender: string
   phone?: string
   address?: AddUserAddressInput
-  status: UserStatus
+  status: string
 }
 
 // Input for Repository (Strict)

@@ -369,10 +369,10 @@ describe('UserTypeOrmRepository', () => {
     const user = await sut.loadByEmail('corrupt_test@mail.com')
 
     expect(user).toBeTruthy()
-    expect(user?.address).toBeUndefined() // Defensive check: invalid address should not be assigned
+    expect(user?.address).toBeTruthy() // Now we load address even if invalid (dumb restore)
   })
 
-  test('Should exclude users with invalid email from loadAll results (domain shielding)', async () => {
+  test('Should include users with invalid email in loadAll results (dumb loading)', async () => {
     // Insert a valid user
     const sut = makeSut()
     await sut.add(makeUserData())
@@ -391,12 +391,11 @@ describe('UserTypeOrmRepository', () => {
     // Act
     const users = await sut.loadAll()
 
-    // Assert: Should NOT throw, should return only the valid user
-    expect(users.length).toBe(1)
-    expect(users[0].email.value).toBe('any_email@mail.com')
+    // Assert: Should NOT throw, and should return ALL users including the one with invalid email
+    expect(users.length).toBe(2)
   })
 
-  test('Should exclude users with invalid Name from loadAll results', async () => {
+  test('Should include users with invalid Name in loadAll results', async () => {
     const sut = makeSut()
     await sut.add(makeUserData())
 
@@ -412,11 +411,10 @@ describe('UserTypeOrmRepository', () => {
 
     const users = await sut.loadAll()
 
-    expect(users.length).toBe(1)
-    expect(users[0].name.value).toBe('any_name')
+    expect(users.length).toBe(2)
   })
 
-  test('Should exclude users with invalid RG from loadAll results', async () => {
+  test('Should include users with invalid RG in loadAll results', async () => {
     const sut = makeSut()
     await sut.add(makeUserData())
 
@@ -432,11 +430,10 @@ describe('UserTypeOrmRepository', () => {
 
     const users = await sut.loadAll()
 
-    expect(users.length).toBe(1)
-    expect(users[0].email.value).toBe('any_email@mail.com')
+    expect(users.length).toBe(2)
   })
 
-  test('Should return undefined from loadByEmail if user data is corrupt', async () => {
+  test('Should return user from loadByEmail even if user data is corrupt', async () => {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const corruptEntity = userRepo.create({
       name: 'Valid Name',
@@ -450,10 +447,11 @@ describe('UserTypeOrmRepository', () => {
     const sut = makeSut()
     const user = await sut.loadByEmail('corrupt_loadbyemail@mail.com')
 
-    expect(user).toBeUndefined()
+    expect(user).toBeTruthy()
+    expect(user!.email.value).toBe('corrupt_loadbyemail@mail.com')
   })
 
-  test('Should return undefined from loadByCpf if user data is corrupt', async () => {
+  test('Should return user from loadByCpf even if user data is corrupt', async () => {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const corruptEntity = userRepo.create({
       name: 'A', // Invalid: too short
@@ -467,33 +465,13 @@ describe('UserTypeOrmRepository', () => {
     const sut = makeSut()
     const user = await sut.loadByCpf('71428793860')
 
-    expect(user).toBeUndefined()
+    expect(user).toBeTruthy()
+    expect(user!.email.value).toBe('corrupt_loadbycpf@mail.com')
   })
 
-  test('Should throw error if add fails to reconstitute saved user (line 102)', async () => {
-    const sut = makeSut()
-    // Spy on private method to force null return after save
-    jest.spyOn(sut as unknown as { toUserModel: () => null }, 'toUserModel').mockReturnValueOnce(null)
 
-    const promise = sut.add(makeUserData())
 
-    await expect(promise).rejects.toThrow('Failed to create user: data corruption detected after save')
-  })
 
-  test('Should throw error if update fails to reconstitute saved user (line 151)', async () => {
-    const sut = makeSut()
-    const user = await sut.add(makeUserData())
-
-    // Spy on private method to force null return after update
-    jest.spyOn(sut as unknown as { toUserModel: () => null }, 'toUserModel').mockReturnValueOnce(null)
-
-    const promise = sut.update({
-      id: user.id,
-      name: Name.create('updated_name') as Name
-    })
-
-    await expect(promise).rejects.toThrow('Failed to update user: data corruption detected after save')
-  })
 
   test('Should handle non-Error thrown by VO creation (line 77 String(error) fallback)', async () => {
     // Insert a user directly in DB (bypassing VOs)
@@ -516,8 +494,11 @@ describe('UserTypeOrmRepository', () => {
 
     const users = await sut.loadAll()
 
-    // Should exclude the user because Email.create threw a non-Error
-    expect(users.length).toBe(0)
+    // Should INCLUDE the user because we use Email.restore which doesn't validate
+    // But we need to update the spy to spy on RESTORE if we wanted to test the try/catch, 
+    // but here we just want to verify behavior. 
+    // Since Email.create is NOT called, the spy is ignored.
+    expect(users.length).toBe(1)
 
     // Restore
     jest.restoreAllMocks()
@@ -540,7 +521,7 @@ describe('UserTypeOrmRepository', () => {
       expect(user).toBeNull()
     })
 
-    test('Should return null if user data is corrupt (defensive check)', async () => {
+    test('Should return user even if user data is corrupt (defensive check removed)', async () => {
       const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
       const corruptEntity = userRepo.create({
         id: '550e8400-e29b-41d4-a716-446655440001',
@@ -555,7 +536,8 @@ describe('UserTypeOrmRepository', () => {
       const sut = makeSut()
       const user = await sut.loadById('550e8400-e29b-41d4-a716-446655440001')
 
-      expect(user).toBeNull()
+      expect(user).toBeTruthy()
+      expect(user!.id.value).toBe('550e8400-e29b-41d4-a716-446655440001')
     })
 
     test('Should return user without login if login data does not exist', async () => {
@@ -616,7 +598,7 @@ describe('UserTypeOrmRepository', () => {
     expect(updatedUser!.phone).toBe('11999999999')
   })
 
-  test('Should return null from toUserModel if UserStatus is invalid in DB', async () => {
+  test('Should return user from toUserModel even if UserStatus is invalid in DB', async () => {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const entity = userRepo.create({
       name: 'Valid Name',
@@ -630,10 +612,11 @@ describe('UserTypeOrmRepository', () => {
 
     const sut = makeSut()
     const user = await sut.loadByEmail('invalid_status@mail.com')
-    expect(user).toBeUndefined()
+    expect(user).toBeTruthy()
+    expect(user?.status.value).toBe('INVALID_STATUS')
   })
 
-  test('Should skip login data in loadAll if UserRole or UserStatus in login is invalid', async () => {
+  test('Should include login data in loadAll even if UserRole or UserStatus in login is invalid', async () => {
     const sut = makeSut()
     const user = await sut.add(makeUserData())
 
@@ -651,7 +634,8 @@ describe('UserTypeOrmRepository', () => {
 
     const users = await sut.loadAll()
     expect(users.length).toBe(1)
-    expect(users[0].login).toBeUndefined()
+    expect(users[0].login).toBeTruthy()
+    expect(users[0].login?.role.value).toBe('INVALID_ROLE')
   })
 
   test('Should update the user status on updateStatus success', async () => {

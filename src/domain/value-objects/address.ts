@@ -52,4 +52,7 @@ export class Address {
       zipCode: cleanZip
     })
   }
+  static restore(props: AddressProps): Address {
+    return new Address(props)
+  }
 }

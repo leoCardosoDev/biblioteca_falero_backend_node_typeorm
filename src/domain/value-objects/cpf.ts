@@ -41,4 +41,7 @@ export class Cpf {
 
     return true
   }
+  static restore(cpf: string): Cpf {
+    return new Cpf(cpf)
+  }
 }

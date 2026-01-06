@@ -7,6 +7,9 @@ import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
 import { RoleTypeOrmEntity } from '@/infra/db/typeorm/entities/role-entity'
 import { PermissionTypeOrmEntity } from '@/infra/db/typeorm/entities/permission-entity'
 import { DomainEventTypeOrmEntity } from '@/infra/db/typeorm/entities/domain-event-entity'
+import { State } from '@/infra/db/typeorm/entities/state'
+import { City } from '@/infra/db/typeorm/entities/city'
+import { Neighborhood } from '@/infra/db/typeorm/entities/neighborhood'
 import { DataSource } from 'typeorm'
 
 
@@ -23,7 +26,7 @@ describe('User Routes', () => {
       database: ':memory:',
       dropSchema: true,
       synchronize: true,
-      entities: [UserTypeOrmEntity, LoginTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity, DomainEventTypeOrmEntity]
+      entities: [UserTypeOrmEntity, LoginTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity, DomainEventTypeOrmEntity, State, City, Neighborhood]
     })
     await setupApp()
     await app.ready()
@@ -33,6 +36,13 @@ describe('User Routes', () => {
     await TypeOrmHelper.disconnect()
     await app.close()
   })
+
+  // Helper to seed state for address tests
+  const seedState = async () => {
+    const stateRepo = dataSource.getRepository(State)
+    const state = stateRepo.create({ name: 'São Paulo', uf: 'SP' })
+    await stateRepo.save(state)
+  }
 
   beforeEach(async () => {
     await dataSource.synchronize(true)
@@ -100,6 +110,124 @@ describe('User Routes', () => {
         }
       })
       expect(response.statusCode).toBe(200)
+    })
+
+    test('Should return 400 if name is too short', async () => {
+      const accessToken = makeAccessToken('LIBRARIAN')
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/users',
+        headers: { authorization: `Bearer ${accessToken}` },
+        payload: {
+          name: 'A', // Invalid
+          email: 'valid@mail.com',
+          rg: '123456789',
+          cpf: '529.982.247-25',
+          gender: 'male'
+        }
+      })
+      expect(response.statusCode).toBe(400)
+      expect(response.statusCode).toBe(400)
+      expect(response.json()).toMatchObject({
+        error: {
+          type: 'VALIDATION',
+          code: 'INVALID_NAME'
+        }
+      })
+    })
+
+    test('Should return 400 if email is invalid', async () => {
+      const accessToken = makeAccessToken('LIBRARIAN')
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/users',
+        headers: { authorization: `Bearer ${accessToken}` },
+        payload: {
+          name: 'Valid Name',
+          email: 'invalid-email',
+          rg: '123456789',
+          cpf: '529.982.247-25',
+          gender: 'male'
+        }
+      })
+      expect(response.statusCode).toBe(400)
+      expect(response.statusCode).toBe(400)
+      expect(response.json()).toMatchObject({
+        error: {
+          type: 'VALIDATION',
+          code: 'INVALID_PARAMETERS'
+        }
+      })
+    })
+
+    test('Should return 403 if email is already in use', async () => {
+      const accessToken = makeAccessToken('LIBRARIAN')
+      // Create first user
+      await app.inject({
+        method: 'POST',
+        url: '/api/users',
+        headers: { authorization: `Bearer ${accessToken}` },
+        payload: {
+          name: 'First User',
+          email: 'duplicate@mail.com',
+          rg: '123456789',
+          cpf: '529.982.247-25',
+          gender: 'male'
+        }
+      })
+      // Try create second user with same email
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/users',
+        headers: { authorization: `Bearer ${accessToken}` },
+        payload: {
+          name: 'Second User',
+          email: 'duplicate@mail.com',
+          rg: '987654321',
+          cpf: '71428793860',
+          gender: 'male'
+        }
+      })
+      expect(response.statusCode).toBe(409)
+      expect(response.json()).toMatchObject({
+        error: {
+          type: 'REPOSITORY',
+          code: 'EMAIL_IN_USE'
+        }
+      })
+    })
+
+    test('Should return 200 and create user with address (Geo feature)', async () => {
+      await seedState()
+      const accessToken = makeAccessToken('LIBRARIAN')
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/users',
+        headers: { authorization: `Bearer ${accessToken}` },
+        payload: {
+          name: 'User With Address',
+          email: 'address@mail.com',
+          rg: '111111111',
+          cpf: '529.982.247-25',
+          gender: 'female',
+          address: {
+            street: 'Rua Teste',
+            number: '123',
+            zipCode: '12345678',
+            city: 'São Paulo',
+            neighborhood: 'Centro',
+            state: 'SP'
+          }
+        }
+      })
+      if (response.statusCode !== 200) {
+        console.log('DEBUG FAIL:', JSON.stringify(response.json(), null, 2))
+      }
+      expect(response.statusCode).toBe(200)
+      const body = response.json()
+      expect(body.address).toBeTruthy()
+      expect(body.address.street).toBe('Rua Teste')
+      // Implicitly verifies that GeoService worked if no error was returned
     })
   })
 

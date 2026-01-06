@@ -5,11 +5,12 @@ import { Validation } from '@/presentation/protocols/validation'
 import { HttpRequest } from '@/presentation/protocols'
 import { ok } from '@/presentation/helpers/http-helper'
 import { UserAlreadyExistsError } from '@/presentation/errors/user-already-exists-error'
-import { InvalidParamError } from '@/presentation/errors/invalid-param-error'
+
 import { ServerError } from '@/presentation/errors/server-error'
 import { Id } from '@/domain/value-objects/id'
 import { Name, Email, Rg, Cpf, Address, UserStatus } from '@/domain/value-objects'
-import { InvalidAddressError } from '@/domain/errors'
+import { InvalidAddressError, InvalidNameError, InvalidEmailError, InvalidRgError } from '@/domain/errors'
+import { InvalidCpfError } from '@/domain/errors/invalid-cpf-error'
 
 const makeAddUser = (): AddUser => {
   class AddUserStub implements AddUser {
@@ -105,13 +106,13 @@ describe('AddUser Controller', () => {
     const addSpy = jest.spyOn(addUserStub, 'add')
     await sut.handle(makeFakeRequest())
     expect(addSpy).toHaveBeenCalledWith({
-      name: Name.create('Any Name') as Name,
-      email: Email.create('any_email@mail.com'),
-      cpf: Cpf.create('00000000191'),
-      rg: Rg.create('123456789') as Rg,
+      name: 'Any Name',
+      email: 'any_email@mail.com',
+      cpf: '00000000191',
+      rg: '123456789',
       gender: 'any_gender',
       phone: '123456789',
-      status: UserStatus.create('INACTIVE') as UserStatus,
+      status: 'INACTIVE',
       address: {
         street: 'Any Street',
         number: '123',
@@ -164,44 +165,40 @@ describe('AddUser Controller', () => {
     }))
   })
 
-  test('Should return 400 if Email.create throws', async () => {
-    const { sut } = makeSut()
+  test('Should return 400 if AddUser returns InvalidEmailError', async () => {
+    const { sut, addUserStub } = makeSut()
+    jest.spyOn(addUserStub, 'add').mockResolvedValueOnce(new InvalidEmailError())
     const httpRequest = makeFakeRequest()
-    const body = httpRequest.body as Record<string, unknown>
-    body.email = 'invalid-email'
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new InvalidParamError('email'))
+    expect(httpResponse.body).toEqual(new InvalidEmailError())
   })
 
-  test('Should return 400 if Cpf.create throws', async () => {
-    const { sut } = makeSut()
+  test('Should return 400 if AddUser returns InvalidCpfError', async () => {
+    const { sut, addUserStub } = makeSut()
+    jest.spyOn(addUserStub, 'add').mockResolvedValueOnce(new InvalidCpfError())
     const httpRequest = makeFakeRequest()
-    const body = httpRequest.body as Record<string, unknown>
-    body.cpf = 'invalid-cpf'
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new InvalidParamError('cpf'))
+    expect(httpResponse.body).toEqual(new InvalidCpfError())
   })
 
-  test('Should return 400 if Name.create returns an error', async () => {
-    const { sut } = makeSut()
+  test('Should return 400 if AddUser returns InvalidNameError', async () => {
+    const { sut, addUserStub } = makeSut()
+    jest.spyOn(addUserStub, 'add').mockResolvedValueOnce(new InvalidNameError('a'))
     const httpRequest = makeFakeRequest()
-    const body = httpRequest.body as Record<string, unknown>
-    body.name = 'A'
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new InvalidParamError('name'))
+    expect(httpResponse.body).toEqual(new InvalidNameError('a'))
   })
 
-  test('Should return 400 if Rg.create returns an error', async () => {
-    const { sut } = makeSut()
+  test('Should return 400 if AddUser returns InvalidRgError', async () => {
+    const { sut, addUserStub } = makeSut()
+    jest.spyOn(addUserStub, 'add').mockResolvedValueOnce(new InvalidRgError('invalid_rg'))
     const httpRequest = makeFakeRequest()
-    const body = httpRequest.body as Record<string, unknown>
-    body.rg = ''
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new InvalidParamError('rg'))
+    expect(httpResponse.body).toEqual(new InvalidRgError('invalid_rg'))
   })
 
   test('Should return 400 if AddUser returns InvalidAddressError', async () => {

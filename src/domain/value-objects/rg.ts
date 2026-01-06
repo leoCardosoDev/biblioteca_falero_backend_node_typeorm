@@ -21,4 +21,7 @@ export class Rg {
     }
     return new Rg(cleaned)
   }
+  static restore(rg: string): Rg {
+    return new Rg(rg)
+  }
 }
