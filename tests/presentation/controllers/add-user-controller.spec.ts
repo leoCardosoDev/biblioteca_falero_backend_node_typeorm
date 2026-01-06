@@ -9,6 +9,7 @@ import { InvalidParamError } from '@/presentation/errors/invalid-param-error'
 import { ServerError } from '@/presentation/errors/server-error'
 import { Id } from '@/domain/value-objects/id'
 import { Name, Email, Rg, Cpf, Address, UserStatus } from '@/domain/value-objects'
+import { InvalidAddressError } from '@/domain/errors'
 
 const makeAddUser = (): AddUser => {
   class AddUserStub implements AddUser {
@@ -111,14 +112,14 @@ describe('AddUser Controller', () => {
       gender: 'any_gender',
       phone: '123456789',
       status: UserStatus.create('INACTIVE') as UserStatus,
-      address: Address.create({
+      address: {
         street: 'Any Street',
         number: '123',
         complement: 'Apt 1',
         neighborhoodId: 'any_neighborhood_id',
         cityId: 'any_city_id',
         zipCode: '12345678'
-      }) as Address
+      }
     })
   })
 
@@ -187,7 +188,7 @@ describe('AddUser Controller', () => {
     const { sut } = makeSut()
     const httpRequest = makeFakeRequest()
     const body = httpRequest.body as Record<string, unknown>
-    body.name = 'A' // Invalid name (too short)
+    body.name = 'A'
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('name'))
@@ -197,25 +198,18 @@ describe('AddUser Controller', () => {
     const { sut } = makeSut()
     const httpRequest = makeFakeRequest()
     const body = httpRequest.body as Record<string, unknown>
-    body.rg = '' // Invalid RG
+    body.rg = ''
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('rg'))
   })
 
-  test('Should return 400 if Address.create returns an error', async () => {
-    const { sut } = makeSut()
+  test('Should return 400 if AddUser returns InvalidAddressError', async () => {
+    const { sut, addUserStub } = makeSut()
     const httpRequest = makeFakeRequest()
-    const body = httpRequest.body as Record<string, unknown>
-    body.address = {
-      street: '', // Invalid address
-      number: '123',
-      neighborhoodId: 'any',
-      cityId: 'any',
-      zipCode: '12345'
-    }
+    jest.spyOn(addUserStub, 'add').mockResolvedValueOnce(new InvalidAddressError('any_error'))
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new InvalidParamError('address'))
+    expect(httpResponse.body).toEqual(new InvalidAddressError('any_error'))
   })
 })
