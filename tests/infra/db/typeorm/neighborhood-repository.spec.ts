@@ -86,4 +86,17 @@ describe('NeighborhoodTypeOrmRepository', () => {
 
     expect(neighborhood).toBeUndefined()
   })
+
+  test('Should return a neighborhood on loadByNameAndCity success', async () => {
+    const sut = makeSut()
+    const state = await makeState()
+    const city = await makeCity(state.id)
+    await sut.add('Any Neighborhood', city.id)
+
+    const neighborhood = await sut.loadByNameAndCity('Any Neighborhood', city.id)
+
+    expect(neighborhood).toBeTruthy()
+    expect(neighborhood?.name).toBe('Any Neighborhood')
+    expect(neighborhood?.cityId.value).toBe(city.id)
+  })
 })
