@@ -1,5 +1,5 @@
 import { Controller, HttpRequest, HttpResponse, Validation, ok, serverError, badRequest, notFound, UserMapper } from '@/presentation'
-import { UpdateUser, NotFoundError, Id, Email, Cpf, Name, Rg, Address, AddressProps } from '@/domain'
+import { UpdateUser, NotFoundError, Id, Email, Cpf, Name, Rg, Address } from '@/domain'
 
 export class UpdateUserController implements Controller {
   constructor(
@@ -62,7 +62,16 @@ export class UpdateUserController implements Controller {
         updateData.phone = body.phone as string
       }
       if (body?.address) {
-        const addressVO = Address.create(body.address as AddressProps)
+        const rawAddr = body.address as Record<string, unknown>
+        const addressVO = Address.create({
+          street: rawAddr.street as string,
+          number: rawAddr.number as string,
+          complement: rawAddr.complement as string,
+          zipCode: rawAddr.zipCode as string,
+          neighborhoodId: rawAddr.neighborhoodId ? Id.create(rawAddr.neighborhoodId as string) : undefined!,
+          cityId: rawAddr.cityId ? Id.create(rawAddr.cityId as string) : undefined!,
+          stateId: rawAddr.stateId ? Id.create(rawAddr.stateId as string) : undefined!
+        })
         if (addressVO instanceof Error) return badRequest(addressVO)
         updateData.address = addressVO
       }
