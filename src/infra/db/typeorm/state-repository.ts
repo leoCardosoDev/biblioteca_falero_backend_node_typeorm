@@ -5,7 +5,7 @@ import { TypeOrmHelper } from './typeorm-helper'
 import { Id } from '@/domain/value-objects/id'
 
 export class StateTypeOrmRepository implements LoadStateByUfRepository {
-  async loadByUf(uf: string): Promise<StateModel> {
+  async loadByUf(uf: string): Promise<StateModel | null> {
     const repo = await TypeOrmHelper.getRepository(State)
     const state = await repo.findOne({ where: { uf } })
     return state ? this.toDomain(state) : null
@@ -13,7 +13,7 @@ export class StateTypeOrmRepository implements LoadStateByUfRepository {
 
   private toDomain(entity: State): StateModel {
     return {
-      id: Id.create(entity.id) as Id,
+      id: Id.restore(entity.id),
       name: entity.name,
       uf: entity.uf
     }

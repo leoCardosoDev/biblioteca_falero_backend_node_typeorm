@@ -1,3 +1,5 @@
+import { Id } from '@/domain/value-objects/id'
+
 import { LoadStateByUfRepository } from '@/application/protocols/db/state/load-state-by-uf-repository'
 import { LoadCityByNameAndStateRepository } from '@/application/protocols/db/city/load-city-by-name-and-state-repository'
 import { AddCityRepository } from '@/application/protocols/db/city/add-city-repository'
@@ -11,9 +13,9 @@ export type AddressDTO = {
 }
 
 export type GeoIdsDTO = {
-  stateId: string
-  cityId: string
-  neighborhoodId: string
+  stateId: Id
+  cityId: Id
+  neighborhoodId: Id
 }
 
 export class GetOrCreateGeoEntityService {
@@ -32,23 +34,23 @@ export class GetOrCreateGeoEntityService {
     if (!stateModel) {
       throw new Error(`State not found for UF: ${uf}`)
     }
-    const stateIdStr = stateModel.id.value
+    const stateId = stateModel.id
 
-    let cityModel = await this.loadCityByNameAndStateRepository.loadByNameAndState(city, stateIdStr)
+    let cityModel = await this.loadCityByNameAndStateRepository.loadByNameAndState(city, stateId.value)
     if (!cityModel) {
-      cityModel = await this.addCityRepository.add(city, stateIdStr)
+      cityModel = await this.addCityRepository.add(city, stateId.value)
     }
-    const cityIdStr = cityModel.id.value
+    const cityId = cityModel.id
 
-    let neighborhoodModel = await this.loadNeighborhoodByNameAndCityRepository.loadByNameAndCity(neighborhood, cityIdStr)
+    let neighborhoodModel = await this.loadNeighborhoodByNameAndCityRepository.loadByNameAndCity(neighborhood, cityId.value)
     if (!neighborhoodModel) {
-      neighborhoodModel = await this.addNeighborhoodRepository.add(neighborhood, cityIdStr)
+      neighborhoodModel = await this.addNeighborhoodRepository.add(neighborhood, cityId.value)
     }
 
     return {
-      stateId: stateIdStr,
-      cityId: cityIdStr,
-      neighborhoodId: neighborhoodModel.id.value
+      stateId: stateId,
+      cityId: cityId,
+      neighborhoodId: neighborhoodModel.id
     }
   }
 }

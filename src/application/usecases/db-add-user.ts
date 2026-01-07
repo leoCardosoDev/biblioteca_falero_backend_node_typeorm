@@ -1,3 +1,4 @@
+import { Id } from '@/domain/value-objects/id'
 import { AddUser, AddUserParams } from '@/domain/usecases/add-user'
 import { User } from '@/domain/models/user'
 import { AddUserRepository } from '@/application/protocols/add-user-repository'
@@ -91,16 +92,67 @@ export class DbAddUser implements AddUser {
       return undefined
     }
 
-    let { cityId, neighborhoodId } = addressData
+    // Initialize with values from input (strings)
+    let cityIdResult: Id | undefined
+    let neighborhoodIdResult: Id | undefined
+    let stateIdResult: Id | undefined
+
+    // Try to convert input strings to Ids
+    if (typeof addressData.cityId === 'string') {
+      cityIdResult = Id.create(addressData.cityId)
+    } else {
+      cityIdResult = addressData.cityId
+    }
+
+    if (typeof addressData.neighborhoodId === 'string') {
+      neighborhoodIdResult = Id.create(addressData.neighborhoodId)
+    } else {
+      neighborhoodIdResult = addressData.neighborhoodId
+    }
+
+    if (typeof addressData.stateId === 'string') {
+      stateIdResult = Id.create(addressData.stateId)
+    } else {
+      stateIdResult = addressData.stateId
+    }
 
     if (this.shouldLookUpGeoEntities(addressData)) {
       const geoIds = await this.getOrCreateGeoEntityService.perform({
-        uf: addressData.state!, 
+        uf: addressData.state!,
         city: addressData.city!,
         neighborhood: addressData.neighborhood!
       })
-      cityId = geoIds.cityId
-      neighborhoodId = geoIds.neighborhoodId
+      cityIdResult = geoIds.cityId
+      neighborhoodIdResult = geoIds.neighborhoodId
+      stateIdResult = geoIds.stateId
+    }
+
+    // Strict validation before Domain creation to avoid "any" cast
+    // Address.create requires these to be defined. If they are undefined, we pass them as undefined 
+    // and let domain return Error (InvalidAddressError: ... required).
+    // However, TS complains if we pass undefined to a type explicitly expecting Id.
+    // So we cast to `unknown as Id` ONLY if we are sure we want to delegate validation to Domain,
+    // OR we return an error early here.
+    // Better approach: Let strict types guide us. 
+    // AddressProps says they are Id.
+
+    // We cannot pass 'undefined' to 'Id'.
+    if (!cityIdResult || !neighborhoodIdResult || !stateIdResult) {
+      // If we miss any ID, we try to create Address with missing props to let it throw its specific error,
+      // OR we return a generic invalid address error here.
+      // Given Address.create validation logic:
+      // if (!props.cityId) return new InvalidAddressError('cityId is required')
+      // So it handles falsy values. We just need to trick TS to let us pass undefined for testing/validation path.
+
+      return Address.create({
+        street: addressData.street,
+        number: addressData.number,
+        complement: addressData.complement,
+        zipCode: addressData.zipCode,
+        cityId: cityIdResult as unknown as Id,
+        neighborhoodId: neighborhoodIdResult as unknown as Id,
+        stateId: stateIdResult as unknown as Id,
+      })
     }
 
     return Address.create({
@@ -108,8 +160,9 @@ export class DbAddUser implements AddUser {
       number: addressData.number,
       complement: addressData.complement,
       zipCode: addressData.zipCode,
-      cityId: cityId || '',
-      neighborhoodId: neighborhoodId || ''
+      cityId: cityIdResult,
+      neighborhoodId: neighborhoodIdResult,
+      stateId: stateIdResult,
     })
   }
 

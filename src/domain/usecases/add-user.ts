@@ -13,10 +13,11 @@ export type AddUserAddressInput = {
   complement?: string
   zipCode: string
   neighborhoodId?: string
-  neighborhood?: string 
+  neighborhood?: string
   cityId?: string
-  city?: string 
-  state?: string 
+  city?: string
+  stateId?: string
+  state?: string
 }
 
 export interface AddUserParams {

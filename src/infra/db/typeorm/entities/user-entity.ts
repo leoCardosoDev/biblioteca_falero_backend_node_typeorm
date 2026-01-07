@@ -1,4 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, VersionColumn, OneToMany } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, VersionColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm'
+import { State } from './state'
+import { City } from './city'
+import { Neighborhood } from './neighborhood'
 
 export const dateTransformer = {
   to: (value: string) => value,
@@ -42,6 +45,9 @@ export class UserTypeOrmEntity {
   @Column({ name: 'address_complement', nullable: true })
   addressComplement?: string
 
+  @Column({ name: 'address_state_id', nullable: true })
+  addressStateId?: string
+
   @Column({ name: 'address_neighborhood_id', nullable: true })
   addressNeighborhoodId?: string
 
@@ -60,7 +66,7 @@ export class UserTypeOrmEntity {
   @Column({ type: 'datetime', nullable: true, name: 'deleted_at' })
   deletedAt?: Date
 
-  @Column({ type: 'varchar', length: 20, default: 'ACTIVE' })
+  @Column({ type: 'varchar', length: 20, default: 'INACTIVE' })
   status!: string
 
   @VersionColumn()
@@ -68,4 +74,16 @@ export class UserTypeOrmEntity {
 
   @OneToMany('LoginTypeOrmEntity', 'user')
   logins?: unknown[]
+
+  @ManyToOne(() => State)
+  @JoinColumn({ name: 'address_state_id' })
+  addressState?: State
+
+  @ManyToOne(() => City)
+  @JoinColumn({ name: 'address_city_id' })
+  addressCity?: City
+
+  @ManyToOne(() => Neighborhood)
+  @JoinColumn({ name: 'address_neighborhood_id' })
+  addressNeighborhood?: Neighborhood
 }
