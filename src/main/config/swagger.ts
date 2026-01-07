@@ -64,6 +64,7 @@ export const swaggerConfig: FastifyDynamicSwaggerOptions = {
                 complement: { type: 'string', nullable: true },
                 neighborhoodId: { type: 'string', format: 'uuid' },
                 cityId: { type: 'string', format: 'uuid' },
+                stateId: { type: 'string', format: 'uuid' },
                 zipCode: { type: 'string' }
               },
               nullable: true
