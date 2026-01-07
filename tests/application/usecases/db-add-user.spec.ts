@@ -66,9 +66,9 @@ const makeSaveDomainEventRepository = (): SaveDomainEventRepository => {
 class GetOrCreateGeoEntityServiceSpy {
   params: AddressDTO | undefined
   result: GeoIdsDTO = {
-    stateId: 'any_state_id',
-    cityId: 'any_city_id',
-    neighborhoodId: 'any_neighborhood_id'
+    stateId: Id.create('550e8400-e29b-41d4-a716-446655440001'),
+    cityId: Id.create('550e8400-e29b-41d4-a716-446655440002'),
+    neighborhoodId: Id.create('550e8400-e29b-41d4-a716-446655440003')
   }
 
   async perform(dto: AddressDTO): Promise<GeoIdsDTO> {
@@ -191,8 +191,8 @@ describe('DbAddUser UseCase', () => {
       street: 'any_street',
       number: '123',
       zipCode: '12345678',
-      cityId: 'any_id',
-      neighborhoodId: 'any_id'
+      cityId: '550e8400-e29b-41d4-a716-446655440002',
+      neighborhoodId: '550e8400-e29b-41d4-a716-446655440003'
     }
     const executeSpy = jest.spyOn(getOrCreateGeoEntityServiceSpy, 'perform')
     await sut.add(userData)
@@ -206,8 +206,8 @@ describe('DbAddUser UseCase', () => {
       street: 'any_street',
       number: '123',
       zipCode: 'invalid', // invalid zip
-      cityId: 'any_id',
-      neighborhoodId: 'any_id'
+      cityId: '550e8400-e29b-41d4-a716-446655440002',
+      neighborhoodId: '550e8400-e29b-41d4-a716-446655440003'
     }
     const response = await sut.add(userData)
     expect(response).toBeInstanceOf(Error)
@@ -294,5 +294,25 @@ describe('DbAddUser UseCase', () => {
     userData.status = 'invalid_status'
     const response = await sut.add(userData)
     expect(response).toEqual(new InvalidUserStatusError())
+  })
+
+  test('Should convert stateId string to Id', async () => {
+    const { sut, addUserRepositoryStub } = makeSut()
+    const addSpy = jest.spyOn(addUserRepositoryStub, 'add')
+    const userData = makeFakeUserData()
+    userData.address = {
+      street: 'any_street',
+      number: '123',
+      zipCode: '12345678',
+      cityId: '550e8400-e29b-41d4-a716-446655440002',
+      neighborhoodId: '550e8400-e29b-41d4-a716-446655440003',
+      stateId: '550e8400-e29b-41d4-a716-446655440001'
+    }
+    await sut.add(userData)
+    expect(addSpy).toHaveBeenCalledWith(expect.objectContaining({
+      address: expect.objectContaining({
+        stateId: expect.objectContaining({ value: '550e8400-e29b-41d4-a716-446655440001' })
+      })
+    }))
   })
 })

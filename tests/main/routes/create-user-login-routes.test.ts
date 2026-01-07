@@ -9,6 +9,9 @@ import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
 
 import { PermissionTypeOrmEntity } from '@/infra/db/typeorm/entities/permission-entity'
 import { RoleTypeOrmEntity } from '@/infra/db/typeorm/entities/role-entity'
+import { State } from '@/infra/db/typeorm/entities/state'
+import { City } from '@/infra/db/typeorm/entities/city'
+import { Neighborhood } from '@/infra/db/typeorm/entities/neighborhood'
 
 const makeAccessToken = (role: string = 'LIBRARIAN'): string => {
   return jwt.sign({ id: 'any_id', role }, process.env.JWT_SECRET ?? 'secret')
@@ -23,7 +26,7 @@ describe('CreateUserLogin Routes', () => {
       database: ':memory:',
       dropSchema: true,
       synchronize: true,
-      entities: [LoginTypeOrmEntity, UserTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity]
+      entities: [LoginTypeOrmEntity, UserTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity, State, City, Neighborhood]
     })
     await setupApp()
     await app.ready()

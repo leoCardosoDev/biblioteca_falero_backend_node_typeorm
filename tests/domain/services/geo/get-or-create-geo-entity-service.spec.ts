@@ -127,9 +127,9 @@ describe('GetOrCreateGeoEntityService', () => {
       neighborhood: 'Any Neighborhood'
     })
     expect(result).toEqual({
-      stateId: STATE_ID,
-      cityId: CITY_ID,
-      neighborhoodId: NEIGHBORHOOD_ID
+      stateId: Id.create(STATE_ID),
+      cityId: Id.create(CITY_ID),
+      neighborhoodId: Id.create(NEIGHBORHOOD_ID)
     })
   })
 
@@ -167,7 +167,7 @@ describe('GetOrCreateGeoEntityService', () => {
     })
 
     expect(addSpy).toHaveBeenCalledWith('New City', STATE_ID)
-    expect(result.cityId).toBe(NEW_CITY_ID)
+    expect(result.cityId).toEqual(Id.create(NEW_CITY_ID))
   })
 
   test('Should add neighborhood if LoadNeighborhoodByNameAndCityRepository returns undefined', async () => {
@@ -182,6 +182,6 @@ describe('GetOrCreateGeoEntityService', () => {
     })
 
     expect(addSpy).toHaveBeenCalledWith('New Neighborhood', CITY_ID)
-    expect(result.neighborhoodId).toBe(NEW_NEIGHBORHOOD_ID)
+    expect(result.neighborhoodId).toEqual(Id.create(NEW_NEIGHBORHOOD_ID))
   })
 })

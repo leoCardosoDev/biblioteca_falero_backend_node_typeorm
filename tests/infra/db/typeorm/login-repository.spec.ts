@@ -1,5 +1,8 @@
 import { Repository, DataSource } from 'typeorm'
 import { TypeOrmHelper, LoginTypeOrmRepository, LoginTypeOrmEntity, UserTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity } from '@/infra'
+import { State } from '@/infra/db/typeorm/entities/state'
+import { City } from '@/infra/db/typeorm/entities/city'
+import { Neighborhood } from '@/infra/db/typeorm/entities/neighborhood'
 import { Id, Email, UserStatus } from '@/domain'
 
 describe('LoginTypeOrmRepository', () => {
@@ -11,7 +14,7 @@ describe('LoginTypeOrmRepository', () => {
       database: ':memory:',
       dropSchema: true,
       synchronize: true,
-      entities: [LoginTypeOrmEntity, UserTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity]
+      entities: [LoginTypeOrmEntity, UserTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity, State, City, Neighborhood]
     })
   })
 
@@ -76,7 +79,8 @@ describe('LoginTypeOrmRepository', () => {
       email: 'any_email@mail.com',
       rg: 'any_rg',
       cpf: 'any_cpf',
-      gender: 'male'
+      gender: 'male',
+      status: 'ACTIVE'
     })
     await userRepo.save(user)
     const account = await sut.loadByEmail('any_email@mail.com')

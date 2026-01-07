@@ -86,7 +86,7 @@ describe('LoadUsers Controller', () => {
         phone: undefined,
         status: 'ACTIVE',
         version: 1,
-        login: null
+        login: undefined
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440001',
@@ -98,7 +98,7 @@ describe('LoadUsers Controller', () => {
         phone: undefined,
         status: 'ACTIVE',
         version: 1,
-        login: null
+        login: undefined
       }
     ])
   })
@@ -124,8 +124,9 @@ describe('LoadUsers Controller', () => {
       address: Address.create({
         street: 'any_street',
         number: '123',
-        neighborhoodId: 'any_neighborhood',
-        cityId: 'any_city',
+        neighborhoodId: { value: 'any_neighborhood' } as Id,
+        cityId: { value: 'any_city' } as Id,
+        stateId: { value: 'any_state' } as Id,
         zipCode: '12345678'
       }) as Address
     }
@@ -138,6 +139,7 @@ describe('LoadUsers Controller', () => {
       complement: undefined,
       neighborhoodId: 'any_neighborhood',
       cityId: 'any_city',
+      stateId: 'any_state',
       zipCode: '12345678'
     })
   })

@@ -25,8 +25,9 @@ describe('UserMapper', () => {
         street: 'Any Street',
         number: '123',
         complement: 'Apt 1',
-        neighborhoodId: 'any_neighborhood_id',
-        cityId: 'any_city_id',
+        neighborhoodId: { value: 'any_neighborhood_id' } as Id,
+        cityId: { value: 'any_city_id' } as Id,
+        stateId: { value: 'any_state_id' } as Id,
         zipCode: '12345678'
       } as Address, // Mocking Address simply
       login: {
@@ -53,6 +54,7 @@ describe('UserMapper', () => {
         complement: 'Apt 1',
         neighborhoodId: 'any_neighborhood_id',
         cityId: 'any_city_id',
+        stateId: 'any_state_id',
         zipCode: '12345678'
       },
       login: {

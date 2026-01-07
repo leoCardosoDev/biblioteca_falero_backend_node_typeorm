@@ -4,6 +4,9 @@ import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
 import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
 import { RoleTypeOrmEntity } from '@/infra/db/typeorm/entities/role-entity'
 import { PermissionTypeOrmEntity } from '@/infra/db/typeorm/entities/permission-entity'
+import { State } from '@/infra/db/typeorm/entities/state'
+import { City } from '@/infra/db/typeorm/entities/city'
+import { Neighborhood } from '@/infra/db/typeorm/entities/neighborhood'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { Id } from '@/domain/value-objects/id'
 import { DataSource } from 'typeorm'
@@ -17,7 +20,7 @@ describe('SessionTypeOrmRepository', () => {
       database: ':memory:',
       dropSchema: true,
       synchronize: true,
-      entities: [SessionTypeOrmEntity, UserTypeOrmEntity, LoginTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity]
+      entities: [SessionTypeOrmEntity, UserTypeOrmEntity, LoginTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity, State, City, Neighborhood]
     })
   })
 

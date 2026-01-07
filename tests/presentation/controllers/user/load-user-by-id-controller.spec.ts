@@ -103,8 +103,9 @@ describe('LoadUserById Controller', () => {
         street: 'any_street',
         number: 'any_number',
         complement: 'any_complement',
-        neighborhoodId: 'any_neighborhood',
-        cityId: 'any_city',
+        neighborhoodId: { value: 'any_neighborhood' } as Id,
+        cityId: { value: 'any_city' } as Id,
+        stateId: { value: 'any_state' } as Id,
         zipCode: 'any_zipCode'
       }
     }
@@ -127,6 +128,7 @@ describe('LoadUserById Controller', () => {
         complement: 'any_complement',
         neighborhoodId: 'any_neighborhood',
         cityId: 'any_city',
+        stateId: 'any_state',
         zipCode: 'any_zipCode'
       },
       login: undefined

@@ -115,8 +115,9 @@ describe('UpdateUser Controller', () => {
         address: { // Valid Address
           street: 'updated_street',
           number: '456',
-          neighborhoodId: 'updated_neighborhood',
-          cityId: 'updated_city',
+          neighborhoodId: '550e8400-e29b-41d4-a716-446655440001',
+          cityId: '550e8400-e29b-41d4-a716-446655440002',
+          stateId: '550e8400-e29b-41d4-a716-446655440003',
           zipCode: '87654321'
         }
       }
@@ -131,8 +132,9 @@ describe('UpdateUser Controller', () => {
       address: Address.create({
         street: 'updated_street',
         number: '456',
-        neighborhoodId: 'updated_neighborhood',
-        cityId: 'updated_city',
+        neighborhoodId: Id.create('550e8400-e29b-41d4-a716-446655440001'),
+        cityId: Id.create('550e8400-e29b-41d4-a716-446655440002'),
+        stateId: Id.create('550e8400-e29b-41d4-a716-446655440003'),
         zipCode: '87654321'
       })
     })
@@ -265,8 +267,9 @@ describe('UpdateUser Controller', () => {
       address: Address.create({
         street: 'updated_street',
         number: '456',
-        neighborhoodId: 'updated_neighborhood',
-        cityId: 'updated_city',
+        neighborhoodId: { value: 'updated_neighborhood' } as Id,
+        cityId: { value: 'updated_city' } as Id,
+        stateId: { value: 'updated_state' } as Id,
         zipCode: '87654321'
       }) as Address
     }
@@ -283,6 +286,7 @@ describe('UpdateUser Controller', () => {
       complement: undefined,
       neighborhoodId: 'updated_neighborhood',
       cityId: 'updated_city',
+      stateId: 'updated_state',
       zipCode: '87654321'
     })
   })

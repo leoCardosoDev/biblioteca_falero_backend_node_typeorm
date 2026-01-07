@@ -63,13 +63,13 @@ describe('Geography Integration Flow', () => {
     expect(result1.neighborhoodId).toBeTruthy()
 
     // Verify DB
-    const cityInDb = await cityRepo.loadByNameAndState('Campinas', result1.stateId)
+    const cityInDb = await cityRepo.loadByNameAndState('Campinas', result1.stateId.value)
     expect(cityInDb).toBeTruthy()
-    expect(cityInDb?.id.value).toBe(result1.cityId)
+    expect(cityInDb?.id.value).toBe(result1.cityId.value)
 
-    const neighborhoodInDb = await neighborhoodRepo.loadByNameAndCity('Centro', result1.cityId)
+    const neighborhoodInDb = await neighborhoodRepo.loadByNameAndCity('Centro', result1.cityId.value)
     expect(neighborhoodInDb).toBeTruthy()
-    expect(neighborhoodInDb?.id.value).toBe(result1.neighborhoodId)
+    expect(neighborhoodInDb?.id.value).toBe(result1.neighborhoodId.value)
 
     // 2. Second Call: Should Return Existing
     const result2 = await sut.perform({
@@ -78,8 +78,8 @@ describe('Geography Integration Flow', () => {
       neighborhood: 'Centro'
     })
 
-    expect(result2.stateId).toBe(result1.stateId)
-    expect(result2.cityId).toBe(result1.cityId)
-    expect(result2.neighborhoodId).toBe(result1.neighborhoodId)
+    expect(result2.stateId.value).toBe(result1.stateId.value)
+    expect(result2.cityId.value).toBe(result1.cityId.value)
+    expect(result2.neighborhoodId.value).toBe(result1.neighborhoodId.value)
   })
 })
