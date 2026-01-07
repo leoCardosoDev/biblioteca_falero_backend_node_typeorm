@@ -30,7 +30,6 @@ export class CreateState1735000000000 implements MigrationInterface {
       true
     )
 
-    // Seed Data
     await queryRunner.query(`
       INSERT INTO state (id, name, uf) VALUES
       (uuid(), 'Acre', 'AC'),

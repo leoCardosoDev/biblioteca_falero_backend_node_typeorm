@@ -9,7 +9,6 @@ export class AddPowerLevelToRoles1767306000000 implements MigrationInterface {
       isNullable: false
     }))
 
-    // Seed data updates
     await queryRunner.query("UPDATE roles SET power_level = 100 WHERE slug = 'ADMIN'")
     await queryRunner.query("UPDATE roles SET power_level = 50 WHERE slug = 'LIBRARIAN'")
     await queryRunner.query("UPDATE roles SET power_level = 10 WHERE slug = 'PROFESSOR'")

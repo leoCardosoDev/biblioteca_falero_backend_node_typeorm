@@ -7,17 +7,16 @@ import { Rg } from '@/domain/value-objects/rg'
 import { Address } from '@/domain/value-objects/address'
 import { UserStatus } from '@/domain/value-objects/user-status'
 
-// Input for UseCase
 export type AddUserAddressInput = {
   street: string
   number: string
   complement?: string
   zipCode: string
   neighborhoodId?: string
-  neighborhood?: string // Name for resolution
+  neighborhood?: string 
   cityId?: string
-  city?: string // Name for resolution
-  state?: string // UF for resolution
+  city?: string 
+  state?: string 
 }
 
 export interface AddUserParams {
@@ -31,7 +30,6 @@ export interface AddUserParams {
   status: string
 }
 
-// Input for Repository (Strict)
 export interface AddUserRepoParams {
   id: Id
   name: Name

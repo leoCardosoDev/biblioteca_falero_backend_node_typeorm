@@ -37,7 +37,7 @@ export class RoleTypeOrmRepository implements LoadRoleBySlugRepository, LoadRole
     }))
 
     return Role.create({
-      id: Id.create(entity.id), // Assuming Id.create parses UUID string
+      id: Id.create(entity.id), 
       slug: entity.slug,
       description: entity.description,
       permissions,

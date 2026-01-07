@@ -5,7 +5,7 @@ export class LoadUsersController implements Controller {
   constructor(private readonly loadUsers: LoadUsers) { }
 
   async handle(_request: unknown): Promise<HttpResponse> {
-    console.log('DEBUG: LoadUsersController.handle called - checking version 123')
+    
     try {
       const users = await this.loadUsers.load()
       const serializedUsers = users.map(user => ({
@@ -33,6 +33,7 @@ export class LoadUsersController implements Controller {
       }))
       return ok(serializedUsers)
     } catch (error) {
+      
       return serverError(error as Error)
     }
   }

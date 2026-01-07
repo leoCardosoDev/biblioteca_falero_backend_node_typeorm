@@ -22,7 +22,6 @@ export class UpdateUserStatusController implements Controller {
         return badRequest(new MissingParamError('status'))
       }
 
-      // Strict check for now as we only support blocking
       if (status !== 'BLOCKED') {
         return badRequest(new InvalidParamError('status'))
       }

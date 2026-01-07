@@ -6,25 +6,25 @@ export class UpdateLoginSchema1767267753341 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         try {
             await queryRunner.query(`DROP INDEX \`UQ_230b925048540454c8b4c481e1c\` ON \`users\``);
-        } catch (_e) { /* ignore */ }
+        } catch (_e) { void _e }
         try {
             await queryRunner.query(`DROP INDEX \`UQ_97672ac88f789774dd47f7c8be3\` ON \`users\``);
-        } catch (_e) { /* ignore */ }
+        } catch (_e) { void _e }
         try {
             await queryRunner.query(`DROP INDEX \`UQ_5c5dcf2d3a6675ddbc6cd3afd55\` ON \`state\``);
-        } catch (_e) { /* ignore */ }
+        } catch (_e) { void _e }
         try {
             await queryRunner.query(`DROP INDEX \`IDX_SESSION_TOKEN_HASH\` ON \`user_sessions\``);
-        } catch (_e) { /* ignore */ }
+        } catch (_e) { void _e }
         try {
             await queryRunner.query(`DROP INDEX \`IDX_SESSION_USER_ID\` ON \`user_sessions\``);
-        } catch (_e) { /* ignore */ }
+        } catch (_e) { void _e }
         try {
             await queryRunner.query(`DROP INDEX \`uq_city_name_state\` ON \`city\``);
-        } catch (_e) { /* ignore */ }
+        } catch (_e) { void _e }
         try {
             await queryRunner.query(`DROP INDEX \`uq_neighborhood_name_city\` ON \`neighborhood\``);
-        } catch (_e) { /* ignore */ }
+        } catch (_e) { void _e }
         await queryRunner.query(`ALTER TABLE \`users\` DROP COLUMN \`role\``);
         await queryRunner.query(`ALTER TABLE \`users\` DROP COLUMN \`status\``);
         await queryRunner.query(`ALTER TABLE \`logins\` ADD \`status\` varchar(255) NULL`);
@@ -51,16 +51,16 @@ export class UpdateLoginSchema1767267753341 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE \`logins\` CHANGE \`role\` \`role\` varchar(255) NOT NULL`);
         try {
             await queryRunner.query(`CREATE UNIQUE INDEX \`IDX_d2dd8af8dc964bf1375377ae32\` ON \`city\` (\`name\`, \`state_id\`)`);
-        } catch (_e) { /* ignore */ }
+        } catch (_e) { void _e }
         try {
             await queryRunner.query(`CREATE UNIQUE INDEX \`IDX_58e79c3c54d8d023a38091a167\` ON \`neighborhood\` (\`name\`, \`city_id\`)`);
-        } catch (_e) { /* ignore */ }
+        } catch (_e) { void _e }
         try {
             await queryRunner.query(`ALTER TABLE \`city\` ADD CONSTRAINT \`FK_37ecd8addf395545dcb0242a593\` FOREIGN KEY (\`state_id\`) REFERENCES \`state\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        } catch (_e) { /* ignore */ }
+        } catch (_e) { void _e }
         try {
             await queryRunner.query(`ALTER TABLE \`neighborhood\` ADD CONSTRAINT \`FK_afa8388e34d9117a5ec01da4764\` FOREIGN KEY (\`city_id\`) REFERENCES \`city\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        } catch (_e) { /* ignore */ }
+        } catch (_e) { void _e }
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {

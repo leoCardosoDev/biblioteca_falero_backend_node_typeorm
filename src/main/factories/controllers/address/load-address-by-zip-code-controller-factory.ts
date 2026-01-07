@@ -13,7 +13,7 @@ import { Controller } from '@/presentation/protocols'
 import { HttpClient } from '@/application/protocols/http/http-client'
 
 export const makeLoadAddressByZipCodeController = (): Controller => {
-  // Geo Service Dependencies
+  
   const stateRepo = new StateTypeOrmRepository()
   const cityRepo = new CityTypeOrmRepository()
   const neighborhoodRepo = new NeighborhoodTypeOrmRepository()
@@ -26,15 +26,12 @@ export const makeLoadAddressByZipCodeController = (): Controller => {
     neighborhoodRepo
   )
 
-  // Address Gateway Dependencies
   const httpClient = new AxiosHttpClient()
   const viaCepGateway = new ViaCepAdapter(httpClient as unknown as HttpClient<ViaCepResponse>)
   const redisCache = new RedisCacheAdapter()
   const addressGateway = new CachedAddressGateway(viaCepGateway, redisCache)
 
-  // Service
   const addressResolutionService = new AddressResolutionService(addressGateway, geoService)
 
-  // Controller
   return new LoadAddressByZipCodeController(addressResolutionService)
 }

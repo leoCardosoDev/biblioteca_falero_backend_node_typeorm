@@ -8,9 +8,8 @@ export default async (app: FastifyInstance): Promise<void> => {
 
   const routesPath = join(__dirname, '../../main/routes')
   readdirSync(routesPath).map(async file => {
-    if (!file.endsWith('.map') && !file.includes('user-governance-routes')) { // Avoid double reg if we manual
-      // logic for auto load, but usually i prefer explicit given the explicit manual plan step
-      // Checking how other routes are loaded. 
+    if (!file.endsWith('.map') && !file.includes('user-governance-routes')) { 
+
       const route = require(`../routes/${file}`).default
       app.register(async (instance) => {
         await route(instance)

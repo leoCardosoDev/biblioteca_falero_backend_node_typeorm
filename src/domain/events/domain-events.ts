@@ -18,12 +18,11 @@ export class DomainEvents {
     if (events) {
       for (const event of events) {
         await repository.save(event)
-        // Here we could also trigger local handlers if needed
+        
       }
       this.markedAggregates.delete(aggregateId)
     }
   }
-
 
   public static clearMarkedAggregates(): void {
     this.markedAggregates.clear()

@@ -27,7 +27,7 @@ export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountBy
       updatedAt: new Date()
     })
     const saved = await repository.save(loginEntity)
-    // We need email to return Domain Login. 'data' has email.
+    
     const result = this.toDomain(saved, data.email)
     if (!result) {
       throw new Error('Failed to create login: data corruption detected after save')
@@ -76,7 +76,7 @@ export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountBy
 
   async updateRole(userId: string, roleId: string): Promise<void> {
     const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
-    // We update based on userId as per interface
+    
     await repository.update({ userId }, { roleId })
   }
 

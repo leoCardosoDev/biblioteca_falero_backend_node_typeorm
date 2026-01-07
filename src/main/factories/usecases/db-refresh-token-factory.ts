@@ -11,12 +11,12 @@ export const makeDbRefreshToken = (): RefreshToken => {
   const refreshTokenExpirationDays = parseInt(process.env.REFRESH_TOKEN_EXPIRATION_DAYS ?? '7', 10)
 
   return new DbRefreshToken(
-    sessionRepository,  // LoadSessionByTokenRepository
-    sessionRepository,  // LoadUserBySessionRepository
-    sessionRepository,  // InvalidateSessionRepository
-    sessionRepository,  // SaveSessionRepository
-    sha256Adapter,      // Hasher
-    jwtAdapter,         // Encrypter
+    sessionRepository,  
+    sessionRepository,  
+    sessionRepository,  
+    sessionRepository,  
+    sha256Adapter,      
+    jwtAdapter,         
     refreshTokenExpirationDays
   )
 }

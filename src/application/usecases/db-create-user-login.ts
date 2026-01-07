@@ -23,7 +23,7 @@ export class DbCreateUserLogin implements CreateUserLogin {
     }
 
     const { role: _, ...loginData } = data
-    // Default status to ACTIVE if not provided
+    
     const status = loginData.status ?? (UserStatus.create('INACTIVE') as UserStatus)
 
     const login = await this.addLoginRepository.add({

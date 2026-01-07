@@ -70,7 +70,6 @@ const users = [
 ]
 
 const run = async (): Promise<void> => {
-  console.log('🌱 Starting Consolidated Users Seed...')
 
   const config: DataSourceOptions = {
     type: 'mysql',
@@ -84,7 +83,6 @@ const run = async (): Promise<void> => {
   }
 
   await TypeOrmHelper.connect(config)
-  console.log('✅ Database connected')
 
   const userRepository = TypeOrmHelper.getRepository(UserTypeOrmEntity)
   const loginRepository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
@@ -97,19 +95,16 @@ const run = async (): Promise<void> => {
     if (!savedUser) {
       const user = userRepository.create(item.userData)
       savedUser = await userRepository.save(user)
-      console.log(`✅ User created: ${savedUser.name} (${item.loginData.role})`)
     } else {
-      console.log(`⚠️ User ${item.userData.email} already exists. Checking login...`)
+      void savedUser
     }
 
-    // Check if login exists
     const existingLogin = await loginRepository.findOne({ where: { userId: savedUser.id } })
 
     if (!existingLogin) {
-      console.log(`⚠️ Login missing for ${savedUser.email}. Creating...`)
+
       const hashedPassword = await bcryptAdapter.hash(item.loginData.password)
 
-      // Attempt to find existing role
       const role = await roleRepository.findOne({ where: { slug: item.loginData.role.toUpperCase() } })
 
       if (!role) {
@@ -124,21 +119,14 @@ const run = async (): Promise<void> => {
       })
 
       await loginRepository.save(login)
-      console.log(`✅ Login created for ${savedUser.email}`)
+
     } else {
-      console.log(`ℹ️ Login searching... found for ${savedUser.email}`)
-      // Optional: Update role if needed
-      // const role = await roleRepository.findOne({ where: { slug: item.loginData.role.toUpperCase() } })
-      // if (role && existingLogin.roleId !== role.id) {
-      //    existingLogin.roleId = role.id;
-      //    await loginRepository.save(existingLogin)
-      //    console.log(`🔄 Role updated for ${savedUser.email}`)
-      // }
+      void existingLogin
     }
   }
 
   await TypeOrmHelper.disconnect()
-  console.log('🎉 Consolidated Users Seed completed successfully!')
+
 }
 
 run().catch(console.error)

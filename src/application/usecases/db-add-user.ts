@@ -13,7 +13,6 @@ import { Cpf } from '@/domain/value-objects/cpf'
 import { Rg } from '@/domain/value-objects/rg'
 import { UserStatus } from '@/domain/value-objects/user-status'
 
-
 type AddressParams = AddUserParams['address']
 
 export class DbAddUser implements AddUser {
@@ -96,7 +95,7 @@ export class DbAddUser implements AddUser {
 
     if (this.shouldLookUpGeoEntities(addressData)) {
       const geoIds = await this.getOrCreateGeoEntityService.perform({
-        uf: addressData.state!, // Validated by shouldLookUpGeoEntities
+        uf: addressData.state!, 
         city: addressData.city!,
         neighborhood: addressData.neighborhood!
       })

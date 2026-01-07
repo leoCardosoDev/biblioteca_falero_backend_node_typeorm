@@ -56,9 +56,26 @@ export const swaggerConfig: FastifyDynamicSwaggerOptions = {
             phone: { type: 'string', nullable: true },
             status: { type: 'string', enum: ['ACTIVE', 'INACTIVE', 'BLOCKED'] },
             version: { type: 'integer', description: 'Optimistic Locking version' },
-            createdAt: { type: 'string', format: 'date-time' },
-            updatedAt: { type: 'string', format: 'date-time' },
-            deletedAt: { type: 'string', format: 'date-time', nullable: true }
+            address: {
+              type: 'object',
+              properties: {
+                street: { type: 'string' },
+                number: { type: 'string' },
+                complement: { type: 'string', nullable: true },
+                neighborhoodId: { type: 'string', format: 'uuid' },
+                cityId: { type: 'string', format: 'uuid' },
+                zipCode: { type: 'string' }
+              },
+              nullable: true
+            },
+            login: {
+              type: 'object',
+              properties: {
+                role: { type: 'string' },
+                status: { type: 'string' }
+              },
+              nullable: true
+            }
           }
         },
         Login: {

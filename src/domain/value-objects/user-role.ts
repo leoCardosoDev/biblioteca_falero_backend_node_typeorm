@@ -31,7 +31,7 @@ export class UserRole {
       case 'ADMIN': return 100
       case 'LIBRARIAN': return 50
       case 'PROFESSOR': return 10
-      default: return 0 // STUDENT
+      default: return 0 
     }
   }
   static restore(role: string): UserRole {

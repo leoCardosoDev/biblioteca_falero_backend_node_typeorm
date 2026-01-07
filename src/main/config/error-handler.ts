@@ -3,7 +3,6 @@ import { ZodError } from 'zod'
 import { AppError, UnauthorizedError, AccessDeniedError } from '@/presentation/errors'
 import { DomainError } from '@/domain/errors'
 
-
 interface FastifyValidationError extends Error {
   code: string
   validation: Array<{
@@ -60,7 +59,6 @@ export const errorHandler = (error: Error, request: FastifyRequest, reply: Fasti
     }))
   }
 
-  // Security: Do not expose stack traces or generic messages in production
   if (type === 'SYSTEM' && process.env.NODE_ENV === 'production') {
     message = 'Internal server error'
   } else if (type === 'SYSTEM') {

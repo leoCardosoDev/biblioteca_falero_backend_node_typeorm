@@ -18,10 +18,10 @@ import { Id, Email, Cpf, Name, Rg, Address, UserRole, UserStatus, UserStatusEnum
 
 export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmailRepository, LoadUserByCpfRepository, LoadUsersRepository, LoadUserByIdRepository, UpdateUserRepository, DeleteUserRepository, UpdateUserStatusRepository {
   private toUserModel(entity: UserTypeOrmEntity): UserModel {
-    // console.log('Converting entity:', entity.name)
+    
     let address: Address | undefined
     if (entity.addressStreet && entity.addressNumber && entity.addressNeighborhoodId && entity.addressCityId && entity.addressZipCode) {
-      // console.log('Restoring address')
+      
       address = Address.restore({
         street: entity.addressStreet,
         number: entity.addressNumber,
@@ -32,10 +32,8 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
       })
     }
 
-    // console.log('Restoring ID')
     const id = Id.restore(entity.id)
 
-    // console.log('Restoring User')
     return User.restore({
       id,
       name: Name.restore(entity.name),
@@ -66,7 +64,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
       addressNeighborhoodId: data.address?.neighborhoodId,
       addressCityId: data.address?.cityId,
       addressZipCode: data.address?.zipCode,
-      status: data.status.value // Ensure status is saved as string
+      status: data.status.value 
     })
     await userRepo.save(user)
     return this.toUserModel(user)
@@ -143,7 +141,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
     if (!user) {
       return null
     }
-    // Manual version check before saving (Fallback for when save() doesn't throw in specific driver configurations)
+    
     if (userData.version !== undefined && user.version !== userData.version) {
       throw new Error('OptimisticLockError: version mismatch')
     }

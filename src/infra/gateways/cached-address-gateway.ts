@@ -2,7 +2,7 @@ import { AddressDTO, AddressGateway } from '@/domain/gateways/address-gateway'
 import { CacheRepository } from '@/application/protocols/cache/cache-repository'
 
 export class CachedAddressGateway implements AddressGateway {
-  private readonly CACHE_TTL = 60 * 60 * 24 * 7 // 7 days
+  private readonly CACHE_TTL = 60 * 60 * 24 * 7
 
   constructor(
     private readonly source: AddressGateway,
@@ -19,15 +19,15 @@ export class CachedAddressGateway implements AddressGateway {
           return parsed
         }
       }
-    } catch {
-      // Cache miss or error (best-effort)
+    } catch (_error) {
+      void _error
     }
     const address = await this.source.getByZipCode(zipCode)
     if (address) {
       try {
         await this.cacheRepository.set(key, JSON.stringify(address), this.CACHE_TTL)
-      } catch {
-        // Cache write error (best-effort)
+      } catch (_error) {
+        void _error
       }
     }
     return address

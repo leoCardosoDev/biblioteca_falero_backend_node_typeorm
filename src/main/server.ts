@@ -22,7 +22,7 @@ TypeOrmHelper.connect({
     const { setupApp } = await import('./config/app')
     const app = await setupApp()
     app.listen({ port: Number(env.port), host: '0.0.0.0' }, () => {
-      console.log(`Server running at http://localhost:${env.port}`)
+      
     })
   })
   .catch(console.error)

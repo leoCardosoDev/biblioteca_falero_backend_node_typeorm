@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableColumn } 
 
 export class CreateAccessControl1767305000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Create Roles Table
+
     if (!(await queryRunner.hasTable('roles'))) {
       await queryRunner.createTable(new Table({
         name: 'roles',
@@ -16,7 +16,6 @@ export class CreateAccessControl1767305000000 implements MigrationInterface {
       }))
     }
 
-    // Create Permissions Table
     if (!(await queryRunner.hasTable('permissions'))) {
       await queryRunner.createTable(new Table({
         name: 'permissions',
@@ -30,7 +29,6 @@ export class CreateAccessControl1767305000000 implements MigrationInterface {
       }))
     }
 
-    // Create Role_Permissions Join Table
     if (!(await queryRunner.hasTable('role_permissions'))) {
       await queryRunner.createTable(new Table({
         name: 'role_permissions',
@@ -48,8 +46,6 @@ export class CreateAccessControl1767305000000 implements MigrationInterface {
       }))
     }
 
-    // Modify Logins Table
-    // Add role_id
     if (!(await queryRunner.hasColumn('logins', 'role_id'))) {
       await queryRunner.addColumn('logins', new TableColumn({
         name: 'role_id',
@@ -58,7 +54,6 @@ export class CreateAccessControl1767305000000 implements MigrationInterface {
       }))
     }
 
-    // Add ForeignKey
     try {
       await queryRunner.createForeignKey('logins', new TableForeignKey({
         columnNames: ['role_id'],
@@ -66,9 +61,8 @@ export class CreateAccessControl1767305000000 implements MigrationInterface {
         referencedTableName: 'roles',
         onDelete: 'SET NULL'
       }))
-    } catch (_e) { /* ignore */ }
+    } catch (_e) { void _e }
 
-    // Add user_id ForeignKey
     try {
       const table = await queryRunner.getTable('logins')
       const foreignKey = table?.foreignKeys.find(fk => fk.columnNames.indexOf('user_id') !== -1)
@@ -80,13 +74,8 @@ export class CreateAccessControl1767305000000 implements MigrationInterface {
           onDelete: 'CASCADE'
         }))
       }
-    } catch (_e) { /* ignore */ }
+    } catch (_e) { void _e }
 
-    // Drop old role column if strictly needed, or keep for backward compat and drop later.
-    // Spec says "Separated Login/User tables", implies clean break.
-    // I'll drop 'role' column.
-    // await queryRunner.dropColumn('logins', 'role') 
-    // Commented out to be safe for now, can drop in separate cleanup.
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

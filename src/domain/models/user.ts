@@ -62,7 +62,7 @@ export class User {
     const id = props.id ?? Id.generate()
     const user = new User(props, id)
 
-    const isNewUser = !props.id // If no ID passed, assuming new user creation
+    const isNewUser = !props.id 
     if (isNewUser) {
       DomainEvents.markAggregateForDispatch(user.id.value, {
         aggregateId: user.id.value,
@@ -83,6 +83,5 @@ export class User {
   }
 }
 
-// Keep for backward compatibility if needed, or alias
 export type UserModel = User
 

@@ -30,7 +30,6 @@ const roles = [
 ]
 
 const run = async (): Promise<void> => {
-  console.log('🌱 Starting Roles Seed...')
 
   const config: DataSourceOptions = {
     type: 'mysql',
@@ -44,7 +43,6 @@ const run = async (): Promise<void> => {
   }
 
   await TypeOrmHelper.connect(config)
-  console.log('✅ Database connected')
 
   const roleRepository = TypeOrmHelper.getRepository(RoleTypeOrmEntity)
 
@@ -52,11 +50,11 @@ const run = async (): Promise<void> => {
     let role = await roleRepository.findOne({ where: { slug: roleData.slug } })
 
     if (role) {
-      console.log(`🔄 Updating existing role: ${roleData.slug}`)
+      
       role.description = roleData.description
       role.powerLevel = roleData.powerLevel
     } else {
-      console.log(`➕ Creating new role: ${roleData.slug}`)
+      
       role = roleRepository.create(roleData)
     }
 
@@ -64,7 +62,7 @@ const run = async (): Promise<void> => {
   }
 
   await TypeOrmHelper.disconnect()
-  console.log('🎉 Roles Seed completed successfully!')
+  
 }
 
 run().catch(console.error)
