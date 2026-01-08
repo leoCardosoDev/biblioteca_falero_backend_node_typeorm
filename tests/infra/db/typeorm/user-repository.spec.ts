@@ -225,6 +225,25 @@ describe('UserTypeOrmRepository', () => {
     expect(updatedUser?.address?.street).toBe('New Street')
   })
 
+  test('Should update user status when passed in update method', async () => {
+    const sut = makeSut()
+    const user = await sut.add(makeUserData('status_update'))
+
+    // Using strict Value Object for status
+    const newStatus = UserStatus.create('INACTIVE') as UserStatus
+
+    const updatedUser = await sut.update({
+      id: user.id,
+      status: newStatus
+    })
+
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const dbUser = await userRepo.findOne({ where: { id: user.id.value } })
+
+    expect(dbUser?.status).toBe('INACTIVE')
+    expect(updatedUser?.status.value).toBe('INACTIVE')
+  })
+
   test('Should throw OptimisticLockError if version mismatch', async () => {
     const sut = makeSut()
     const user = await sut.add(makeUserData('opt_lock'))

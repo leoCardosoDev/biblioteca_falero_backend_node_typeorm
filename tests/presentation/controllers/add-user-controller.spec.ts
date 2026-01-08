@@ -81,7 +81,8 @@ const makeFakeRequest = (): HttpRequest => ({
       neighborhoodId: 'any_neighborhood_id',
       cityId: 'any_city_id',
       zipCode: '12345678'
-    }
+    },
+    status: 'ACTIVE'
   }
 })
 
@@ -113,7 +114,7 @@ describe('AddUser Controller', () => {
       rg: '123456789',
       gender: 'any_gender',
       phone: '123456789',
-      status: 'INACTIVE',
+      status: 'ACTIVE',
       address: {
         street: 'Any Street',
         number: '123',
@@ -141,6 +142,14 @@ describe('AddUser Controller', () => {
     expect(httpResponse.body).toBeInstanceOf(ServerError)
   })
 
+  test('Should return 500 if AddUser throws a non-Error object', async () => {
+    const { sut, addUserStub } = makeSut()
+    jest.spyOn(addUserStub, 'add').mockImplementationOnce(() => { throw 'some_string_error' })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toBeInstanceOf(ServerError)
+  })
+
   test('Should return 200 on success', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
@@ -163,6 +172,7 @@ describe('AddUser Controller', () => {
         stateId: 'any_state_id',
         zipCode: '12345678'
       },
+      createdAt: expect.any(String),
       login: undefined
     }))
   })
