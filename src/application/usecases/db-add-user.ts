@@ -4,7 +4,8 @@ import { User } from '@/domain/models/user'
 import { AddUserRepository } from '@/application/protocols/add-user-repository'
 import { LoadUserByEmailRepository } from '@/application/protocols/db/load-user-by-email-repository'
 import { LoadUserByCpfRepository } from '@/application/protocols/db/load-user-by-cpf-repository'
-import { EmailInUseError, CpfInUseError } from '@/domain/errors'
+import { EmailInUseError } from '@/domain/errors/email-in-use-error'
+import { CpfInUseError } from '@/domain/errors/cpf-in-use-error'
 import { DomainEvents, SaveDomainEventRepository } from '@/domain/events/domain-events'
 import { GetOrCreateGeoEntityService } from '@/domain/services/geo/get-or-create-geo-entity-service'
 import { Address } from '@/domain/value-objects/address'
@@ -50,7 +51,7 @@ export class DbAddUser implements AddUser {
       return error as Error
     }
 
-    const statusOrError = UserStatus.create(userData.status)
+    const statusOrError = UserStatus.create(userData.status || 'ACTIVE')
     if (statusOrError instanceof Error) {
       return statusOrError
     }
@@ -127,23 +128,9 @@ export class DbAddUser implements AddUser {
       stateIdResult = geoIds.stateId
     }
 
-    // Strict validation before Domain creation to avoid "any" cast
-    // Address.create requires these to be defined. If they are undefined, we pass them as undefined 
-    // and let domain return Error (InvalidAddressError: ... required).
-    // However, TS complains if we pass undefined to a type explicitly expecting Id.
-    // So we cast to `unknown as Id` ONLY if we are sure we want to delegate validation to Domain,
-    // OR we return an error early here.
-    // Better approach: Let strict types guide us. 
-    // AddressProps says they are Id.
-
-    // We cannot pass 'undefined' to 'Id'.
     if (!cityIdResult || !neighborhoodIdResult || !stateIdResult) {
-      // If we miss any ID, we try to create Address with missing props to let it throw its specific error,
-      // OR we return a generic invalid address error here.
-      // Given Address.create validation logic:
-      // if (!props.cityId) return new InvalidAddressError('cityId is required')
-      // So it handles falsy values. We just need to trick TS to let us pass undefined for testing/validation path.
-
+      // Allow domain validation to handle missing IDs by passing explicit params
+      // Casting to unknown as Id to bypass TS check BUT domain will validate
       return Address.create({
         street: addressData.street,
         number: addressData.number,

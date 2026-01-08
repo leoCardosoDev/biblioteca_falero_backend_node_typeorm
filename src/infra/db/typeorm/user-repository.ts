@@ -11,7 +11,15 @@ import { UpdateUserParams } from '@/domain/usecases/update-user'
 import { User, UserModel } from '@/domain/models/user'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
-import { Id, Email, Cpf, Name, Rg, Address, UserStatus, UserStatusEnum, UserRole } from '@/domain/value-objects'
+import { Id } from '@/domain/value-objects/id'
+import { Email } from '@/domain/value-objects/email'
+import { Cpf } from '@/domain/value-objects/cpf'
+import { Name } from '@/domain/value-objects/name'
+import { Rg } from '@/domain/value-objects/rg'
+import { Address } from '@/domain/value-objects/address'
+import { UserStatus } from '@/domain/value-objects/user-status'
+import { UserStatusEnum } from '@/domain/value-objects/user-status'
+import { UserRole } from '@/domain/value-objects/user-role'
 
 export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmailRepository, LoadUserByCpfRepository, LoadUsersRepository, LoadUserByIdRepository, UpdateUserRepository, DeleteUserRepository, UpdateUserStatusRepository {
   private toUserModel(entity: UserTypeOrmEntity): UserModel {
@@ -50,6 +58,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
       phone: entity.phone,
       address,
       status: UserStatus.restore(entity.status),
+      createdAt: entity.createdAt,
       deletedAt: entity.deletedAt,
       version: entity.version,
       login
@@ -157,6 +166,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
       userEntity.addressStateId = userData.address.stateId?.value
       userEntity.addressZipCode = userData.address.zipCode
     }
+    if (userData.status) userEntity.status = userData.status.value
 
     await userRepo.save(userEntity)
     return this.toUserModel(userEntity)

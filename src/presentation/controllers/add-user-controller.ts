@@ -14,7 +14,7 @@ export class AddUserController implements Controller {
       if (error) {
         return badRequest(error)
       }
-      const { name, email, rg, cpf, gender, phone, address } = httpRequest.body as {
+      const { name, email, rg, cpf, gender, phone, address, status } = httpRequest.body as {
         name: string
         email: string
         rg: string
@@ -22,17 +22,11 @@ export class AddUserController implements Controller {
         gender: string
         phone?: string
         address?: AddUserAddressInput
+        status: string
       }
 
       const userOrError = await this.addUser.add({
-        name,
-        email,
-        rg,
-        cpf,
-        gender,
-        phone,
-        address,
-        status: 'INACTIVE'
+        name, email, rg, cpf, gender, phone, address, status
       })
 
       if (userOrError instanceof Error) {
@@ -42,7 +36,12 @@ export class AddUserController implements Controller {
         return forbidden(userOrError)
       }
       return ok(UserMapper.toDTO(userOrError))
+      // return ok({})
     } catch (error) {
+      console.error('ADD USER CONTROLLER ERROR:', error)
+      if (error instanceof Error) {
+        console.error('STACK:', error.stack)
+      }
       return serverError(error as Error)
     }
   }

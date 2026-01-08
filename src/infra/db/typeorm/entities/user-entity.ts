@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { State } from './state'
 import { City } from './city'
 import { Neighborhood } from './neighborhood'
+import { LoginTypeOrmEntity } from './login-entity'
 
 export const dateTransformer = {
   to: (value: string) => value,
@@ -72,8 +73,8 @@ export class UserTypeOrmEntity {
   @VersionColumn()
   version!: number
 
-  @OneToMany('LoginTypeOrmEntity', 'user')
-  logins?: unknown[]
+  @OneToMany(() => LoginTypeOrmEntity, (login) => login.user)
+  logins?: LoginTypeOrmEntity[]
 
   @ManyToOne(() => State)
   @JoinColumn({ name: 'address_state_id' })

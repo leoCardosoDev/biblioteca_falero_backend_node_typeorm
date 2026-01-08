@@ -13,7 +13,7 @@ import { Controller } from '@/presentation/protocols'
 import { HttpClient } from '@/application/protocols/http/http-client'
 
 export const makeLoadAddressByZipCodeController = (): Controller => {
-  
+
   const stateRepo = new StateTypeOrmRepository()
   const cityRepo = new CityTypeOrmRepository()
   const neighborhoodRepo = new NeighborhoodTypeOrmRepository()
@@ -31,7 +31,7 @@ export const makeLoadAddressByZipCodeController = (): Controller => {
   const redisCache = new RedisCacheAdapter()
   const addressGateway = new CachedAddressGateway(viaCepGateway, redisCache)
 
-  const addressResolutionService = new AddressResolutionService(addressGateway, geoService)
+  const addressResolutionService = new AddressResolutionService(addressGateway, geoService, redisCache)
 
   return new LoadAddressByZipCodeController(addressResolutionService)
 }

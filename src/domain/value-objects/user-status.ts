@@ -1,4 +1,4 @@
-import { InvalidUserStatusError } from '@/domain/errors'
+import { InvalidUserStatusError } from '@/domain/errors/invalid-user-status-error'
 
 export enum UserStatusEnum {
   ACTIVE = 'ACTIVE',

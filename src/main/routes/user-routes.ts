@@ -22,6 +22,7 @@ const userSchema = {
     phone: { type: 'string' },
     status: { type: 'string', enum: ['ACTIVE', 'INACTIVE', 'BLOCKED'] },
     version: { type: 'integer' },
+    createdAt: { type: 'string', format: 'date-time' },
     login: {
       type: 'object',
       properties: {

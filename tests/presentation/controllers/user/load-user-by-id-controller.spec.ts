@@ -21,7 +21,8 @@ const makeFakeUser = (): UserModel => ({
   cpf: Cpf.create('529.982.247-25'),
   gender: 'male',
   status: UserStatus.create('ACTIVE') as UserStatus,
-  version: 1
+  version: 1,
+  createdAt: new Date('2026-01-08T22:00:00.000Z')
 })
 
 const fakeUserById = makeFakeUser()
@@ -90,6 +91,7 @@ describe('LoadUserById Controller', () => {
       phone: undefined,
       status: 'ACTIVE',
       version: 1,
+      createdAt: '2026-01-08T22:00:00.000Z',
       address: undefined,
       login: undefined
     })
@@ -131,6 +133,7 @@ describe('LoadUserById Controller', () => {
         stateId: 'any_state',
         zipCode: 'any_zipCode'
       },
+      createdAt: '2026-01-08T22:00:00.000Z',
       login: undefined
     })
   })
@@ -161,7 +164,8 @@ describe('LoadUserById Controller', () => {
       login: {
         role: 'LIBRARIAN',
         status: 'ACTIVE'
-      }
+      },
+      createdAt: '2026-01-08T22:00:00.000Z'
     })
   })
 

@@ -19,6 +19,7 @@ export type UserProps = {
   phone?: string
   address?: Address
   status: UserStatus
+  createdAt?: Date
   deletedAt?: Date
   login?: {
     role: UserRole
@@ -37,6 +38,7 @@ export class User {
   public readonly phone?: string
   public readonly address?: Address
   public readonly status: UserStatus
+  public readonly createdAt?: Date
   public readonly deletedAt?: Date
   public readonly login?: {
     role: UserRole
@@ -54,6 +56,7 @@ export class User {
     this.phone = props.phone
     this.address = props.address
     this.status = props.status
+    this.createdAt = props.createdAt
     this.deletedAt = props.deletedAt
     this.login = props.login
   }
@@ -62,7 +65,7 @@ export class User {
     const id = props.id ?? Id.generate()
     const user = new User(props, id)
 
-    const isNewUser = !props.id 
+    const isNewUser = !props.id
     if (isNewUser) {
       DomainEvents.markAggregateForDispatch(user.id.value, {
         aggregateId: user.id.value,
