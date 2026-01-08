@@ -86,6 +86,7 @@ describe('LoadUsers Controller', () => {
         phone: undefined,
         status: 'ACTIVE',
         version: 1,
+        createdAt: expect.any(String),
         login: undefined
       },
       {
@@ -98,6 +99,7 @@ describe('LoadUsers Controller', () => {
         phone: undefined,
         status: 'ACTIVE',
         version: 1,
+        createdAt: expect.any(String),
         login: undefined
       }
     ])

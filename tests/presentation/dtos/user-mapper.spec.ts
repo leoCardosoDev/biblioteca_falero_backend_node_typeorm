@@ -21,6 +21,7 @@ describe('UserMapper', () => {
       phone: '123456789',
       status: UserStatus.create('ACTIVE') as UserStatus,
       version: 1,
+      createdAt: new Date('2026-01-01T10:00:00Z'),
       address: {
         street: 'Any Street',
         number: '123',
@@ -48,6 +49,7 @@ describe('UserMapper', () => {
       phone: '123456789',
       status: 'ACTIVE',
       version: 1,
+      createdAt: '2026-01-01T10:00:00.000Z',
       address: {
         street: 'Any Street',
         number: '123',
@@ -87,6 +89,7 @@ describe('UserMapper', () => {
       gender: 'male',
       status: 'ACTIVE',
       version: 1,
+      createdAt: expect.any(String),
       phone: undefined,
       address: undefined,
       login: undefined

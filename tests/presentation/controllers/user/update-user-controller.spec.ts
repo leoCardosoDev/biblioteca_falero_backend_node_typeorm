@@ -153,6 +153,27 @@ describe('UpdateUser Controller', () => {
     }))
   })
 
+  test('Should call UpdateUser with status', async () => {
+    const { sut, updateUserStub } = makeSut()
+    const updateSpy = jest.spyOn(updateUserStub, 'update')
+    await sut.handle({
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { status: 'BLOCKED' }
+    })
+    expect(updateSpy).toHaveBeenCalledWith(expect.objectContaining({
+      status: UserStatus.create('BLOCKED')
+    }))
+  })
+
+  test('Should return 400 if status is invalid', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { status: 'invalid_status' }
+    })
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
   test('Should return 200 on success', async () => {
     const { sut } = makeSut()
     const httpRequest = {
@@ -169,7 +190,8 @@ describe('UpdateUser Controller', () => {
       cpf: '52998224725',
       gender: 'male',
       status: 'ACTIVE',
-      version: 1
+      version: 1,
+      createdAt: expect.any(String)
     })
   })
 

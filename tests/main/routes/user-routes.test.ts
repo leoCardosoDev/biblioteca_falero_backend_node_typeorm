@@ -221,7 +221,8 @@ describe('User Routes', () => {
         }
       })
       if (response.statusCode !== 200) {
-        console.log('DEBUG FAIL:', JSON.stringify(response.json(), null, 2))
+        console.error('DEBUG FAIL:', JSON.stringify(response.json(), null, 2))
+        throw new Error(`DEBUG FAIL: ${JSON.stringify(response.json(), null, 2)}`)
       }
       expect(response.statusCode).toBe(200)
       const body = response.json()

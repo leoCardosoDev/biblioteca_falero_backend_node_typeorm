@@ -5,6 +5,7 @@ import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { Address } from '@/domain/value-objects/address'
+import { UserStatus } from '@/domain/value-objects/user-status'
 
 export type UpdateUserParams = {
   id: Id
@@ -15,6 +16,7 @@ export type UpdateUserParams = {
   gender?: string
   phone?: string
   address?: Address
+  status?: UserStatus
   version?: number
 }
 
