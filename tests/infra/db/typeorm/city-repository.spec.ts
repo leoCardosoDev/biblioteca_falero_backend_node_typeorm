@@ -72,4 +72,22 @@ describe('CityTypeOrmRepository', () => {
 
     expect(city).toBeUndefined()
   })
+
+  test('Should return a city on loadById success', async () => {
+    const sut = makeSut()
+    const state = await makeState()
+    const addedCity = await sut.add('Any City', state.id)
+
+    const city = await sut.loadById(addedCity.id.value)
+
+    expect(city).toBeTruthy()
+    expect(city?.id.value).toBe(addedCity.id.value)
+    expect(city?.name).toBe('Any City')
+  })
+
+  test('Should return undefined if loadById finds nothing', async () => {
+    const sut = makeSut()
+    const city = await sut.loadById('550e8400-e29b-41d4-a716-446655440000')
+    expect(city).toBeUndefined()
+  })
 })

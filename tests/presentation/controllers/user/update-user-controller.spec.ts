@@ -307,8 +307,11 @@ describe('UpdateUser Controller', () => {
       number: '456',
       complement: undefined,
       neighborhoodId: 'updated_neighborhood',
+      neighborhood: '',
       cityId: 'updated_city',
+      city: '',
       stateId: 'updated_state',
+      state: '',
       zipCode: '87654321'
     })
   })

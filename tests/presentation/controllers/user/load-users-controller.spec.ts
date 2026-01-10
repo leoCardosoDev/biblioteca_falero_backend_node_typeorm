@@ -140,8 +140,11 @@ describe('LoadUsers Controller', () => {
       number: '123',
       complement: undefined,
       neighborhoodId: 'any_neighborhood',
+      neighborhood: '',
       cityId: 'any_city',
+      city: '',
       stateId: 'any_state',
+      state: '',
       zipCode: '12345678'
     })
   })
