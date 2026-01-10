@@ -12,9 +12,10 @@ import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { UserStatus } from '@/domain/value-objects/user-status'
 import { DomainEvents, SaveDomainEventRepository } from '@/domain/events/domain-events'
-import { GetOrCreateGeoEntityService, GeoIdsDTO, AddressDTO } from '@/domain/services/geo/get-or-create-geo-entity-service'
 import { InvalidNameError, InvalidEmailError, InvalidRgError, InvalidUserStatusError } from '@/domain/errors'
 import { InvalidCpfError } from '@/domain/errors/invalid-cpf-error'
+import { AddressResolutionProtocol } from '@/application/services/address/address-resolution-service'
+import { Address } from '@/domain/value-objects/address'
 
 const makeFakeUser = (): User => User.create({
   id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
@@ -63,18 +64,20 @@ const makeSaveDomainEventRepository = (): SaveDomainEventRepository => {
   return new SaveDomainEventRepositoryStub()
 }
 
-class GetOrCreateGeoEntityServiceSpy {
-  params: AddressDTO | undefined
-  result: GeoIdsDTO = {
-    stateId: Id.create('550e8400-e29b-41d4-a716-446655440001'),
-    cityId: Id.create('550e8400-e29b-41d4-a716-446655440002'),
-    neighborhoodId: Id.create('550e8400-e29b-41d4-a716-446655440003')
+const makeAddressResolutionService = (): AddressResolutionProtocol => {
+  class AddressResolutionServiceStub implements AddressResolutionProtocol {
+    async resolve(_addressData: AddUserParams['address']): Promise<Address | undefined | Error> {
+      return Promise.resolve(Address.create({
+        street: 'any_street',
+        number: '123',
+        zipCode: '12345678',
+        neighborhoodId: Id.create('550e8400-e29b-41d4-a716-446655440003'),
+        cityId: Id.create('550e8400-e29b-41d4-a716-446655440002'),
+        stateId: Id.create('550e8400-e29b-41d4-a716-446655440001')
+      }))
+    }
   }
-
-  async perform(dto: AddressDTO): Promise<GeoIdsDTO> {
-    this.params = dto
-    return this.result
-  }
+  return new AddressResolutionServiceStub()
 }
 
 interface SutTypes {
@@ -83,7 +86,7 @@ interface SutTypes {
   loadUserByEmailRepositoryStub: LoadUserByEmailRepository
   loadUserByCpfRepositoryStub: LoadUserByCpfRepository
   saveDomainEventRepositoryStub: SaveDomainEventRepository
-  getOrCreateGeoEntityServiceSpy: GetOrCreateGeoEntityServiceSpy
+  addressResolutionServiceStub: AddressResolutionProtocol
 }
 
 const makeSut = (): SutTypes => {
@@ -91,13 +94,13 @@ const makeSut = (): SutTypes => {
   const loadUserByEmailRepositoryStub = makeLoadUserByEmailRepository()
   const loadUserByCpfRepositoryStub = makeLoadUserByCpfRepository()
   const saveDomainEventRepositoryStub = makeSaveDomainEventRepository()
-  const getOrCreateGeoEntityServiceSpy = new GetOrCreateGeoEntityServiceSpy()
+  const addressResolutionServiceStub = makeAddressResolutionService()
   const sut = new DbAddUser(
     addUserRepositoryStub,
     loadUserByEmailRepositoryStub,
     loadUserByCpfRepositoryStub,
     saveDomainEventRepositoryStub,
-    getOrCreateGeoEntityServiceSpy as unknown as GetOrCreateGeoEntityService
+    addressResolutionServiceStub
   )
   return {
     sut,
@@ -105,7 +108,7 @@ const makeSut = (): SutTypes => {
     loadUserByEmailRepositoryStub,
     loadUserByCpfRepositoryStub,
     saveDomainEventRepositoryStub,
-    getOrCreateGeoEntityServiceSpy
+    addressResolutionServiceStub
   }
 }
 
@@ -165,53 +168,35 @@ describe('DbAddUser UseCase', () => {
     await expect(promise).rejects.toThrow()
   })
 
-  test('Should call GetOrCreateGeoEntityService if address is provided without IDs', async () => {
-    const { sut, getOrCreateGeoEntityServiceSpy } = makeSut()
+  test('Should call AddressResolutionService with correct values', async () => {
+    const { sut, addressResolutionServiceStub } = makeSut()
+    const resolveSpy = jest.spyOn(addressResolutionServiceStub, 'resolve')
     const userData = makeFakeUserData()
     userData.address = {
       street: 'any_street',
       number: '123',
-      zipCode: '12345678',
-      city: 'any_city',
-      neighborhood: 'any_neighborhood',
-      state: 'SP'
+      zipCode: '12345678'
     }
     await sut.add(userData)
-    expect(getOrCreateGeoEntityServiceSpy.params).toEqual({
-      uf: 'SP',
-      city: 'any_city',
-      neighborhood: 'any_neighborhood'
-    })
+    expect(resolveSpy).toHaveBeenCalledWith(userData.address)
   })
 
-  test('Should NOT call GetOrCreateGeoEntityService if address has IDs', async () => {
-    const { sut, getOrCreateGeoEntityServiceSpy } = makeSut()
+  test('Should return undefined address if AddressResolutionService returns undefined', async () => {
+    const { sut, addressResolutionServiceStub } = makeSut()
+    jest.spyOn(addressResolutionServiceStub, 'resolve').mockReturnValueOnce(Promise.resolve(undefined))
     const userData = makeFakeUserData()
-    userData.address = {
-      street: 'any_street',
-      number: '123',
-      zipCode: '12345678',
-      cityId: '550e8400-e29b-41d4-a716-446655440002',
-      neighborhoodId: '550e8400-e29b-41d4-a716-446655440003'
-    }
-    const executeSpy = jest.spyOn(getOrCreateGeoEntityServiceSpy, 'perform')
-    await sut.add(userData)
-    expect(executeSpy).not.toHaveBeenCalled()
+    const result = await sut.add(userData) as User
+    expect(result.address).toBeUndefined()
   })
 
-  test('Should return Error if Address creation fails (e.g. invalid zip)', async () => {
-    const { sut } = makeSut()
+  test('Should return Error if AddressResolutionService returns Error', async () => {
+    const { sut, addressResolutionServiceStub } = makeSut()
+    jest.spyOn(addressResolutionServiceStub, 'resolve').mockReturnValueOnce(Promise.resolve(new Error('Address Error')))
     const userData = makeFakeUserData()
-    userData.address = {
-      street: 'any_street',
-      number: '123',
-      zipCode: 'invalid', // invalid zip
-      cityId: '550e8400-e29b-41d4-a716-446655440002',
-      neighborhoodId: '550e8400-e29b-41d4-a716-446655440003'
-    }
-    const response = await sut.add(userData)
-    expect(response).toBeInstanceOf(Error)
+    const result = await sut.add(userData)
+    expect(result).toEqual(new Error('Address Error'))
   })
+
 
   test('Should call DomainEvents with correct values', async () => {
     const { sut, saveDomainEventRepositoryStub } = makeSut()
@@ -238,22 +223,6 @@ describe('DbAddUser UseCase', () => {
     const account = await sut.add(makeFakeUserData()) as User
     expect(account).toBeInstanceOf(User)
     expect(account.email.value).toEqual('valid_email@mail.com')
-  })
-
-  test('Should return Error if Address has no IDs and no Names (GeoService skipped)', async () => {
-    const { sut, getOrCreateGeoEntityServiceSpy } = makeSut()
-    const userData = makeFakeUserData()
-    userData.address = {
-      street: 'any_street',
-      number: '123',
-      zipCode: '12345678',
-      // No IDs, No Names
-    } as AddUserParams['address']
-    const executeSpy = jest.spyOn(getOrCreateGeoEntityServiceSpy, 'perform')
-    const response = await sut.add(userData)
-    expect(executeSpy).not.toHaveBeenCalled()
-    // It should fail because neighborhoodId is required and become ''
-    expect(response).toBeInstanceOf(Error)
   })
 
   test('Should return InvalidParamError if name is invalid', async () => {
@@ -294,25 +263,5 @@ describe('DbAddUser UseCase', () => {
     userData.status = 'invalid_status'
     const response = await sut.add(userData)
     expect(response).toEqual(new InvalidUserStatusError())
-  })
-
-  test('Should convert stateId string to Id', async () => {
-    const { sut, addUserRepositoryStub } = makeSut()
-    const addSpy = jest.spyOn(addUserRepositoryStub, 'add')
-    const userData = makeFakeUserData()
-    userData.address = {
-      street: 'any_street',
-      number: '123',
-      zipCode: '12345678',
-      cityId: '550e8400-e29b-41d4-a716-446655440002',
-      neighborhoodId: '550e8400-e29b-41d4-a716-446655440003',
-      stateId: '550e8400-e29b-41d4-a716-446655440001'
-    }
-    await sut.add(userData)
-    expect(addSpy).toHaveBeenCalledWith(expect.objectContaining({
-      address: expect.objectContaining({
-        stateId: expect.objectContaining({ value: '550e8400-e29b-41d4-a716-446655440001' })
-      })
-    }))
   })
 })

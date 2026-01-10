@@ -8,6 +8,14 @@ import { StateTypeOrmRepository } from '@/infra/db/typeorm/state-repository'
 import { CityTypeOrmRepository } from '@/infra/db/typeorm/city-repository'
 import { NeighborhoodTypeOrmRepository } from '@/infra/db/typeorm/neighborhood-repository'
 import { GetOrCreateGeoEntityService } from '@/domain/services/geo/get-or-create-geo-entity-service'
+import { AddressResolutionService } from '@/application/services/address/address-resolution-service'
+
+import { AxiosHttpClient } from '@/infra/http/axios-http-client'
+import { ViaCepAdapter } from '@/infra/gateways/via-cep-adapter'
+import { HttpClient } from '@/application/protocols/http/http-client'
+import { ViaCepResponse } from '@/infra/gateways/via-cep-adapter'
+import { RedisCacheAdapter } from '@/infra/cache/redis-cache-adapter'
+import { CachedAddressGateway } from '@/infra/gateways/cached-address-gateway'
 
 export const makeAddUserController = (): Controller => {
   const userTypeOrmRepository = new UserTypeOrmRepository()
@@ -24,12 +32,19 @@ export const makeAddUserController = (): Controller => {
     neighborhoodRepo
   )
 
+  const httpClient = new AxiosHttpClient()
+  const viaCepGateway = new ViaCepAdapter(httpClient as unknown as HttpClient<ViaCepResponse>)
+  const redisCache = new RedisCacheAdapter()
+  const addressGateway = new CachedAddressGateway(viaCepGateway, redisCache)
+
+  const addressResolutionService = new AddressResolutionService(getOrCreateGeoEntityService, addressGateway)
+
   const dbAddUser = new DbAddUser(
     userTypeOrmRepository,
     userTypeOrmRepository,
     userTypeOrmRepository,
     domainEventRepository,
-    getOrCreateGeoEntityService
+    addressResolutionService
   )
   return new AddUserController(makeAddUserValidation(), dbAddUser)
 }

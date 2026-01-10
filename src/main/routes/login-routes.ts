@@ -3,6 +3,7 @@ import { adaptRoute } from '@/main/adapters/fastify-route-adapter'
 import { errorSchema } from '@/main/config/error-schema'
 import { makeLoginController } from '@/main/factories/login/login-controller-factory'
 import { makeRefreshTokenController } from '@/main/factories/login/refresh-token-controller-factory'
+import { makeLogoutController } from '@/main/factories/login/logout-controller-factory'
 
 const loginSchema = {
   tags: ['Auth'],
@@ -54,6 +55,26 @@ const refreshTokenSchema = {
   }
 }
 
+const logoutSchema = {
+  tags: ['Auth'],
+  summary: 'User logout',
+  description: 'Invalidates a user session using a refresh token',
+  body: {
+    type: 'object',
+    required: ['refreshToken'],
+    properties: {
+      refreshToken: { type: 'string', description: 'JWT refresh token to invalidate' }
+    }
+  },
+  response: {
+    204: {
+      type: 'null',
+      description: 'Successful logout'
+    },
+    400: errorSchema
+  }
+}
+
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.post('/login', {
     schema: loginSchema,
@@ -68,4 +89,8 @@ export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.post('/refresh-token', {
     schema: refreshTokenSchema
   }, adaptRoute(makeRefreshTokenController()))
+
+  fastify.post('/logout', {
+    schema: logoutSchema
+  }, adaptRoute(makeLogoutController()))
 }

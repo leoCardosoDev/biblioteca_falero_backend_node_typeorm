@@ -84,6 +84,40 @@ export class User {
   static restore(props: UserProps, id: Id): User {
     return new User(props, id)
   }
+
+  changeAddress(address: Address): User {
+    return new User({
+      name: this.name,
+      email: this.email,
+      rg: this.rg,
+      cpf: this.cpf,
+      gender: this.gender,
+      version: this.version,
+      phone: this.phone,
+      address: address,
+      status: this.status,
+      createdAt: this.createdAt,
+      deletedAt: this.deletedAt,
+      login: this.login
+    }, this.id)
+  }
+
+  changeName(name: Name): User {
+    return new User({
+      name: name,
+      email: this.email,
+      rg: this.rg,
+      cpf: this.cpf,
+      gender: this.gender,
+      version: this.version,
+      phone: this.phone,
+      address: this.address,
+      status: this.status,
+      createdAt: this.createdAt,
+      deletedAt: this.deletedAt,
+      login: this.login
+    }, this.id)
+  }
 }
 
 export type UserModel = User
