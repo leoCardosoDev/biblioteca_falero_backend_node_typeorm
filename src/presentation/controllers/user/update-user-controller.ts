@@ -74,8 +74,11 @@ export class UpdateUserController implements Controller {
           complement: rawAddr.complement as string,
           zipCode: rawAddr.zipCode as string,
           neighborhoodId: rawAddr.neighborhoodId ? Id.create(rawAddr.neighborhoodId as string) : undefined!,
+          neighborhood: rawAddr.neighborhood as string,
           cityId: rawAddr.cityId ? Id.create(rawAddr.cityId as string) : undefined!,
-          stateId: rawAddr.stateId ? Id.create(rawAddr.stateId as string) : undefined!
+          city: rawAddr.city as string,
+          stateId: rawAddr.stateId ? Id.create(rawAddr.stateId as string) : undefined!,
+          state: rawAddr.state as string
         })
         if (addressVO instanceof Error) return badRequest(addressVO)
         updateData.address = addressVO
