@@ -1,166 +1,231 @@
 import { AddressResolutionService } from '@/application/services/address/address-resolution-service'
-import { AddressGateway, AddressDTO } from '@/domain/gateways/address-gateway'
-import { GetOrCreateGeoEntityService, GeoIdsDTO, AddressDTO as GeoAddressDTO } from '@/domain/services/geo/get-or-create-geo-entity-service'
+import { GetOrCreateGeoEntityService, GeoIdsDTO } from '@/domain/services/geo/get-or-create-geo-entity-service'
 import { Id } from '@/domain/value-objects/id'
-import { CacheRepository } from '@/application/protocols/cache/cache-repository'
+import { AddUserParams } from '@/domain/usecases/add-user'
+import { AddressGateway, AddressDTO } from '@/domain/gateways/address-gateway'
+import { Address } from '@/domain/value-objects/address'
 
-class AddressGatewaySpy implements AddressGateway {
-  zipCode: string | undefined
-  result: AddressDTO | null = {
-    zipCode: 'any_zip',
-    street: 'any_street',
-    neighborhood: 'any_neighborhood',
-    city: 'any_city',
-    state: 'any_state'
+const makeGetOrCreateGeoEntityService = (): GetOrCreateGeoEntityService => {
+  class GetOrCreateGeoEntityServiceStub {
+    async perform(_dto: AddressDTO): Promise<GeoIdsDTO> {
+      return Promise.resolve({
+        stateId: Id.create('550e8400-e29b-41d4-a716-446655440001'),
+        cityId: Id.create('550e8400-e29b-41d4-a716-446655440002'),
+        neighborhoodId: Id.create('550e8400-e29b-41d4-a716-446655440003')
+      })
+    }
   }
-
-  async getByZipCode(zipCode: string): Promise<AddressDTO | null> {
-    this.zipCode = zipCode
-    return this.result
-  }
+  return new GetOrCreateGeoEntityServiceStub() as unknown as GetOrCreateGeoEntityService
 }
 
-class GetOrCreateGeoEntityServiceSpy {
-  params: GeoAddressDTO | undefined
-  result: GeoIdsDTO = {
-    stateId: { value: 'any_state_id' } as Id,
-    cityId: { value: 'any_city_id' } as Id,
-    neighborhoodId: { value: 'any_neighborhood_id' } as Id
+const makeAddressGateway = (): AddressGateway => {
+  class AddressGatewayStub implements AddressGateway {
+    async getByZipCode(zipCode: string): Promise<AddressDTO | null> {
+      return Promise.resolve({
+        zipCode,
+        street: 'any_street_external',
+        neighborhood: 'any_neighborhood_external',
+        city: 'any_city_external',
+        state: 'SP'
+      })
+    }
   }
-
-  async perform(dto: GeoAddressDTO): Promise<GeoIdsDTO> {
-    this.params = dto
-    return this.result
-  }
+  return new AddressGatewayStub()
 }
 
-class CacheRepositorySpy {
-  key: string | undefined
-  value: unknown
-  ttl: number | undefined
-  result: unknown = null
-
-  async get(key: string): Promise<unknown> {
-    this.key = key
-    return this.result
-  }
-
-  async set(key: string, value: unknown, ttl?: number): Promise<void> {
-    this.key = key
-    this.value = value
-    this.ttl = ttl
-  }
-}
-
-type SutTypes = {
+interface SutTypes {
   sut: AddressResolutionService
-  addressGatewaySpy: AddressGatewaySpy
-  getOrCreateGeoEntityServiceSpy: GetOrCreateGeoEntityServiceSpy
-  cacheRepositorySpy: CacheRepositorySpy
+  getOrCreateGeoEntityServiceStub: GetOrCreateGeoEntityService
+  addressGatewayStub: AddressGateway
 }
 
 const makeSut = (): SutTypes => {
-  const addressGatewaySpy = new AddressGatewaySpy()
-  const getOrCreateGeoEntityServiceSpy = new GetOrCreateGeoEntityServiceSpy()
-  const cacheRepositorySpy = new CacheRepositorySpy()
-  const sut = new AddressResolutionService(
-    addressGatewaySpy,
-    getOrCreateGeoEntityServiceSpy as unknown as GetOrCreateGeoEntityService,
-    cacheRepositorySpy as unknown as CacheRepository
-  )
+  const getOrCreateGeoEntityServiceStub = makeGetOrCreateGeoEntityService()
+  const addressGatewayStub = makeAddressGateway()
+  const sut = new AddressResolutionService(getOrCreateGeoEntityServiceStub, addressGatewayStub)
   return {
     sut,
-    addressGatewaySpy,
-    getOrCreateGeoEntityServiceSpy,
-    cacheRepositorySpy
+    getOrCreateGeoEntityServiceStub,
+    addressGatewayStub
   }
 }
 
+const makeFakeAddressData = (): AddUserParams['address'] => ({
+  street: 'any_street',
+  number: '123',
+  zipCode: '12345678',
+  cityId: '550e8400-e29b-41d4-a716-446655440002',
+  neighborhoodId: '550e8400-e29b-41d4-a716-446655440003',
+  stateId: '550e8400-e29b-41d4-a716-446655440001'
+})
+
 describe('AddressResolutionService', () => {
-  test('Should call AddressGateway with correct zipCode', async () => {
-    const { sut, addressGatewaySpy } = makeSut()
-    await sut.load('any_zip')
-    expect(addressGatewaySpy.zipCode).toBe('any_zip')
-  })
+  describe('resolve', () => {
+    test('Should return undefined if addressData is null/undefined', async () => {
+      const { sut } = makeSut()
+      const response = await sut.resolve(undefined)
+      expect(response).toBeUndefined()
+    })
 
-  test('Should check CacheRepository with correct key', async () => {
-    const { sut, cacheRepositorySpy } = makeSut()
-    await sut.load('any_zip')
-    expect(cacheRepositorySpy.key).toBe('address:resolved:any_zip')
-  })
+    test('Should return Address if valid IDs are provided', async () => {
+      const { sut } = makeSut()
+      const response = await sut.resolve(makeFakeAddressData())
+      expect(response).not.toBeInstanceOf(Error)
+      expect(response).toHaveProperty('street')
+      expect(response).toHaveProperty('cityId')
+    })
 
-  test('Should return cached value if present and valid', async () => {
-    const { sut, cacheRepositorySpy, addressGatewaySpy } = makeSut()
-    const cachedValue = {
-      zipCode: 'any_zip',
-      stateId: 'cached_id',
-      cityId: 'cached_id',
-      neighborhoodId: 'cached_id'
-    }
-    cacheRepositorySpy.result = JSON.stringify(cachedValue)
-    const result = await sut.load('any_zip')
-    expect(result).toEqual(cachedValue)
-    expect(addressGatewaySpy.zipCode).toBeUndefined() // Should NOT call gateway
-  })
+    test('Should return InvalidAddressError if IDs are missing and not resolved', async () => {
+      const { sut, addressGatewayStub } = makeSut()
+      // Mock gateway to return null, forcing failure if no geo names are present
+      jest.spyOn(addressGatewayStub, 'getByZipCode').mockResolvedValueOnce(null)
 
-  test('Should return null if AddressGateway returns null', async () => {
-    const { sut, addressGatewaySpy } = makeSut()
-    addressGatewaySpy.result = null
-    const result = await sut.load('any_zip')
-    expect(result).toBeNull()
-  })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const addressData: any = makeFakeAddressData()
+      delete addressData.cityId
+      delete addressData.zipCode // ensure external lookup doesn't happen/isn't passed
 
-  test('Should call GetOrCreateGeoEntityService with correct values', async () => {
-    const { sut, getOrCreateGeoEntityServiceSpy, addressGatewaySpy } = makeSut()
-    addressGatewaySpy.result = {
-      zipCode: 'any_zip',
-      street: 'any_street',
-      neighborhood: 'any_neighborhood',
-      city: 'any_city',
-      state: 'any_state'
-    }
-    await sut.load('any_zip')
-    expect(getOrCreateGeoEntityServiceSpy.params).toEqual({
-      uf: 'any_state',
-      city: 'any_city',
-      neighborhood: 'any_neighborhood'
+      const response = await sut.resolve(addressData)
+      expect(response).toBeInstanceOf(Error)
+      expect((response as Error).message).toContain('city is required')
+    })
+
+    test('Should call GetOrCreateGeoEntityService if address has names but no IDs', async () => {
+      const { sut, getOrCreateGeoEntityServiceStub } = makeSut()
+      const performSpy = jest.spyOn(getOrCreateGeoEntityServiceStub, 'perform')
+      const addressData = {
+        street: 'any_street',
+        number: '123',
+        zipCode: '12345678',
+        city: 'any_city',
+        neighborhood: 'any_neighborhood',
+        state: 'SP'
+      }
+      await sut.resolve(addressData)
+      expect(performSpy).toHaveBeenCalledWith({
+        uf: 'SP',
+        city: 'any_city',
+        neighborhood: 'any_neighborhood'
+      })
+    })
+
+    test('Should call AddressGateway if no IDs and no Names, but ZipCode provided', async () => {
+      const { sut, addressGatewayStub, getOrCreateGeoEntityServiceStub } = makeSut()
+      const getByZipCodeSpy = jest.spyOn(addressGatewayStub, 'getByZipCode')
+      const performSpy = jest.spyOn(getOrCreateGeoEntityServiceStub, 'perform')
+
+      const addressData = {
+        zipCode: '87654321',
+        number: '100'
+      } as unknown as AddUserParams['address']
+
+      await sut.resolve(addressData)
+
+      expect(getByZipCodeSpy).toHaveBeenCalledWith('87654321')
+      expect(performSpy).toHaveBeenCalledWith({
+        uf: 'SP',
+        city: 'any_city_external',
+        neighborhood: 'any_neighborhood_external'
+      })
+    })
+
+    test('Should return correct Address after external lookup', async () => {
+      const { sut } = makeSut()
+      const addressData = {
+        zipCode: '87654321',
+        number: '100'
+      } as unknown as AddUserParams['address']
+
+      const response = await sut.resolve(addressData) as Address
+      expect(response).not.toBeInstanceOf(Error)
+      expect(response.street).toBe('any_street_external')
+      expect(response.zipCode).toBe('87654321')
+    })
+
+    test('Should return invalid address error if external lookup fails (returns null)', async () => {
+      const { sut, addressGatewayStub } = makeSut()
+      jest.spyOn(addressGatewayStub, 'getByZipCode').mockResolvedValueOnce(null)
+
+      const addressData = {
+        zipCode: '99999999',
+        number: '100'
+      } as unknown as AddUserParams['address']
+
+      const response = await sut.resolve(addressData)
+      expect(response).toBeInstanceOf(Error)
+    })
+
+    test('Should not overwrite street and complement if already provided', async () => {
+      const { sut, addressGatewayStub, getOrCreateGeoEntityServiceStub } = makeSut()
+      jest.spyOn(addressGatewayStub, 'getByZipCode')
+      jest.spyOn(getOrCreateGeoEntityServiceStub, 'perform')
+
+      const addressData = {
+        zipCode: '87654321',
+        number: '100',
+        street: 'User Provided Street',
+        complement: 'User Provided Complement'
+      } as unknown as AddUserParams['address']
+
+      const response = await sut.resolve(addressData) as Address
+
+      expect(response).not.toBeInstanceOf(Error)
+      expect(response.street).toBe('User Provided Street')
+      expect(response.complement).toBe('User Provided Complement')
+      // Should still resolve IDs
+      expect(response.cityId.value).toBe('550e8400-e29b-41d4-a716-446655440002')
+    })
+
+    test('Should return InvalidAddressError if neighborhoodId is missing', async () => {
+      const { sut, addressGatewayStub } = makeSut()
+      jest.spyOn(addressGatewayStub, 'getByZipCode').mockResolvedValueOnce(null)
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const addressData: any = makeFakeAddressData()
+      delete addressData.neighborhoodId
+      delete addressData.zipCode
+
+      const response = await sut.resolve(addressData)
+      expect(response).toBeInstanceOf(Error)
+      expect((response as Error).message).toContain('neighborhood is required')
+    })
+
+    test('Should return InvalidAddressError if stateId is missing', async () => {
+      const { sut, addressGatewayStub } = makeSut()
+      jest.spyOn(addressGatewayStub, 'getByZipCode').mockResolvedValueOnce(null)
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const addressData: any = makeFakeAddressData()
+      delete addressData.stateId
+      delete addressData.zipCode
+
+      const response = await sut.resolve(addressData)
+      expect(response).toBeInstanceOf(Error)
+      expect((response as Error).message).toContain('state is required')
     })
   })
 
-  test('Should return ResolvedAddress on success and Cache It', async () => {
-    const { sut, addressGatewaySpy, getOrCreateGeoEntityServiceSpy, cacheRepositorySpy } = makeSut()
-    const result = await sut.load('any_zip')
-    const expected = {
-      ...addressGatewaySpy.result,
-      stateId: getOrCreateGeoEntityServiceSpy.result.stateId.value,
-      cityId: getOrCreateGeoEntityServiceSpy.result.cityId.value,
-      neighborhoodId: getOrCreateGeoEntityServiceSpy.result.neighborhoodId.value
-    }
-    expect(result).toEqual(expected)
-    expect(cacheRepositorySpy.key).toBe('address:resolved:any_zip')
-    expect(JSON.parse(cacheRepositorySpy.value as string)).toEqual(expected)
-  })
+  describe('load (LoadAddressByZipCode)', () => {
+    test('Should return null if gateway returns null', async () => {
+      const { sut, addressGatewayStub } = makeSut()
+      jest.spyOn(addressGatewayStub, 'getByZipCode').mockResolvedValueOnce(null)
+      const response = await sut.load('invalid_zip')
+      expect(response).toBeNull()
+    })
 
-  test('Should throw if GetOrCreateGeoEntityService throws', async () => {
-    const { sut, getOrCreateGeoEntityServiceSpy } = makeSut()
-    jest.spyOn(getOrCreateGeoEntityServiceSpy, 'perform').mockRejectedValueOnce(new Error())
-    const promise = sut.load('any_zip')
-    await expect(promise).rejects.toThrow()
-  })
-
-  test('Should ignore cache errors on get', async () => {
-    const { sut, cacheRepositorySpy } = makeSut()
-    jest.spyOn(cacheRepositorySpy, 'get').mockRejectedValueOnce(new Error())
-    const result = await sut.load('any_zip')
-    expect(result).toBeTruthy()
-    expect(cacheRepositorySpy.key).toBe('address:resolved:any_zip')
-  })
-
-  test('Should ignore cache errors on set', async () => {
-    const { sut, cacheRepositorySpy } = makeSut()
-    jest.spyOn(cacheRepositorySpy, 'set').mockRejectedValueOnce(new Error())
-    const result = await sut.load('any_zip')
-    expect(result).toBeTruthy()
-    expect(cacheRepositorySpy.key).toBe('address:resolved:any_zip')
+    test('Should return ResolvedAddress with IDs on success', async () => {
+      const { sut } = makeSut()
+      const response = await sut.load('valid_zip')
+      expect(response).toEqual({
+        zipCode: 'valid_zip',
+        street: 'any_street_external',
+        neighborhood: 'any_neighborhood_external',
+        city: 'any_city_external',
+        state: 'SP',
+        stateId: '550e8400-e29b-41d4-a716-446655440001',
+        cityId: '550e8400-e29b-41d4-a716-446655440002',
+        neighborhoodId: '550e8400-e29b-41d4-a716-446655440003'
+      })
+    })
   })
 })

@@ -30,6 +30,18 @@ describe('Address Value Object', () => {
     expect((sut as InvalidAddressError).message).toBe('The address city is required')
   })
 
+  test('Should return InvalidAddressError if neighborhoodId is missing', () => {
+    const sut = Address.create({ ...validAddressProps, neighborhoodId: undefined as unknown as Id })
+    expect(sut).toBeInstanceOf(InvalidAddressError)
+    expect((sut as InvalidAddressError).message).toBe('The address neighborhood is required')
+  })
+
+  test('Should return InvalidAddressError if stateId is missing', () => {
+    const sut = Address.create({ ...validAddressProps, stateId: undefined as unknown as Id })
+    expect(sut).toBeInstanceOf(InvalidAddressError)
+    expect((sut as InvalidAddressError).message).toBe('The address state is required')
+  })
+
   // Removed empty ID string tests because now we pass objects, type check prevents strings.
   // We could test for undefined if we want, but TS handles strict null checks.
   // However, we should still ensure the properties are correctly assigned.
