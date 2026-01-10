@@ -8,6 +8,11 @@ import { FastifyInstance } from 'fastify'
 import Redis from 'ioredis'
 import crypto from 'crypto'
 import env from '@/main/config/env'
+import jwt from 'jsonwebtoken'
+
+const makeAccessToken = (role: string = 'STUDENT'): string => {
+  return jwt.sign({ id: 'any_id', role }, process.env.JWT_SECRET ?? 'secret')
+}
 
 describe('City/State Routes Integration', () => {
   let app: FastifyInstance
@@ -63,7 +68,8 @@ describe('City/State Routes Integration', () => {
 
     const response = await app.inject({
       method: 'GET',
-      url: `/api/cities/${cityId.value}`
+      url: `/api/cities/${cityId.value}`,
+      headers: { authorization: `Bearer ${makeAccessToken()}` }
     })
 
     expect(response.statusCode).toBe(200)
@@ -91,7 +97,8 @@ describe('City/State Routes Integration', () => {
 
     const response = await app.inject({
       method: 'GET',
-      url: `/api/states/${stateId.value}`
+      url: `/api/states/${stateId.value}`,
+      headers: { authorization: `Bearer ${makeAccessToken()}` }
     })
 
     expect(response.statusCode).toBe(200)
@@ -106,5 +113,13 @@ describe('City/State Routes Integration', () => {
     expect(cachedState).toBeTruthy()
     const parsedState = JSON.parse(cachedState!)
     expect(parsedState.id.id).toBe(stateId.value)
+  })
+
+  test('Should return 403 if no access token is provided', async () => {
+    const response = await app.inject({
+      method: 'GET',
+      url: `/api/cities/${crypto.randomUUID()}`
+    })
+    expect(response.statusCode).toBe(403)
   })
 })
