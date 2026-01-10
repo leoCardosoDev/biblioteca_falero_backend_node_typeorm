@@ -6,8 +6,11 @@ export interface AddressProps {
   number: string
   complement?: string
   neighborhoodId: Id
+  neighborhood?: string
   cityId: Id
+  city?: string
   stateId: Id
+  state?: string
   zipCode: string
 }
 
@@ -16,8 +19,11 @@ export class Address {
   readonly number: string
   readonly complement?: string
   readonly neighborhoodId: Id
+  readonly neighborhood?: string
   readonly cityId: Id
+  readonly city?: string
   readonly stateId: Id
+  readonly state?: string
   readonly zipCode: string
 
   private constructor(props: AddressProps) {
@@ -25,8 +31,11 @@ export class Address {
     this.number = props.number
     this.complement = props.complement
     this.neighborhoodId = props.neighborhoodId
+    this.neighborhood = props.neighborhood
     this.cityId = props.cityId
+    this.city = props.city
     this.stateId = props.stateId
+    this.state = props.state
     this.zipCode = props.zipCode
   }
 
@@ -57,8 +66,11 @@ export class Address {
       number: props.number.trim(),
       complement: props.complement?.trim(),
       neighborhoodId: props.neighborhoodId,
+      neighborhood: props.neighborhood,
       cityId: props.cityId,
+      city: props.city,
       stateId: props.stateId,
+      state: props.state,
       zipCode: cleanZip
     })
   }
