@@ -30,8 +30,11 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
         number: entity.addressNumber,
         complement: entity.addressComplement,
         neighborhoodId: Id.restore(entity.addressNeighborhoodId),
+        neighborhood: entity.addressNeighborhood?.name,
         cityId: Id.restore(entity.addressCityId),
+        city: entity.addressCity?.name,
         stateId: Id.restore(entity.addressStateId),
+        state: entity.addressState?.uf,
         zipCode: entity.addressZipCode
       })
     }
@@ -91,7 +94,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const user = await userRepo.findOne({
       where: { email },
-      relations: ['logins', 'logins.role']
+      relations: ['logins', 'logins.role', 'addressNeighborhood', 'addressCity', 'addressState']
     })
     if (!user) {
       return undefined
@@ -103,7 +106,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const user = await userRepo.findOne({
       where: { cpf },
-      relations: ['logins', 'logins.role']
+      relations: ['logins', 'logins.role', 'addressNeighborhood', 'addressCity', 'addressState']
     })
     if (!user) {
       return undefined
@@ -114,7 +117,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
   async loadAll(): Promise<UserModel[]> {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const users = await userRepo.find({
-      relations: ['logins', 'logins.role']
+      relations: ['logins', 'logins.role', 'addressNeighborhood', 'addressCity', 'addressState']
     })
 
     const userModels: UserModel[] = []
@@ -132,7 +135,7 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const user = await userRepo.findOne({
       where: { id },
-      relations: ['logins', 'logins.role']
+      relations: ['logins', 'logins.role', 'addressNeighborhood', 'addressCity', 'addressState']
     })
     if (!user) {
       return null
@@ -169,7 +172,12 @@ export class UserTypeOrmRepository implements AddUserRepository, LoadUserByEmail
     if (userData.status) userEntity.status = userData.status.value
 
     await userRepo.save(userEntity)
-    return this.toUserModel(userEntity)
+    // Reload relations to include names in the response
+    const updatedUser = await userRepo.findOne({
+      where: { id: userEntity.id },
+      relations: ['logins', 'logins.role', 'addressNeighborhood', 'addressCity', 'addressState']
+    })
+    return this.toUserModel(updatedUser!)
   }
 
   async delete(id: string): Promise<void> {
