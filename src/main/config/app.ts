@@ -6,9 +6,12 @@ import setupRoutes from './routes'
 import { setupMiddlewares } from './middlewares'
 import { swaggerConfig } from './swagger'
 import { errorHandler } from './error-handler'
+import { citySchema, stateSchema } from './schemas'
 
 const app = fastify()
 app.setErrorHandler(errorHandler)
+app.addSchema(citySchema)
+app.addSchema(stateSchema)
 
 const setupSwagger = async (): Promise<void> => {
 

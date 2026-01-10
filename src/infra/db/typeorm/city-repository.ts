@@ -1,14 +1,21 @@
 import { LoadCityByNameAndStateRepository } from '@/application/protocols/db/city/load-city-by-name-and-state-repository'
 import { AddCityRepository } from '@/application/protocols/db/city/add-city-repository'
+import { LoadCityByIdRepository } from '@/application/protocols/db/city/load-city-by-id-repository'
 import { CityModel } from '@/domain/models/city'
 import { City } from './entities/city'
 import { TypeOrmHelper } from './typeorm-helper'
 import { Id } from '@/domain/value-objects/id'
 
-export class CityTypeOrmRepository implements LoadCityByNameAndStateRepository, AddCityRepository {
+export class CityTypeOrmRepository implements LoadCityByNameAndStateRepository, AddCityRepository, LoadCityByIdRepository {
   async loadByNameAndState(name: string, stateId: string): Promise<CityModel | undefined> {
     const repo = await TypeOrmHelper.getRepository(City)
     const city = await repo.findOne({ where: { name, state_id: stateId } })
+    return city ? this.toDomain(city) : undefined
+  }
+
+  async loadById(id: string): Promise<CityModel | undefined> {
+    const repo = await TypeOrmHelper.getRepository(City)
+    const city = await repo.findOne({ where: { id } })
     return city ? this.toDomain(city) : undefined
   }
 

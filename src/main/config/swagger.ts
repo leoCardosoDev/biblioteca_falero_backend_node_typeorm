@@ -96,7 +96,8 @@ export const swaggerConfig: FastifyDynamicSwaggerOptions = {
     tags: [
       { name: 'Auth', description: 'Authentication and Access Control' },
       { name: 'Users', description: 'User Identity Management' },
-      { name: 'Roles', description: 'Role and Permission Management' }
+      { name: 'Roles', description: 'Role and Permission Management' },
+      { name: 'Geography', description: 'City and State Lookup' }
     ]
   }
 }
