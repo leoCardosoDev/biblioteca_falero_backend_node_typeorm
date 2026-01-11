@@ -5,7 +5,8 @@ import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { Address } from '@/domain/value-objects/address'
 import { UserStatus } from '@/domain/value-objects/user-status'
-import { UserRole } from '@/domain/value-objects/user-role'
+
+import { UserLogin } from '@/domain/value-objects/user-login'
 import { DomainEvents } from '@/domain/events/domain-events'
 
 export type UserProps = {
@@ -21,10 +22,7 @@ export type UserProps = {
   status: UserStatus
   createdAt?: Date
   deletedAt?: Date
-  login?: {
-    role: UserRole
-    status: UserStatus
-  }
+  login?: UserLogin
 }
 
 export class User {
@@ -40,10 +38,7 @@ export class User {
   public readonly status: UserStatus
   public readonly createdAt?: Date
   public readonly deletedAt?: Date
-  public readonly login?: {
-    role: UserRole
-    status: UserStatus
-  }
+  public readonly login?: UserLogin
 
   private constructor(props: UserProps, id: Id) {
     this.id = id

@@ -7,8 +7,10 @@ import { Id } from '@/domain/value-objects/id'
 import { FastifyInstance } from 'fastify'
 import Redis from 'ioredis'
 import crypto from 'crypto'
-import env from '@/main/config/env'
+
 import jwt from 'jsonwebtoken'
+import { RedisCacheAdapter } from '@/infra/cache/redis-cache-adapter'
+
 
 const makeAccessToken = (role: string = 'STUDENT'): string => {
   return jwt.sign({ id: 'any_id', role }, process.env.JWT_SECRET ?? 'secret')
@@ -30,13 +32,13 @@ describe('City/State Routes Integration', () => {
       synchronize: true
     })
 
-    redisClient = new Redis(env.redisUrl)
+    redisClient = new RedisCacheAdapter().clientInstance
   })
 
   afterAll(async () => {
     await TypeOrmHelper.disconnect()
     await app.close()
-    redisClient.disconnect()
+    // redisClient.disconnect() // Handle via Adapter if possible or just ignore for mock
   })
 
   beforeEach(async () => {

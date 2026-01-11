@@ -226,8 +226,16 @@ describe('User Routes', () => {
       }
       expect(response.statusCode).toBe(200)
       const body = response.json()
-      expect(body.address).toBeTruthy()
-      expect(body.address.street).toBe('Rua Teste')
+      // Response doesn't include address anymore, verify via DB
+      const userRepo = dataSource.getRepository(UserTypeOrmEntity)
+      const user = await userRepo.findOne({
+        where: { id: body.id },
+        relations: ['addressNeighborhood', 'addressCity', 'addressState']
+      })
+      expect(user).toBeTruthy()
+      expect(user?.addressStreet).toBe('Rua Teste')
+      expect(user?.addressNumber).toBe('123')
+      expect(user?.addressZipCode).toBe('12345678')
       // Implicitly verifies that GeoService worked if no error was returned
     })
   })

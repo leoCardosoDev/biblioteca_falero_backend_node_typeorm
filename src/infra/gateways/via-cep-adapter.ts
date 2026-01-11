@@ -1,5 +1,5 @@
-import { AddressDTO, AddressGateway } from '@/domain/gateways/address-gateway'
 import { HttpClient } from '@/application/protocols/http/http-client'
+import { AddressDTO, AddressGateway } from '@/domain/gateways/address-gateway'
 
 export type ViaCepResponse = {
   cep: string

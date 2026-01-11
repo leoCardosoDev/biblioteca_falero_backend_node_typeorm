@@ -1,6 +1,6 @@
 import { LoadAddressByZipCodeController } from '@/presentation/controllers/address/load-address-by-zip-code-controller'
 
-import { AddressResolutionService } from '@/application/services/address/address-resolution-service'
+import { DbLoadAddressByZipCode } from '@/application/usecases/db-load-address-by-zip-code'
 import { GetOrCreateGeoEntityService } from '@/domain/services/geo/get-or-create-geo-entity-service'
 import { StateTypeOrmRepository } from '@/infra/db/typeorm/state-repository'
 import { CityTypeOrmRepository } from '@/infra/db/typeorm/city-repository'
@@ -31,7 +31,7 @@ export const makeLoadAddressByZipCodeController = (): Controller => {
   const redisCache = new RedisCacheAdapter()
   const addressGateway = new CachedAddressGateway(viaCepGateway, redisCache)
 
-  const addressResolutionService = new AddressResolutionService(geoService, addressGateway)
+  const dbLoadAddressByZipCode = new DbLoadAddressByZipCode(addressGateway, geoService)
 
-  return new LoadAddressByZipCodeController(addressResolutionService)
+  return new LoadAddressByZipCodeController(dbLoadAddressByZipCode)
 }

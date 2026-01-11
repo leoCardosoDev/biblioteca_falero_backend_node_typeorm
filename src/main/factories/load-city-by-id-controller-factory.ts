@@ -1,6 +1,6 @@
 import { LoadCityByIdController } from '@/presentation/controllers/load-city-by-id-controller'
 import { Controller } from '@/presentation/protocols/controller'
-import { DbLoadCityById } from '@/data/usecases/load-city-by-id/db-load-city-by-id'
+import { DbLoadCityById } from '@/application/usecases/db-load-city-by-id'
 import { CityTypeOrmRepository } from '@/infra/db/typeorm/city-repository'
 import { CacheCityRepository } from '@/infra/db/typeorm/cache-city-repository'
 import { RedisCacheAdapter } from '@/infra/cache/redis-cache-adapter'
