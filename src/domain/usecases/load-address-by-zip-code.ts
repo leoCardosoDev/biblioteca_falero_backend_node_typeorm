@@ -1,4 +1,5 @@
 import { AddressDTO } from '@/domain/gateways/address-gateway'
+import { Either } from '@/shared/either'
 
 export type ResolvedAddress = AddressDTO & {
   stateId: string
@@ -7,5 +8,5 @@ export type ResolvedAddress = AddressDTO & {
 }
 
 export interface LoadAddressByZipCode {
-  load: (zipCode: string) => Promise<ResolvedAddress | null>
+  load: (zipCode: string) => Promise<Either<Error, ResolvedAddress>>
 }

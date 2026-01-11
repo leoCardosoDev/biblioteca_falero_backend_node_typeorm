@@ -226,8 +226,16 @@ describe('User Routes', () => {
       }
       expect(response.statusCode).toBe(200)
       const body = response.json()
-      expect(body.address).toBeTruthy()
-      expect(body.address.street).toBe('Rua Teste')
+      // Response doesn't include address anymore, verify via DB
+      const userRepo = dataSource.getRepository(UserTypeOrmEntity)
+      const user = await userRepo.findOne({
+        where: { id: body.id },
+        relations: ['addressNeighborhood', 'addressCity', 'addressState']
+      })
+      expect(user).toBeTruthy()
+      expect(user?.addressStreet).toBe('Rua Teste')
+      expect(user?.addressNumber).toBe('123')
+      expect(user?.addressZipCode).toBe('12345678')
       // Implicitly verifies that GeoService worked if no error was returned
     })
   })
@@ -286,6 +294,46 @@ describe('User Routes', () => {
     })
   })
 
+  describe('GET /users/:id', () => {
+    test('Should return 200 and include stateId in address', async () => {
+      const stateRepo = dataSource.getRepository(State)
+      const cityRepo = dataSource.getRepository(City)
+      const neighborhoodRepo = dataSource.getRepository(Neighborhood)
+      const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+
+      const state = await stateRepo.save(stateRepo.create({ name: 'São Paulo', uf: 'SP' }))
+      const city = await cityRepo.save(cityRepo.create({ name: 'São Paulo', state_id: state.id }))
+      const neighborhood = await neighborhoodRepo.save(neighborhoodRepo.create({ name: 'Centro', city_id: city.id }))
+
+      const user = await userRepo.save(userRepo.create({
+        name: 'User With State',
+        email: 'state_check@mail.com',
+        rg: '555555555',
+        cpf: '55555555555',
+        gender: 'male',
+        addressStreet: 'Rua Teste',
+        addressNumber: '123',
+        addressComplement: 'Ap 1',
+        addressNeighborhoodId: neighborhood.id,
+        addressCityId: city.id,
+        addressStateId: state.id,
+        addressZipCode: '12345678'
+      }))
+
+      const accessToken = makeAccessToken('LIBRARIAN')
+      const response = await app.inject({
+        method: 'GET',
+        url: `/api/users/${user.id}`,
+        headers: { authorization: `Bearer ${accessToken}` }
+      })
+
+      expect(response.statusCode).toBe(200)
+      const body = response.json()
+      expect(body.address).toBeDefined()
+      expect(body.address.stateId).toBe(state.id)
+    })
+  })
+
   describe('PUT /users/:id', () => {
     test('Should return 403 if user role is not ADMIN', async () => {
       const accessToken = makeAccessToken('LIBRARIAN')
@@ -341,6 +389,48 @@ describe('User Routes', () => {
       })
       expect(response.statusCode).toBe(200)
       expect(response.json().name).toBe('updated_name_confirmed')
+    })
+
+    test('Should return 200 and return address names on update', async () => {
+      const stateRepo = dataSource.getRepository(State)
+      const cityRepo = dataSource.getRepository(City)
+      const neighborhoodRepo = dataSource.getRepository(Neighborhood)
+      const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+
+      const state = await stateRepo.save(stateRepo.create({ name: 'Ceará', uf: 'CE' }))
+      const city = await cityRepo.save(cityRepo.create({ name: 'Quixadá', state_id: state.id }))
+      const neighborhood = await neighborhoodRepo.save(neighborhoodRepo.create({ name: 'Centro', city_id: city.id }))
+
+      const user = await userRepo.save(userRepo.create({
+        name: 'User Address Test',
+        email: 'addr_test@mail.com',
+        rg: '111222333',
+        cpf: '11122233344',
+        gender: 'female'
+      }))
+
+      const accessToken = makeAccessToken('ADMIN')
+      const response = await app.inject({
+        method: 'PUT',
+        url: `/api/users/${user.id}`,
+        headers: { authorization: `Bearer ${accessToken}` },
+        payload: {
+          address: {
+            street: 'Rua das Flores',
+            number: '456',
+            zipCode: '63900000',
+            neighborhoodId: neighborhood.id,
+            cityId: city.id,
+            stateId: state.id
+          }
+        }
+      })
+
+      expect(response.statusCode).toBe(200)
+      const body = response.json()
+      expect(body.address.neighborhood).toBe('Centro')
+      expect(body.address.city).toBe('Quixadá')
+      expect(body.address.state).toBe('CE')
     })
   })
 

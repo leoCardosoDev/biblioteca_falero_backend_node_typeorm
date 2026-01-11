@@ -46,4 +46,22 @@ describe('StateTypeOrmRepository', () => {
     const state = await sut.loadByUf('SP')
     expect(state).toBeNull()
   })
+
+  test('Should return a state on loadById success', async () => {
+    const sut = makeSut()
+    const repo = TypeOrmHelper.getRepository(State)
+    const savedState = await repo.save(repo.create({ name: 'São Paulo', uf: 'SP' }))
+
+    const state = await sut.loadById(savedState.id)
+
+    expect(state).toBeTruthy()
+    expect(state?.name).toBe('São Paulo')
+    expect(state?.uf).toBe('SP')
+  })
+
+  test('Should return undefined if loadById finds nothing', async () => {
+    const sut = makeSut()
+    const state = await sut.loadById('550e8400-e29b-41d4-a716-446655440000')
+    expect(state).toBeUndefined()
+  })
 })

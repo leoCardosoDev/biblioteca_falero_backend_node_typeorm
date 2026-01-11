@@ -1,4 +1,4 @@
-import { UserModel } from '@/domain/models/user'
+import { AddUserOutput } from '@/domain/usecases/add-user-output'
 import { Id } from '@/domain/value-objects/id'
 import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
@@ -44,5 +44,5 @@ export interface AddUserRepoParams {
 }
 
 export interface AddUser {
-  add: (user: AddUserParams) => Promise<UserModel | Error>
+  add: (user: AddUserParams) => Promise<AddUserOutput | Error>
 }

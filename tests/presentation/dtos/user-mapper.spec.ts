@@ -55,8 +55,11 @@ describe('UserMapper', () => {
         number: '123',
         complement: 'Apt 1',
         neighborhoodId: 'any_neighborhood_id',
+        neighborhood: '',
         cityId: 'any_city_id',
+        city: '',
         stateId: 'any_state_id',
+        state: '',
         zipCode: '12345678'
       },
       login: {

@@ -11,6 +11,7 @@ import { Neighborhood } from '@/infra/db/typeorm/entities/neighborhood'
 import { DataSource } from 'typeorm'
 import { AddUserRepoParams } from '@/domain/usecases/add-user'
 import { Id, Email, Cpf, Name, Rg, Address, UserStatus, UserStatusEnum } from '@/domain/value-objects'
+import { UserMapper } from '@/infra/db/typeorm/mappers/user-mapper'
 
 describe('UserTypeOrmRepository', () => {
   let dataSource: DataSource
@@ -363,5 +364,30 @@ describe('UserTypeOrmRepository', () => {
     const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
     const dbUser = await userRepo.findOne({ where: { id: user.id.value } })
     expect(dbUser?.status).toBe('INACTIVE')
+  })
+  test('Should skip users that fail mapping in loadAll', async () => {
+    const sut = makeSut()
+    await sut.add(makeUserData('skip1'))
+    await sut.add(makeUserData('skip2'))
+
+    // Spy on UserMapper.toDomain
+    // First call throws, second call returns OK.
+
+    const originalToDomain = UserMapper.toDomain
+
+    let callCount = 0
+    jest.spyOn(UserMapper, 'toDomain').mockImplementation((entity) => {
+      callCount++
+      if (callCount === 1) {
+        throw new Error('Mapping error')
+      }
+      return originalToDomain(entity)
+    })
+
+    const users = await sut.loadAll()
+    // Should have 2 users in DB, but only 1 returned
+    expect(users.length).toBe(1)
+
+    jest.restoreAllMocks()
   })
 })

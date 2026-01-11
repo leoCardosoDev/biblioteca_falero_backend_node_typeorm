@@ -16,8 +16,11 @@ export interface UserDTO {
     number: string
     complement?: string
     neighborhoodId: string
+    neighborhood: string
     cityId: string
+    city: string
     stateId: string
+    state: string
     zipCode: string
   }
   login?: {
@@ -44,8 +47,11 @@ export class UserMapper {
         number: user.address.number,
         complement: user.address.complement,
         neighborhoodId: user.address.neighborhoodId.value,
+        neighborhood: user.address.neighborhood ?? '',
         cityId: user.address.cityId.value,
+        city: user.address.city ?? '',
         stateId: user.address.stateId.value,
+        state: user.address.state ?? '',
         zipCode: user.address.zipCode
       } : undefined,
       login: user.login ? {

@@ -1,4 +1,5 @@
 import { AddUser, AddUserParams } from '@/domain/usecases/add-user'
+import { AddUserOutput } from '@/domain/usecases/add-user-output'
 import { User } from '@/domain/models/user'
 import { AddUserRepository } from '@/application/protocols/add-user-repository'
 import { LoadUserByEmailRepository } from '@/application/protocols/db/load-user-by-email-repository'
@@ -6,12 +7,13 @@ import { LoadUserByCpfRepository } from '@/application/protocols/db/load-user-by
 import { EmailInUseError } from '@/domain/errors/email-in-use-error'
 import { CpfInUseError } from '@/domain/errors/cpf-in-use-error'
 import { DomainEvents, SaveDomainEventRepository } from '@/domain/events/domain-events'
-import { AddressResolutionProtocol } from '@/application/services/address/address-resolution-service'
+import { ResolveAddress } from '@/domain/usecases/resolve-address'
 import { Email } from '@/domain/value-objects/email'
 import { Cpf } from '@/domain/value-objects/cpf'
 import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { UserStatus } from '@/domain/value-objects/user-status'
+import { Address } from '@/domain/value-objects/address'
 
 export class DbAddUser implements AddUser {
   constructor(
@@ -19,10 +21,10 @@ export class DbAddUser implements AddUser {
     private readonly loadUserByEmailRepository: LoadUserByEmailRepository,
     private readonly loadUserByCpfRepository: LoadUserByCpfRepository,
     private readonly saveDomainEventRepository: SaveDomainEventRepository,
-    private readonly addressResolutionService: AddressResolutionProtocol
+    private readonly resolveAddress: ResolveAddress
   ) { }
 
-  async add(userData: AddUserParams): Promise<User | Error> {
+  async add(userData: AddUserParams): Promise<AddUserOutput | Error> {
     const nameOrError = Name.create(userData.name)
     if (nameOrError instanceof Error) {
       return nameOrError
@@ -61,9 +63,13 @@ export class DbAddUser implements AddUser {
       return new CpfInUseError()
     }
 
-    const addressVOOrError = await this.addressResolutionService.resolve(userData.address)
-    if (addressVOOrError instanceof Error) {
-      return addressVOOrError
+    let addressVO: Address | undefined
+    if (userData.address) {
+      const addressOrError = await this.resolveAddress.resolve(userData.address)
+      if (addressOrError.isLeft()) {
+        return addressOrError.value
+      }
+      addressVO = addressOrError.value
     }
 
     const user = User.create({
@@ -73,7 +79,7 @@ export class DbAddUser implements AddUser {
       cpf: cpfOrError,
       gender: userData.gender,
       phone: userData.phone,
-      address: addressVOOrError,
+      address: addressVO,
       status: statusOrError
     })
 
@@ -81,6 +87,13 @@ export class DbAddUser implements AddUser {
 
     await DomainEvents.dispatchEventsForAggregate(user.id.value, this.saveDomainEventRepository)
 
-    return user
+    return {
+      id: user.id.value,
+      name: user.name.value,
+      email: user.email.value,
+      cpf: user.cpf.value,
+      role: user.login?.role.value || 'USER',
+      status: user.status.value
+    }
   }
 }

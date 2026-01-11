@@ -1,6 +1,5 @@
-import { Controller, HttpRequest, HttpResponse, Validation, badRequest, serverError, ok, forbidden, UserMapper } from '@/presentation'
-import { AddUser, AddUserAddressInput } from '@/domain'
-import { InvalidAddressError } from '@/domain/errors'
+import { Controller, HttpRequest, HttpResponse, Validation, badRequest, serverError, ok, forbidden } from '@/presentation'
+import { AddUser, AddUserAddressInput, InvalidAddressError } from '@/domain'
 
 export class AddUserController implements Controller {
   constructor(
@@ -35,10 +34,8 @@ export class AddUserController implements Controller {
         }
         return forbidden(userOrError)
       }
-      return ok(UserMapper.toDTO(userOrError))
-      // return ok({})
+      return ok(userOrError)
     } catch (error) {
-      console.error('ADD USER CONTROLLER ERROR:', error)
       if (error instanceof Error) {
         console.error('STACK:', error.stack)
       }

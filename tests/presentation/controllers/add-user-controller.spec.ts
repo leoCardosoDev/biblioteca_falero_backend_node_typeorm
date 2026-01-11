@@ -1,39 +1,25 @@
 import { AddUserController } from '@/presentation/controllers/add-user-controller'
 import { AddUser, AddUserParams } from '@/domain/usecases/add-user'
-import { UserModel } from '@/domain/models/user'
+import { AddUserOutput } from '@/domain/usecases/add-user-output'
 import { Validation } from '@/presentation/protocols/validation'
 import { HttpRequest } from '@/presentation/protocols'
 import { ok } from '@/presentation/helpers/http-helper'
 import { UserAlreadyExistsError } from '@/presentation/errors/user-already-exists-error'
 
 import { ServerError } from '@/presentation/errors/server-error'
-import { Id } from '@/domain/value-objects/id'
-import { Name, Email, Rg, Cpf, Address, UserStatus } from '@/domain/value-objects'
 import { InvalidAddressError, InvalidNameError, InvalidEmailError, InvalidRgError } from '@/domain/errors'
 import { InvalidCpfError } from '@/domain/errors/invalid-cpf-error'
 
 const makeAddUser = (): AddUser => {
   class AddUserStub implements AddUser {
-    async add(_user: AddUserParams): Promise<UserModel | Error> {
+    async add(_user: AddUserParams): Promise<AddUserOutput | Error> {
       return Promise.resolve({
-        id: Id.create('11111111-1111-1111-1111-111111111111'),
-        name: Name.create('Any Name') as Name,
-        email: Email.create('any_email@mail.com') as Email,
-        rg: Rg.create('123456789') as Rg,
-        cpf: Cpf.create('00000000191') as Cpf,
-        gender: 'any_gender',
-        version: 1,
-        phone: '123456789',
-        status: UserStatus.create('ACTIVE') as UserStatus,
-        address: Address.create({
-          street: 'Any Street',
-          number: '123',
-          complement: 'Apt 1',
-          neighborhoodId: { value: 'any_neighborhood_id' } as Id,
-          cityId: { value: 'any_city_id' } as Id,
-          stateId: { value: 'any_state_id' } as Id,
-          zipCode: '12345678'
-        }) as Address
+        id: '11111111-1111-1111-1111-111111111111',
+        name: 'Any Name',
+        email: 'any_email@mail.com',
+        cpf: '00000000191',
+        role: 'USER',
+        status: 'ACTIVE'
       })
     }
   }
@@ -157,23 +143,9 @@ describe('AddUser Controller', () => {
       id: '11111111-1111-1111-1111-111111111111',
       name: 'Any Name',
       email: 'any_email@mail.com',
-      rg: '123456789',
       cpf: '00000000191',
-      gender: 'any_gender',
-      phone: '123456789',
-      status: 'ACTIVE',
-      version: 1,
-      address: {
-        street: 'Any Street',
-        number: '123',
-        complement: 'Apt 1',
-        neighborhoodId: 'any_neighborhood_id',
-        cityId: 'any_city_id',
-        stateId: 'any_state_id',
-        zipCode: '12345678'
-      },
-      createdAt: expect.any(String),
-      login: undefined
+      role: 'USER',
+      status: 'ACTIVE'
     }))
   })
 

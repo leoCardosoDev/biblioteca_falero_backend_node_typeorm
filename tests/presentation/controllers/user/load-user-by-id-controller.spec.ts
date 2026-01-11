@@ -129,8 +129,11 @@ describe('LoadUserById Controller', () => {
         number: 'any_number',
         complement: 'any_complement',
         neighborhoodId: 'any_neighborhood',
+        neighborhood: '',
         cityId: 'any_city',
+        city: '',
         stateId: 'any_state',
+        state: '',
         zipCode: 'any_zipCode'
       },
       createdAt: '2026-01-08T22:00:00.000Z',

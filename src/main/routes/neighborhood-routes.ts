@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify'
 import { adaptRoute } from '@/main/adapters/fastify-route-adapter'
 import { errorSchema } from '@/main/config/error-schema'
 import { makeAddNeighborhoodController } from '@/main/factories/controllers/add-neighborhood-controller-factory'
+import { makeLoadNeighborhoodByIdController } from '@/main/factories/controllers/load-neighborhood-by-id-controller-factory'
 import { adaptMiddleware } from '@/main/adapters/fastify-middleware-adapter'
 import { makeAdminOnly, makeAuthMiddleware } from '@/main/factories/middlewares'
 
@@ -32,6 +33,32 @@ const addNeighborhoodSchema = {
   }
 }
 
+const loadNeighborhoodByIdSchema = {
+  tags: ['Addresses'],
+  summary: 'Load neighborhood by id',
+  description: 'Load a neighborhood by id. Requires authenticated user.',
+  security: [{ bearerAuth: [] }],
+  params: {
+    type: 'object',
+    properties: {
+      id: { type: 'string', format: 'uuid' }
+    }
+  },
+  response: {
+    200: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', format: 'uuid' },
+        name: { type: 'string' },
+        cityId: { type: 'string', format: 'uuid' }
+      }
+    },
+    400: errorSchema,
+    403: errorSchema,
+    404: errorSchema
+  }
+}
+
 export default async (app: FastifyInstance): Promise<void> => {
   app.post('/neighborhoods', {
     schema: addNeighborhoodSchema,
@@ -40,4 +67,11 @@ export default async (app: FastifyInstance): Promise<void> => {
       adaptMiddleware(makeAdminOnly())
     ]
   }, adaptRoute(makeAddNeighborhoodController()))
+
+  app.get('/neighborhoods/:id', {
+    schema: loadNeighborhoodByIdSchema,
+    preHandler: [
+      adaptMiddleware(makeAuthMiddleware())
+    ]
+  }, adaptRoute(makeLoadNeighborhoodByIdController()))
 }
