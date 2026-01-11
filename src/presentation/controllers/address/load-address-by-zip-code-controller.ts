@@ -19,12 +19,12 @@ export class LoadAddressByZipCodeController implements Controller {
 
       const { zipCode } = validation.data
 
-      const address = await this.loadAddressByZipCode.load(zipCode)
-      if (!address) {
-        return notFound(new Error('Address not found'))
+      const result = await this.loadAddressByZipCode.load(zipCode)
+      if (result.isLeft()) {
+        return notFound(result.value)
       }
 
-      return ok(address)
+      return ok(result.value)
     } catch (error) {
       return serverError(error as Error)
     }
