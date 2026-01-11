@@ -2,10 +2,11 @@ import { LoadAddressByZipCodeController } from '@/presentation/controllers/addre
 import { LoadAddressByZipCode, ResolvedAddress } from '@/domain/usecases/load-address-by-zip-code'
 import { ok, notFound, serverError } from '@/presentation/helpers/http-helper'
 import { HttpRequest } from '@/presentation/protocols'
+import { Either, right, left, Right } from '@/shared/either'
 
 class LoadAddressByZipCodeSpy implements LoadAddressByZipCode {
   zipCode: string | undefined
-  result: ResolvedAddress | null = {
+  result: Either<Error, ResolvedAddress> = right({
     zipCode: 'any_zip',
     street: 'any_street',
     neighborhood: 'any_neighborhood',
@@ -14,9 +15,9 @@ class LoadAddressByZipCodeSpy implements LoadAddressByZipCode {
     stateId: 'any_state_id',
     cityId: 'any_city_id',
     neighborhoodId: 'any_neighborhood_id'
-  }
+  })
 
-  async load(zipCode: string): Promise<ResolvedAddress | null> {
+  async load(zipCode: string): Promise<Either<Error, ResolvedAddress>> {
     this.zipCode = zipCode
     return this.result
   }
@@ -55,9 +56,9 @@ describe('LoadAddressByZipCodeController', () => {
     expect(loadAddressByZipCodeSpy.zipCode).toBe('12345678')
   })
 
-  test('Should return 404 if LoadAddressByZipCode returns null', async () => {
+  test('Should return 404 if LoadAddressByZipCode returns left', async () => {
     const { sut, loadAddressByZipCodeSpy } = makeSut()
-    loadAddressByZipCodeSpy.result = null
+    loadAddressByZipCodeSpy.result = left(new Error('Address not found'))
     const result = await sut.handle(mockRequest())
     expect(result).toEqual(notFound(new Error('Address not found')))
   })
@@ -65,7 +66,7 @@ describe('LoadAddressByZipCodeController', () => {
   test('Should return 200 on success', async () => {
     const { sut, loadAddressByZipCodeSpy } = makeSut()
     const result = await sut.handle(mockRequest())
-    expect(result).toEqual(ok(loadAddressByZipCodeSpy.result))
+    expect(result).toEqual(ok((loadAddressByZipCodeSpy.result as Right<Error, ResolvedAddress>).value))
   })
 
   test('Should return 500 if LoadAddressByZipCode throws', async () => {
