@@ -17,7 +17,8 @@ export class CacheStateRepository implements LoadStateByIdRepository {
 
     const state = await this.decoratee.loadById(id)
     if (state) {
-      await this.cacheRepository.set(cacheKey, state, 60 * 60 * 24 * 30) // 30 days
+      const CACHE_TTL_30_DAYS = 60 * 60 * 24 * 30
+      await this.cacheRepository.set(cacheKey, state, CACHE_TTL_30_DAYS)
     }
     return state
   }

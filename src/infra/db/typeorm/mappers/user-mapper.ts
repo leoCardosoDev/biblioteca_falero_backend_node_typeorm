@@ -30,7 +30,7 @@ export class UserMapper {
 
     const id = Id.restore(entity.id)
 
-    // Map login info if available
+
     let login: UserModel['login']
     const firstLogin = entity.logins?.[0] as { role?: { slug?: string }, status?: string } | undefined
     if (firstLogin) {

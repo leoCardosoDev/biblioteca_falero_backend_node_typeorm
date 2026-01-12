@@ -1,7 +1,9 @@
-import { Role, Permission } from '@/domain/models'
+import { Role, Permission, RoleProps } from '@/domain/models'
 import { Id } from '@/domain/value-objects/id'
 
 describe('Role Entity', () => {
+  // ... existing tests code ...
+
   test('Should create a valid Role', () => {
     const sut = Role.create({
       id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
@@ -54,8 +56,7 @@ describe('Role Entity', () => {
     expect(() => {
       Role.create({
         slug: 'admin'
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any)
+      } as unknown as RoleProps)
     }).toThrow('ID is required')
   })
 })

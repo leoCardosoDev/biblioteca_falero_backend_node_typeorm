@@ -4,8 +4,7 @@ export class RequiredFieldValidation implements Validation {
   constructor(private readonly fieldName: string) { }
 
   validate(input: unknown): Error | undefined {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!(input as any)[this.fieldName]) {
+    if (!input || typeof input !== 'object' || !((input as Record<string, unknown>)[this.fieldName])) {
       return new MissingParamError(this.fieldName)
     }
   }

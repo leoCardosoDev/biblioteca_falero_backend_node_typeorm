@@ -17,7 +17,8 @@ export class CacheCityRepository implements LoadCityByIdRepository {
 
     const city = await this.decoratee.loadById(id)
     if (city) {
-      await this.cacheRepository.set(cacheKey, city, 60 * 60 * 24 * 30) // 30 days
+      const CACHE_TTL_30_DAYS = 60 * 60 * 24 * 30
+      await this.cacheRepository.set(cacheKey, city, CACHE_TTL_30_DAYS)
     }
     return city
   }

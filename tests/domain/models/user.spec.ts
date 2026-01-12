@@ -1,4 +1,5 @@
-import { User } from '@/domain/models/user'
+import { User, UserProps } from '@/domain/models/user'
+
 import { Id } from '@/domain/value-objects/id'
 import { Name } from '@/domain/value-objects/name'
 import { Email } from '@/domain/value-objects/email'
@@ -62,8 +63,7 @@ describe('User Entity', () => {
       User.create({
         name: Name.create('valid_name'),
         email: Email.create('valid_email@mail.com')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any)
+      } as unknown as UserProps)
     }).toThrow('ID is required')
   })
 

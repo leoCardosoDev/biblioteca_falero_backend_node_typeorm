@@ -1,8 +1,10 @@
-import { Login } from '@/domain/models/login'
+import { Login, LoginProps } from '@/domain/models/login'
 import { Id } from '@/domain/value-objects/id'
 import { Email } from '@/domain/value-objects/email'
 
 describe('Login Entity', () => {
+  // ... tests ...
+
   test('Should create a valid Login', () => {
     const userId = Id.create('550e8400-e29b-41d4-a716-446655440001')
     const roleId = Id.create('550e8400-e29b-41d4-a716-446655440002')
@@ -64,8 +66,7 @@ describe('Login Entity', () => {
         roleId: Id.create('550e8400-e29b-41d4-a716-446655440002'),
         email: Email.create('any@mail.com'),
         passwordHash: 'hashed_password'
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any)
+      } as unknown as LoginProps)
     }).toThrow('ID is required')
   })
 })

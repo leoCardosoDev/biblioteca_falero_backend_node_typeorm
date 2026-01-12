@@ -1,4 +1,4 @@
-import { Permission } from '@/domain/models/permission'
+import { Permission, PermissionProps } from '@/domain/models/permission'
 import { Id } from '@/domain/value-objects/id'
 
 describe('Permission Entity', () => {
@@ -26,8 +26,7 @@ describe('Permission Entity', () => {
     expect(() => {
       Permission.create({
         slug: 'users:read'
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any)
+      } as unknown as PermissionProps)
     }).toThrow('ID is required')
   })
 
