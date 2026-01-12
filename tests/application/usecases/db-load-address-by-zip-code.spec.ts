@@ -1,5 +1,6 @@
 import { DbLoadAddressByZipCode } from '@/application/usecases/db-load-address-by-zip-code'
 import { ResolvedAddress } from '@/domain/usecases/load-address-by-zip-code'
+import { randomUUID } from 'crypto'
 import { GetOrCreateGeoEntityService } from '@/domain/services/geo/get-or-create-geo-entity-service'
 import { AddressGateway } from '@/domain/gateways/address-gateway'
 import { Id } from '@/domain/value-objects/id'
@@ -40,9 +41,9 @@ describe('DbLoadAddressByZipCode', () => {
     const { sut, addressGatewaySpy, getOrCreateGeoEntityServiceSpy } = makeSut()
     addressGatewaySpy.getByZipCode.mockResolvedValue(validExternalAddress)
     getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
-      cityId: Id.generate(),
-      neighborhoodId: Id.generate(),
-      stateId: Id.generate()
+      cityId: Id.create(randomUUID()),
+      neighborhoodId: Id.create(randomUUID()),
+      stateId: Id.create(randomUUID())
     })
 
     await sut.load(validZipCode)
@@ -64,9 +65,9 @@ describe('DbLoadAddressByZipCode', () => {
     const { sut, addressGatewaySpy, getOrCreateGeoEntityServiceSpy } = makeSut()
     addressGatewaySpy.getByZipCode.mockResolvedValue(validExternalAddress)
     getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
-      cityId: Id.generate(),
-      neighborhoodId: Id.generate(),
-      stateId: Id.generate()
+      cityId: Id.create(randomUUID()),
+      neighborhoodId: Id.create(randomUUID()),
+      stateId: Id.create(randomUUID())
     })
 
     await sut.load(validZipCode)
@@ -82,9 +83,9 @@ describe('DbLoadAddressByZipCode', () => {
     const { sut, addressGatewaySpy, getOrCreateGeoEntityServiceSpy } = makeSut()
     addressGatewaySpy.getByZipCode.mockResolvedValue(validExternalAddress)
 
-    const cityId = Id.generate()
-    const neighborhoodId = Id.generate()
-    const stateId = Id.generate()
+    const cityId = Id.create(randomUUID())
+    const neighborhoodId = Id.create(randomUUID())
+    const stateId = Id.create(randomUUID())
 
     getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
       cityId,

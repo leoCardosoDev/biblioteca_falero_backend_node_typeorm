@@ -1,6 +1,7 @@
-export class NotFoundError extends Error {
+import { AppError } from '@/application/errors/app-error'
+export class NotFoundError extends AppError {
   constructor(paramName: string) {
-    super(`${paramName} not found`)
+    super('NOT_FOUND', `${paramName} not found`)
     this.name = 'NotFoundError'
   }
 }

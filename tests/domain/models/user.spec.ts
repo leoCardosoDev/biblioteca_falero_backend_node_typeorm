@@ -57,4 +57,41 @@ describe('User Entity', () => {
     expect(updatedUser.name.value).toBe('new_name')
     expect(updatedUser).not.toBe(user) // Immutability check
   })
+  test('Should throw error if ID is missing', () => {
+    expect(() => {
+      User.create({
+        name: Name.create('valid_name'),
+        email: Email.create('valid_email@mail.com')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any)
+    }).toThrow('ID is required')
+  })
+
+  test('Should default version to 0 if not provided', () => {
+    const user = User.create({
+      id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
+      name: Name.create('valid_name') as Name,
+      email: Email.create('valid_email@mail.com'),
+      rg: Rg.create('123456789') as Rg,
+      cpf: Cpf.create('529.982.247-25') as Cpf,
+      gender: 'any_gender',
+      status: UserStatus.create('ACTIVE') as UserStatus
+    })
+    expect(user.version).toBe(0)
+  })
+
+  test('Should restore a User', () => {
+    const props = {
+      name: Name.create('valid_name') as Name,
+      email: Email.create('valid_email@mail.com'),
+      rg: Rg.create('123456789') as Rg,
+      cpf: Cpf.create('529.982.247-25') as Cpf,
+      gender: 'any_gender',
+      status: UserStatus.create('ACTIVE') as UserStatus
+    }
+    const id = Id.create('550e8400-e29b-41d4-a716-446655440000')
+    const user = User.restore(props, id)
+    expect(user).toBeInstanceOf(User)
+    expect(user.id).toBe(id)
+  })
 })

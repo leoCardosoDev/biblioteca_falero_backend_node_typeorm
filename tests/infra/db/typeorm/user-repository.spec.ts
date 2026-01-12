@@ -1,4 +1,5 @@
 import 'reflect-metadata'
+import { randomUUID } from 'crypto'
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
 import { UserTypeOrmRepository } from '@/infra/db/typeorm/user-repository'
 import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
@@ -63,7 +64,7 @@ describe('UserTypeOrmRepository', () => {
   }
 
   const makeUserData = (suffix = ''): AddUserRepoParams => ({
-    id: Id.generate(),
+    id: Id.create(randomUUID()),
     name: Name.restore('name' + suffix),
     email: Email.restore(`any${suffix}${Date.now()}${Math.random().toString().split('.')[1]}@mail.com`),
     rg: Rg.restore('rg' + suffix + Math.floor(Math.random() * 1000).toString()),
@@ -287,7 +288,7 @@ describe('UserTypeOrmRepository', () => {
   })
 
   test('Should handle non-Error thrown by VO creation', async () => {
-    const id = Id.generate().value
+    const id = randomUUID()
     await dataSource.createQueryBuilder()
       .insert()
       .into(UserTypeOrmEntity)
@@ -319,7 +320,7 @@ describe('UserTypeOrmRepository', () => {
     const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
 
     const roleRepo = TypeOrmHelper.getRepository(RoleTypeOrmEntity)
-    const roleId = Id.generate().value
+    const roleId = randomUUID()
     await roleRepo.save({ id: roleId, slug: 'invalid_role', description: 'Invalid', powerLevel: 0 })
 
     await loginRepo.save(loginRepo.create({

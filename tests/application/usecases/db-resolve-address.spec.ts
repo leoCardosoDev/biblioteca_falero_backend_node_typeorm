@@ -1,4 +1,5 @@
 import { DbResolveAddress } from '@/application/usecases/db-resolve-address'
+import { randomUUID } from 'crypto'
 import { AddressResolutionPolicy, ResolutionStrategy } from '@/domain/services/address/address-resolution-policy'
 import { GetOrCreateGeoEntityService } from '@/domain/services/geo/get-or-create-geo-entity-service'
 import { AddressGateway } from '@/domain/gateways/address-gateway'
@@ -39,9 +40,9 @@ describe('DbResolveAddress', () => {
     zipCode: '12345678',
     street: 'Rua Teste',
     number: '123',
-    cityId: Id.generate().value,
-    neighborhoodId: Id.generate().value,
-    stateId: Id.generate().value
+    cityId: randomUUID(),
+    neighborhoodId: randomUUID(),
+    stateId: randomUUID()
   }
 
   const validGeoInput: ResolveAddressInput = {
@@ -94,9 +95,9 @@ describe('DbResolveAddress', () => {
     const { sut, addressResolutionPolicySpy, getOrCreateGeoEntityServiceSpy } = makeSut()
     addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_GEO_ENTITIES)
 
-    const cityId = Id.generate()
-    const neighborhoodId = Id.generate()
-    const stateId = Id.generate()
+    const cityId = Id.create(randomUUID())
+    const neighborhoodId = Id.create(randomUUID())
+    const stateId = Id.create(randomUUID())
 
     getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
       cityId,
@@ -120,9 +121,9 @@ describe('DbResolveAddress', () => {
     const { sut, addressResolutionPolicySpy, addressGatewaySpy, getOrCreateGeoEntityServiceSpy } = makeSut()
     addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_EXTERNAL)
 
-    const cityId = Id.generate()
-    const neighborhoodId = Id.generate()
-    const stateId = Id.generate()
+    const cityId = Id.create(randomUUID())
+    const neighborhoodId = Id.create(randomUUID())
+    const stateId = Id.create(randomUUID())
 
     addressGatewaySpy.getByZipCode.mockResolvedValue({
       zipCode: '12345678',
@@ -161,7 +162,8 @@ describe('DbResolveAddress', () => {
     const { sut, addressResolutionPolicySpy } = makeSut()
     addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_EXTERNAL)
 
-    const result = await sut.resolve({ ...validIdsInput, zipCode: undefined })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = await sut.resolve({ ...validIdsInput, zipCode: undefined } as any)
 
     expect(result.isLeft()).toBe(true)
     expect(result.value).toEqual(new InvalidAddressError('ZipCode required for external lookup'))
@@ -183,8 +185,8 @@ describe('DbResolveAddress', () => {
 
     getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
       cityId: undefined as unknown as Id,
-      neighborhoodId: Id.generate(),
-      stateId: Id.generate()
+      neighborhoodId: Id.create(randomUUID()),
+      stateId: Id.create(randomUUID())
     })
 
     const result = await sut.resolve(validGeoInput)
@@ -225,9 +227,9 @@ describe('DbResolveAddress', () => {
     const { sut, addressResolutionPolicySpy, getOrCreateGeoEntityServiceSpy } = makeSut()
     addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_GEO_ENTITIES)
 
-    const cityId = Id.generate()
-    const neighborhoodId = Id.generate()
-    const stateId = Id.generate()
+    const cityId = Id.create(randomUUID())
+    const neighborhoodId = Id.create(randomUUID())
+    const stateId = Id.create(randomUUID())
 
     getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
       cityId,
@@ -251,9 +253,9 @@ describe('DbResolveAddress', () => {
     addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_GEO_ENTITIES)
 
     getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
-      cityId: Id.generate(),
-      neighborhoodId: Id.generate(),
-      stateId: Id.generate()
+      cityId: Id.create(randomUUID()),
+      neighborhoodId: Id.create(randomUUID()),
+      stateId: Id.create(randomUUID())
     })
 
     // Force Address.create to fail (e.g. by emptiness which we confirmed earlier)

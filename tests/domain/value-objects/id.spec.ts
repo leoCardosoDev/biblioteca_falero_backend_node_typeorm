@@ -15,8 +15,5 @@ describe('Id Value Object', () => {
     expect(() => Id.create('')).toThrow()
   })
 
-  test('Should generate a new Id if no value provided', () => {
-    const id = Id.generate()
-    expect(id.value).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)
-  })
+
 })

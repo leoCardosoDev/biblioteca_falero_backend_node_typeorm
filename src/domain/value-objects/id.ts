@@ -1,5 +1,3 @@
-import { randomUUID } from 'crypto'
-
 import { InvalidIdError } from '@/domain/errors/invalid-id-error'
 
 export class Id {
@@ -18,10 +16,6 @@ export class Id {
       throw new InvalidIdError()
     }
     return new Id(id)
-  }
-
-  static generate(): Id {
-    return new Id(randomUUID())
   }
 
   private static isValid(id: string): boolean {

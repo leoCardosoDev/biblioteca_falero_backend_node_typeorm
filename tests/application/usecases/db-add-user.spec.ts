@@ -14,6 +14,7 @@ import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { UserStatus } from '@/domain/value-objects/user-status'
 import { Address } from '@/domain/value-objects/address'
+import { IdGenerator } from '@/domain/gateways/id-generator'
 import { DomainEvents, SaveDomainEventRepository } from '@/domain/events/domain-events'
 import {
   EmailInUseError,
@@ -95,6 +96,15 @@ const makeResolveAddress = (): ResolveAddress => {
   return new ResolveAddressStub()
 }
 
+const makeIdGenerator = (): IdGenerator => {
+  class IdGeneratorStub implements IdGenerator {
+    generate(): string {
+      return '550e8400-e29b-41d4-a716-446655440000'
+    }
+  }
+  return new IdGeneratorStub()
+}
+
 interface SutTypes {
   sut: DbAddUser
   addUserRepositoryStub: AddUserRepository
@@ -102,6 +112,7 @@ interface SutTypes {
   loadUserByCpfRepositoryStub: LoadUserByCpfRepository
   saveDomainEventRepositoryStub: SaveDomainEventRepository
   resolveAddressStub: ResolveAddress
+  idGeneratorStub: IdGenerator
 }
 
 const makeSut = (): SutTypes => {
@@ -110,12 +121,14 @@ const makeSut = (): SutTypes => {
   const loadUserByCpfRepositoryStub = makeLoadUserByCpfRepository()
   const saveDomainEventRepositoryStub = makeSaveDomainEventRepository()
   const resolveAddressStub = makeResolveAddress()
+  const idGeneratorStub = makeIdGenerator()
   const sut = new DbAddUser(
     addUserRepositoryStub,
     loadUserByEmailRepositoryStub,
     loadUserByCpfRepositoryStub,
     saveDomainEventRepositoryStub,
-    resolveAddressStub
+    resolveAddressStub,
+    idGeneratorStub
   )
   return {
     sut,
@@ -123,7 +136,8 @@ const makeSut = (): SutTypes => {
     loadUserByEmailRepositoryStub,
     loadUserByCpfRepositoryStub,
     saveDomainEventRepositoryStub,
-    resolveAddressStub
+    resolveAddressStub,
+    idGeneratorStub
   }
 }
 

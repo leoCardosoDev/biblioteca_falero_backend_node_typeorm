@@ -1,4 +1,4 @@
-import { AppError } from './app-error'
+import { AppError } from '@/application/errors/app-error'
 
 export class InvalidParamError extends AppError {
   constructor(paramName: string) {

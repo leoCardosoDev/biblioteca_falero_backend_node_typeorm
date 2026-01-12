@@ -1,5 +1,6 @@
 import { AddNeighborhood, AddNeighborhoodParams } from '@/domain/usecases/add-neighborhood'
 import { AddNeighborhoodController } from '@/presentation/controllers/add-neighborhood-controller'
+import { randomUUID } from 'crypto'
 import { HttpRequest } from '@/presentation/protocols'
 import { NeighborhoodModel } from '@/domain/models/neighborhood'
 import { Id } from '@/domain/value-objects/id'
@@ -8,7 +9,7 @@ const makeAddNeighborhood = (): AddNeighborhood => {
   class AddNeighborhoodStub implements AddNeighborhood {
     async add(params: AddNeighborhoodParams): Promise<NeighborhoodModel> {
       return {
-        id: Id.generate(),
+        id: Id.create(randomUUID()),
         name: params.name,
         cityId: Id.create(params.cityId)
       }

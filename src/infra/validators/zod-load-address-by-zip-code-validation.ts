@@ -1,5 +1,6 @@
 import { z } from 'zod'
-import { Validation, ValidationError } from '@/presentation'
+import { Validation } from '@/application/protocols/validation'
+import { ValidationError } from '@/application/errors/validation-error'
 
 export class ZodLoadAddressByZipCodeValidator implements Validation {
   validate(input: unknown): Error | undefined {

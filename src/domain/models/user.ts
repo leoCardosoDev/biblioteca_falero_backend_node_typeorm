@@ -57,21 +57,19 @@ export class User {
   }
 
   static create(props: UserProps): User {
-    const id = props.id ?? Id.generate()
+    if (!props.id) throw new Error('ID is required')
+    const id = props.id
     const user = new User(props, id)
 
-    const isNewUser = !props.id
-    if (isNewUser) {
-      DomainEvents.markAggregateForDispatch(user.id.value, {
-        aggregateId: user.id.value,
-        type: 'UserCreated',
-        payload: {
-          userId: user.id.value,
-          email: user.email.value
-        },
-        createdAt: new Date()
-      })
-    }
+    DomainEvents.markAggregateForDispatch(user.id.value, {
+      aggregateId: user.id.value,
+      type: 'UserCreated',
+      payload: {
+        userId: user.id.value,
+        email: user.email.value
+      },
+      createdAt: new Date()
+    })
 
     return user
   }

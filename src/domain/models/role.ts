@@ -19,8 +19,9 @@ export class Role {
   ) { }
 
   static create(props: RoleProps): Role {
+    if (!props.id) throw new Error('ID is required')
     return new Role(
-      props.id ?? Id.generate(),
+      props.id!,
       props.slug,
       props.description ?? '',
       props.permissions ?? [],

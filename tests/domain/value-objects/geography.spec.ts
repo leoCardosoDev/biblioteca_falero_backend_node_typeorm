@@ -1,7 +1,7 @@
 import { Neighborhood } from '@/domain/value-objects/neighborhood'
 import { City } from '@/domain/value-objects/city'
 import { State } from '@/domain/value-objects/state'
-import { InvalidParamError } from '@/presentation/errors/invalid-param-error'
+import { InvalidParamError } from '@/domain/errors/invalid-param-error'
 
 describe('Geography Value Objects', () => {
   describe('Neighborhood', () => {
