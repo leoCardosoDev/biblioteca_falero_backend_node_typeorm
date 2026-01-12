@@ -12,7 +12,7 @@ import jwt from 'jsonwebtoken'
 import { RedisCacheAdapter } from '@/infra/cache/redis-cache-adapter'
 
 
-const makeAccessToken = (role: string = 'STUDENT'): string => {
+const makeAccessToken = (role: string = 'ADMIN'): string => {
   return jwt.sign({ id: 'any_id', role }, process.env.JWT_SECRET ?? 'secret')
 }
 

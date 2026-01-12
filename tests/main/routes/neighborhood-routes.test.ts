@@ -29,7 +29,7 @@ describe('Neighborhood Routes', () => {
     await TypeOrmHelper.client.synchronize(true)
   })
 
-  const makeAccessToken = (role = 'USER'): string => {
+  const makeAccessToken = (role = 'ADMIN'): string => {
     return sign({ id: 'any_id', role: UserRole.restore(role).value }, env.jwtSecret)
   }
 
