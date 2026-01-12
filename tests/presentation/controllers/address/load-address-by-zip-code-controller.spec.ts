@@ -29,23 +29,35 @@ const mockRequest = (): HttpRequest => ({
   }
 })
 
+import { Validation } from '@/presentation/protocols'
+
+class ValidationStub implements Validation {
+  validate(_input: unknown): Error | undefined {
+    return undefined
+  }
+}
+
 type SutTypes = {
   sut: LoadAddressByZipCodeController
   loadAddressByZipCodeSpy: LoadAddressByZipCodeSpy
+  validationStub: ValidationStub
 }
 
 const makeSut = (): SutTypes => {
   const loadAddressByZipCodeSpy = new LoadAddressByZipCodeSpy()
-  const sut = new LoadAddressByZipCodeController(loadAddressByZipCodeSpy)
+  const validationStub = new ValidationStub()
+  const sut = new LoadAddressByZipCodeController(loadAddressByZipCodeSpy, validationStub)
   return {
     sut,
-    loadAddressByZipCodeSpy
+    loadAddressByZipCodeSpy,
+    validationStub
   }
 }
 
 describe('LoadAddressByZipCodeController', () => {
   test('Should return 400 if validation fails', async () => {
-    const { sut } = makeSut()
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error())
     const result = await sut.handle({ params: { zipCode: 'invalid' } })
     expect(result.statusCode).toBe(400)
   })

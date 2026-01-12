@@ -11,6 +11,7 @@ import { ViaCepAdapter, ViaCepResponse } from '@/infra/gateways/via-cep-adapter'
 import { HttpClient } from '@/application/protocols/http/http-client'
 import { RedisCacheAdapter } from '@/infra/cache/redis-cache-adapter'
 import { CachedAddressGateway } from '@/infra/gateways/cached-address-gateway'
+import { ZodLoadAddressByZipCodeValidator } from '@/infra/validators/zod-load-address-by-zip-code-validation'
 
 export const makeLoadAddressByZipCodeController = (): Controller => {
 
@@ -32,6 +33,7 @@ export const makeLoadAddressByZipCodeController = (): Controller => {
   const addressGateway = new CachedAddressGateway(viaCepGateway, redisCache)
 
   const dbLoadAddressByZipCode = new DbLoadAddressByZipCode(addressGateway, geoService)
+  const validation = new ZodLoadAddressByZipCodeValidator()
 
-  return new LoadAddressByZipCodeController(dbLoadAddressByZipCode)
+  return new LoadAddressByZipCodeController(dbLoadAddressByZipCode, validation)
 }
