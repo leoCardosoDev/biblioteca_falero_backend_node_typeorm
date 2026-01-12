@@ -1,5 +1,5 @@
-import { LoadCityByNameAndStateRepository } from '@/application/protocols/db/city/load-city-by-name-and-state-repository'
-import { AddCityRepository } from '@/application/protocols/db/city/add-city-repository'
+import { LoadCityByNameAndStateRepository } from '@/domain/gateways/city-gateway'
+import { AddCityRepository } from '@/domain/gateways/city-gateway'
 import { LoadCityByIdRepository } from '@/application/protocols/db/city/load-city-by-id-repository'
 import { CityModel } from '@/domain/models/city'
 import { City } from './entities/city'

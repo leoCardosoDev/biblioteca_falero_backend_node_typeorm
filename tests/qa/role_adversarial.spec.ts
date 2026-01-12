@@ -1,10 +1,13 @@
 
 import { Role } from '@/domain/models/role'
+import { Id } from '@/domain/value-objects/id'
+import { randomUUID } from 'crypto'
 
 describe('QA Adversarial Scenarios - Role PowerLevel', () => {
 
   test('Should handle negative power levels (Assumption: Allowed but discouraged)', () => {
     const sut = Role.create({
+      id: Id.create(randomUUID()),
       slug: 'banned',
       powerLevel: -10
     })
@@ -15,6 +18,7 @@ describe('QA Adversarial Scenarios - Role PowerLevel', () => {
     // Domain is pure TS, so it accepts number. 
     // We are checking if Domain Layer has any validation against it.
     const sut = Role.create({
+      id: Id.create(randomUUID()),
       slug: 'weird_role',
       powerLevel: 50.5
     })
@@ -23,6 +27,7 @@ describe('QA Adversarial Scenarios - Role PowerLevel', () => {
 
   test('Should rely on default 0 if undefined', () => {
     const sut = Role.create({
+      id: Id.create(randomUUID()),
       slug: 'minimal'
     })
     expect(sut.powerLevel).toBe(0)

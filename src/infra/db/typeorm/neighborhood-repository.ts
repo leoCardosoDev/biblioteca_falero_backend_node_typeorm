@@ -1,5 +1,5 @@
-import { AddNeighborhoodRepository } from '@/application/protocols/db/neighborhood/add-neighborhood-repository'
-import { LoadNeighborhoodByNameAndCityRepository } from '@/application/protocols/db/neighborhood/load-neighborhood-by-name-and-city-repository'
+import { AddNeighborhoodRepository } from '@/domain/gateways/neighborhood-gateway'
+import { LoadNeighborhoodByNameAndCityRepository } from '@/domain/gateways/neighborhood-gateway'
 import { LoadNeighborhoodByIdRepository } from '@/application/protocols/db/neighborhood/load-neighborhood-by-id-repository'
 import { NeighborhoodModel } from '@/domain/models/neighborhood'
 import { Neighborhood } from './entities/neighborhood'

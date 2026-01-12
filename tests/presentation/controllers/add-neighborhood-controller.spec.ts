@@ -1,5 +1,6 @@
 import { AddNeighborhood, AddNeighborhoodParams } from '@/domain/usecases/add-neighborhood'
 import { AddNeighborhoodController } from '@/presentation/controllers/add-neighborhood-controller'
+import { randomUUID } from 'crypto'
 import { HttpRequest } from '@/presentation/protocols'
 import { NeighborhoodModel } from '@/domain/models/neighborhood'
 import { Id } from '@/domain/value-objects/id'
@@ -8,7 +9,7 @@ const makeAddNeighborhood = (): AddNeighborhood => {
   class AddNeighborhoodStub implements AddNeighborhood {
     async add(params: AddNeighborhoodParams): Promise<NeighborhoodModel> {
       return {
-        id: Id.generate(),
+        id: Id.create(randomUUID()),
         name: params.name,
         cityId: Id.create(params.cityId)
       }
@@ -17,21 +18,33 @@ const makeAddNeighborhood = (): AddNeighborhood => {
   return new AddNeighborhoodStub()
 }
 
+import { Validation } from '@/presentation/protocols'
+
+const makeValidation = (): Validation => {
+  class ValidationStub implements Validation {
+    validate(_input: unknown): Error | undefined {
+      return undefined
+    }
+  }
+  return new ValidationStub()
+}
+
 interface SutTypes {
   sut: AddNeighborhoodController
   addNeighborhoodStub: AddNeighborhood
+  validationStub: Validation
 }
 
 const makeSut = (): SutTypes => {
   const addNeighborhoodStub = makeAddNeighborhood()
-  const sut = new AddNeighborhoodController(addNeighborhoodStub)
+  const validationStub = makeValidation()
+  const sut = new AddNeighborhoodController(addNeighborhoodStub, validationStub)
   return {
     sut,
-    addNeighborhoodStub
+    addNeighborhoodStub,
+    validationStub
   }
 }
-
-
 
 interface SuccessResponseBody {
   id: string
@@ -41,7 +54,8 @@ interface SuccessResponseBody {
 
 describe('AddNeighborhood Controller', () => {
   test('Should return 400 if validation fails', async () => {
-    const { sut } = makeSut()
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error())
     const httpRequest: HttpRequest = {
       body: {
         name: '',
@@ -51,7 +65,6 @@ describe('AddNeighborhood Controller', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toBeInstanceOf(Error)
-    expect((httpResponse.body as Error).name).toBe('ZodError')
   })
 
   test('Should call AddNeighborhood with correct values', async () => {

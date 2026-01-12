@@ -1,4 +1,5 @@
 import { DbResolveAddress } from '@/application/usecases/db-resolve-address'
+import { randomUUID } from 'crypto'
 import { AddressResolutionPolicy, ResolutionStrategy } from '@/domain/services/address/address-resolution-policy'
 import { GetOrCreateGeoEntityService } from '@/domain/services/geo/get-or-create-geo-entity-service'
 import { AddressGateway } from '@/domain/gateways/address-gateway'
@@ -39,9 +40,9 @@ describe('DbResolveAddress', () => {
     zipCode: '12345678',
     street: 'Rua Teste',
     number: '123',
-    cityId: Id.generate().value,
-    neighborhoodId: Id.generate().value,
-    stateId: Id.generate().value
+    cityId: randomUUID(),
+    neighborhoodId: randomUUID(),
+    stateId: randomUUID()
   }
 
   const validGeoInput: ResolveAddressInput = {
@@ -53,217 +54,229 @@ describe('DbResolveAddress', () => {
     state: 'ST'
   }
 
-  it('should call AddressResolutionPolicy with correct params', async () => {
-    const { sut, addressResolutionPolicySpy } = makeSut()
-    addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.INVALID)
-
-    await sut.resolve(validIdsInput)
-
-    expect(addressResolutionPolicySpy.determineStrategy).toHaveBeenCalledWith(expect.objectContaining({
-      zipCode: validIdsInput.zipCode,
-      cityId: validIdsInput.cityId,
-      neighborhoodId: validIdsInput.neighborhoodId,
-      stateId: validIdsInput.stateId
-    }))
+  afterEach(() => {
+    jest.restoreAllMocks()
   })
 
-  it('should return InvalidAddressError if strategy is INVALID', async () => {
-    const { sut, addressResolutionPolicySpy } = makeSut()
-    addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.INVALID)
+  describe('Policy Interaction', () => {
+    it('should call AddressResolutionPolicy with correct params', async () => {
+      const { sut, addressResolutionPolicySpy } = makeSut()
+      addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.INVALID)
 
-    const result = await sut.resolve(validIdsInput)
+      await sut.resolve(validIdsInput)
 
-    expect(result.isLeft()).toBe(true)
-    expect(result.value).toBeInstanceOf(InvalidAddressError)
-  })
-
-  it('should resolve using provided IDs if strategy is USE_PROVIDED_IDS', async () => {
-    const { sut, addressResolutionPolicySpy } = makeSut()
-    addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.USE_PROVIDED_IDS)
-
-    const result = await sut.resolve(validIdsInput)
-
-    expect(result.isRight()).toBe(true)
-    const address = result.value as Address
-    expect(address.cityId.value).toBe(validIdsInput.cityId)
-    expect(address.neighborhoodId.value).toBe(validIdsInput.neighborhoodId)
-    expect(address.stateId.value).toBe(validIdsInput.stateId)
-  })
-
-  it('should resolve using GeoEntities if strategy is LOOKUP_GEO_ENTITIES', async () => {
-    const { sut, addressResolutionPolicySpy, getOrCreateGeoEntityServiceSpy } = makeSut()
-    addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_GEO_ENTITIES)
-
-    const cityId = Id.generate()
-    const neighborhoodId = Id.generate()
-    const stateId = Id.generate()
-
-    getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
-      cityId,
-      neighborhoodId,
-      stateId
-    })
-
-    const result = await sut.resolve(validGeoInput)
-
-    expect(result.isRight()).toBe(true)
-    const address = result.value as Address
-    expect(address.cityId.value).toBe(cityId.value)
-    expect(getOrCreateGeoEntityServiceSpy.perform).toHaveBeenCalledWith({
-      uf: validGeoInput.state,
-      city: validGeoInput.city,
-      neighborhood: validGeoInput.neighborhood
+      expect(addressResolutionPolicySpy.determineStrategy).toHaveBeenCalledWith(expect.objectContaining({
+        zipCode: validIdsInput.zipCode,
+        cityId: validIdsInput.cityId,
+        neighborhoodId: validIdsInput.neighborhoodId,
+        stateId: validIdsInput.stateId
+      }))
     })
   })
 
-  it('should resolve using External Gateway if strategy is LOOKUP_EXTERNAL', async () => {
-    const { sut, addressResolutionPolicySpy, addressGatewaySpy, getOrCreateGeoEntityServiceSpy } = makeSut()
-    addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_EXTERNAL)
+  describe('Strategy: INVALID', () => {
+    it('should return InvalidAddressError if strategy is INVALID', async () => {
+      const { sut, addressResolutionPolicySpy } = makeSut()
+      addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.INVALID)
 
-    const cityId = Id.generate()
-    const neighborhoodId = Id.generate()
-    const stateId = Id.generate()
+      const result = await sut.resolve(validIdsInput)
 
-    addressGatewaySpy.getByZipCode.mockResolvedValue({
-      zipCode: '12345678',
-      street: 'Street From API',
-      neighborhood: 'Neighborhood From API',
-      city: 'City From API',
-      state: 'UF'
+      expect(result.isLeft()).toBe(true)
+      expect(result.value).toBeInstanceOf(InvalidAddressError)
+    })
+  })
+
+  describe('Strategy: USE_PROVIDED_IDS', () => {
+    it('should resolve using provided IDs if strategy is USE_PROVIDED_IDS', async () => {
+      const { sut, addressResolutionPolicySpy } = makeSut()
+      addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.USE_PROVIDED_IDS)
+
+      const result = await sut.resolve(validIdsInput)
+
+      expect(result.isRight()).toBe(true)
+      const address = result.value as Address
+      expect(address.cityId.value).toBe(validIdsInput.cityId)
+      expect(address.neighborhoodId.value).toBe(validIdsInput.neighborhoodId)
+      expect(address.stateId.value).toBe(validIdsInput.stateId)
     })
 
-    getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
-      cityId,
-      neighborhoodId,
-      stateId
+    it('should return InvalidAddressError if strategy is USE_PROVIDED_IDS but IDs are missing', async () => {
+      const { sut, addressResolutionPolicySpy } = makeSut()
+      addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.USE_PROVIDED_IDS)
+
+      const result = await sut.resolve({ ...validIdsInput, cityId: undefined })
+
+      expect(result.isLeft()).toBe(true)
+      expect(result.value).toEqual(new InvalidAddressError('Missing required IDs despite strategy'))
     })
 
-    const result = await sut.resolve({ ...validIdsInput, street: undefined })
+    it('should pass empty string for street/number if undefined (USE_PROVIDED_IDS)', async () => {
+      const { sut, addressResolutionPolicySpy } = makeSut()
+      addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.USE_PROVIDED_IDS)
 
-    expect(result.isRight()).toBe(true)
-    const address = result.value as Address
-    expect(address.street).toBe('Street From API')
-    expect(address.cityId.value).toBe(cityId.value)
-  })
+      const createSpy = jest.spyOn(Address, 'create')
 
-  it('should return InvalidAddressError if External Gateway fails to find address', async () => {
-    const { sut, addressResolutionPolicySpy, addressGatewaySpy } = makeSut()
-    addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_EXTERNAL)
+      const input = { ...validIdsInput, street: undefined, number: undefined }
+      await sut.resolve(input)
 
-    addressGatewaySpy.getByZipCode.mockResolvedValue(null)
-
-    const result = await sut.resolve(validIdsInput)
-
-    expect(result.isLeft()).toBe(true)
-    expect(result.value).toEqual(new InvalidAddressError('Address not found for the provided ZipCode'))
-  })
-  it('should return InvalidAddressError if strategy is LOOKUP_EXTERNAL but no zipCode is provided', async () => {
-    const { sut, addressResolutionPolicySpy } = makeSut()
-    addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_EXTERNAL)
-
-    const result = await sut.resolve({ ...validIdsInput, zipCode: undefined })
-
-    expect(result.isLeft()).toBe(true)
-    expect(result.value).toEqual(new InvalidAddressError('ZipCode required for external lookup'))
-  })
-
-  it('should return InvalidAddressError if strategy is USE_PROVIDED_IDS but IDs are missing', async () => {
-    const { sut, addressResolutionPolicySpy } = makeSut()
-    addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.USE_PROVIDED_IDS)
-
-    const result = await sut.resolve({ ...validIdsInput, cityId: undefined })
-
-    expect(result.isLeft()).toBe(true)
-    expect(result.value).toEqual(new InvalidAddressError('Missing required IDs despite strategy'))
-  })
-
-  it('should return InvalidAddressError if GeoEntities lookup fails to return all IDs', async () => {
-    const { sut, addressResolutionPolicySpy, getOrCreateGeoEntityServiceSpy } = makeSut()
-    addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_GEO_ENTITIES)
-
-    getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
-      cityId: undefined as unknown as Id,
-      neighborhoodId: Id.generate(),
-      stateId: Id.generate()
+      expect(createSpy).toHaveBeenCalledWith(expect.objectContaining({
+        street: '',
+        number: ''
+      }))
     })
 
-    const result = await sut.resolve(validGeoInput)
+    it('should return InvalidAddressError if Address.create fails', async () => {
+      const { sut, addressResolutionPolicySpy } = makeSut()
+      addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.USE_PROVIDED_IDS)
 
-    expect(result.isLeft()).toBe(true)
-    expect(result.value).toEqual(new InvalidAddressError('Failed to resolve address IDs'))
+      jest.spyOn(Address, 'create').mockReturnValueOnce(new Error('Address creation error'))
+
+      const result = await sut.resolve(validIdsInput)
+
+      expect(result.isLeft()).toBe(true)
+      expect(result.value).toBeInstanceOf(Error)
+    })
   })
 
-  it('should return InvalidAddressError if Address.create fails', async () => {
-    const { sut, addressResolutionPolicySpy } = makeSut()
-    addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.USE_PROVIDED_IDS)
+  describe('Strategy: LOOKUP_GEO_ENTITIES', () => {
+    it('should resolve using GeoEntities if strategy is LOOKUP_GEO_ENTITIES', async () => {
+      const { sut, addressResolutionPolicySpy, getOrCreateGeoEntityServiceSpy } = makeSut()
+      addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_GEO_ENTITIES)
 
-    jest.spyOn(Address, 'create').mockReturnValueOnce(new Error('Address creation error'))
+      const cityId = Id.create(randomUUID())
+      const neighborhoodId = Id.create(randomUUID())
+      const stateId = Id.create(randomUUID())
 
-    const result = await sut.resolve(validIdsInput)
+      getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
+        cityId,
+        neighborhoodId,
+        stateId
+      })
 
-    expect(result.isLeft()).toBe(true)
-    expect(result.value).toBeInstanceOf(Error)
-  })
+      const result = await sut.resolve(validGeoInput)
 
-  it('should pass empty string for street/number if undefined (USE_PROVIDED_IDS)', async () => {
-    const { sut, addressResolutionPolicySpy } = makeSut()
-    addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.USE_PROVIDED_IDS)
-
-    // Spy to verify arguments passed to Address.create
-    const createSpy = jest.spyOn(Address, 'create')
-
-    const input = { ...validIdsInput, street: undefined, number: undefined }
-    await sut.resolve(input)
-
-    expect(createSpy).toHaveBeenCalledWith(expect.objectContaining({
-      street: '',
-      number: ''
-    }))
-  })
-
-  it('should pass empty string for street/number if undefined (LOOKUP_GEO_ENTITIES)', async () => {
-    const { sut, addressResolutionPolicySpy, getOrCreateGeoEntityServiceSpy } = makeSut()
-    addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_GEO_ENTITIES)
-
-    const cityId = Id.generate()
-    const neighborhoodId = Id.generate()
-    const stateId = Id.generate()
-
-    getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
-      cityId,
-      neighborhoodId,
-      stateId
+      expect(result.isRight()).toBe(true)
+      const address = result.value as Address
+      expect(address.cityId.value).toBe(cityId.value)
+      expect(getOrCreateGeoEntityServiceSpy.perform).toHaveBeenCalledWith({
+        uf: validGeoInput.state,
+        city: validGeoInput.city,
+        neighborhood: validGeoInput.neighborhood
+      })
     })
 
-    const createSpy = jest.spyOn(Address, 'create')
+    it('should return InvalidAddressError if GeoEntities lookup fails to return all IDs', async () => {
+      const { sut, addressResolutionPolicySpy, getOrCreateGeoEntityServiceSpy } = makeSut()
+      addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_GEO_ENTITIES)
 
-    const input = { ...validGeoInput, street: undefined, number: undefined }
-    await sut.resolve(input)
+      getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
+        cityId: undefined as unknown as Id,
+        neighborhoodId: Id.create(randomUUID()),
+        stateId: Id.create(randomUUID())
+      })
 
-    expect(createSpy).toHaveBeenCalledWith(expect.objectContaining({
-      street: '',
-      number: ''
-    }))
-  })
+      const result = await sut.resolve(validGeoInput)
 
-  it('should return Left if Address.create fails in final step (after resolution)', async () => {
-    const { sut, addressResolutionPolicySpy, getOrCreateGeoEntityServiceSpy } = makeSut()
-    addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_GEO_ENTITIES)
-
-    getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
-      cityId: Id.generate(),
-      neighborhoodId: Id.generate(),
-      stateId: Id.generate()
+      expect(result.isLeft()).toBe(true)
+      expect(result.value).toEqual(new InvalidAddressError('Failed to resolve address IDs'))
     })
 
-    // Force Address.create to fail (e.g. by emptiness which we confirmed earlier)
-    // Or just spyMock
-    jest.spyOn(Address, 'create').mockReturnValue(new Error('Final step error'))
+    it('should pass empty string for street/number if undefined (LOOKUP_GEO_ENTITIES)', async () => {
+      const { sut, addressResolutionPolicySpy, getOrCreateGeoEntityServiceSpy } = makeSut()
+      addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_GEO_ENTITIES)
 
-    const result = await sut.resolve(validGeoInput)
+      const cityId = Id.create(randomUUID())
+      const neighborhoodId = Id.create(randomUUID())
+      const stateId = Id.create(randomUUID())
 
-    expect(result.isLeft()).toBe(true)
-    expect(result.value).toBeInstanceOf(Error)
-    expect((result.value as Error).message).toBe('Final step error')
+      getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
+        cityId,
+        neighborhoodId,
+        stateId
+      })
+
+      const createSpy = jest.spyOn(Address, 'create')
+
+      const input = { ...validGeoInput, street: undefined, number: undefined }
+      await sut.resolve(input)
+
+      expect(createSpy).toHaveBeenCalledWith(expect.objectContaining({
+        street: '',
+        number: ''
+      }))
+    })
+
+    it('should return Left if Address.create fails in final step (after resolution)', async () => {
+      const { sut, addressResolutionPolicySpy, getOrCreateGeoEntityServiceSpy } = makeSut()
+      addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_GEO_ENTITIES)
+
+      getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
+        cityId: Id.create(randomUUID()),
+        neighborhoodId: Id.create(randomUUID()),
+        stateId: Id.create(randomUUID())
+      })
+
+      jest.spyOn(Address, 'create').mockReturnValue(new Error('Final step error'))
+
+      const result = await sut.resolve(validGeoInput)
+
+      expect(result.isLeft()).toBe(true)
+      expect(result.value).toBeInstanceOf(Error)
+      expect((result.value as Error).message).toBe('Final step error')
+    })
+  })
+
+  describe('Strategy: LOOKUP_EXTERNAL', () => {
+    it('should resolve using External Gateway if strategy is LOOKUP_EXTERNAL', async () => {
+      const { sut, addressResolutionPolicySpy, addressGatewaySpy, getOrCreateGeoEntityServiceSpy } = makeSut()
+      addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_EXTERNAL)
+
+      const cityId = Id.create(randomUUID())
+      const neighborhoodId = Id.create(randomUUID())
+      const stateId = Id.create(randomUUID())
+
+      addressGatewaySpy.getByZipCode.mockResolvedValue({
+        zipCode: '12345678',
+        street: 'Street From API',
+        neighborhood: 'Neighborhood From API',
+        city: 'City From API',
+        state: 'UF'
+      })
+
+      getOrCreateGeoEntityServiceSpy.perform.mockResolvedValue({
+        cityId,
+        neighborhoodId,
+        stateId
+      })
+
+      const result = await sut.resolve({ ...validIdsInput, street: undefined })
+
+      expect(result.isRight()).toBe(true)
+      const address = result.value as Address
+      expect(address.street).toBe('Street From API')
+      expect(address.cityId.value).toBe(cityId.value)
+    })
+
+    it('should return InvalidAddressError if External Gateway fails to find address', async () => {
+      const { sut, addressResolutionPolicySpy, addressGatewaySpy } = makeSut()
+      addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_EXTERNAL)
+
+      addressGatewaySpy.getByZipCode.mockResolvedValue(null)
+
+      const result = await sut.resolve(validIdsInput)
+
+      expect(result.isLeft()).toBe(true)
+      expect(result.value).toEqual(new InvalidAddressError('Address not found for the provided ZipCode'))
+    })
+
+    it('should return InvalidAddressError if strategy is LOOKUP_EXTERNAL but no zipCode is provided', async () => {
+      const { sut, addressResolutionPolicySpy } = makeSut()
+      addressResolutionPolicySpy.determineStrategy.mockReturnValue(ResolutionStrategy.LOOKUP_EXTERNAL)
+
+      const result = await sut.resolve({ ...validIdsInput, zipCode: undefined } as unknown as ResolveAddressInput)
+
+      expect(result.isLeft()).toBe(true)
+      expect(result.value).toEqual(new InvalidAddressError('ZipCode required for external lookup'))
+    })
   })
 })

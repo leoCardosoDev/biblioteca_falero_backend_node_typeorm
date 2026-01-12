@@ -1,3 +1,1 @@
-export interface Validation {
-  validate: (input: Record<string, unknown>) => Error | undefined
-}
+export * from '@/application/protocols/validation'

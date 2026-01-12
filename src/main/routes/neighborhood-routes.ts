@@ -36,7 +36,7 @@ const addNeighborhoodSchema = {
 const loadNeighborhoodByIdSchema = {
   tags: ['Addresses'],
   summary: 'Load neighborhood by id',
-  description: 'Load a neighborhood by id. Requires authenticated user.',
+  description: 'Load a neighborhood by id. Requires admin role.',
   security: [{ bearerAuth: [] }],
   params: {
     type: 'object',
@@ -71,7 +71,8 @@ export default async (app: FastifyInstance): Promise<void> => {
   app.get('/neighborhoods/:id', {
     schema: loadNeighborhoodByIdSchema,
     preHandler: [
-      adaptMiddleware(makeAuthMiddleware())
+      adaptMiddleware(makeAuthMiddleware()),
+      adaptMiddleware(makeAdminOnly())
     ]
   }, adaptRoute(makeLoadNeighborhoodByIdController()))
 }

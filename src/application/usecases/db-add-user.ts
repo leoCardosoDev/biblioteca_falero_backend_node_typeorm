@@ -14,6 +14,8 @@ import { Name } from '@/domain/value-objects/name'
 import { Rg } from '@/domain/value-objects/rg'
 import { UserStatus } from '@/domain/value-objects/user-status'
 import { Address } from '@/domain/value-objects/address'
+import { IdGenerator } from '@/domain/gateways/id-generator'
+import { Id } from '@/domain/value-objects/id'
 
 export class DbAddUser implements AddUser {
   constructor(
@@ -21,7 +23,8 @@ export class DbAddUser implements AddUser {
     private readonly loadUserByEmailRepository: LoadUserByEmailRepository,
     private readonly loadUserByCpfRepository: LoadUserByCpfRepository,
     private readonly saveDomainEventRepository: SaveDomainEventRepository,
-    private readonly resolveAddress: ResolveAddress
+    private readonly resolveAddress: ResolveAddress,
+    private readonly idGenerator: IdGenerator
   ) { }
 
   async add(userData: AddUserParams): Promise<AddUserOutput | Error> {
@@ -72,7 +75,11 @@ export class DbAddUser implements AddUser {
       addressVO = addressOrError.value
     }
 
+    const id = this.idGenerator.generate()
+    const idVO = Id.create(id)
+
     const user = User.create({
+      id: idVO,
       name: nameOrError,
       email: emailOrError,
       rg: rgOrError,

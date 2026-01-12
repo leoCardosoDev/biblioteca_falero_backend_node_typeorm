@@ -17,6 +17,7 @@ import { HttpClient } from '@/application/protocols/http/http-client'
 
 import { GetOrCreateGeoEntityService } from '@/domain/services/geo/get-or-create-geo-entity-service'
 import { DefaultAddressResolutionPolicy } from '@/domain/services/address/address-resolution-policy'
+import { UUIDGenerator } from '@/infra/gateways/uuid-generator'
 
 import { makeAddUserValidation } from './add-user-validation-factory'
 
@@ -42,13 +43,15 @@ export const makeAddUserController = (): Controller => {
 
   const addressResolutionPolicy = new DefaultAddressResolutionPolicy()
   const dbResolveAddress = new DbResolveAddress(addressResolutionPolicy, addressGateway, getOrCreateGeoEntityService)
+  const idGenerator = new UUIDGenerator()
 
   const dbAddUser = new DbAddUser(
     userTypeOrmRepository,
     userTypeOrmRepository,
     userTypeOrmRepository,
     domainEventRepository,
-    dbResolveAddress
+    dbResolveAddress,
+    idGenerator
   )
   return new AddUserController(makeAddUserValidation(), dbAddUser)
 }

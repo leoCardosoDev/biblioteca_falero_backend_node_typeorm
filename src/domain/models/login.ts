@@ -21,8 +21,9 @@ export class Login {
   ) { }
 
   static create(props: LoginProps): Login {
+    if (!props.id) throw new Error('ID is required')
     return new Login(
-      props.id ?? Id.generate(),
+      props.id!,
       props.userId,
       props.roleId,
       props.email,

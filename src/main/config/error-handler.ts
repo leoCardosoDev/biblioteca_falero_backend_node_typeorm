@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { ZodError } from 'zod'
-import { AppError, UnauthorizedError, AccessDeniedError } from '@/presentation/errors'
+
+import { AppError, UnauthorizedError, AccessDeniedError, ValidationError } from '@/presentation/errors'
 import { DomainError } from '@/domain/errors'
 
 interface FastifyValidationError extends Error {
@@ -21,17 +21,8 @@ export const errorHandler = (error: Error, request: FastifyRequest, reply: Fasti
   let message = 'An unexpected error occurred'
   let details: unknown[] | undefined
 
-  if (error instanceof ZodError) {
-    statusCode = 400
-    type = 'VALIDATION'
-    code = 'INVALID_PARAMETERS'
-    message = 'One or more fields are invalid.'
-    details = error.issues.map(issue => ({
-      field: issue.path.join('.'),
-      issue: issue.code,
-      message: issue.message
-    }))
-  } else if (error instanceof AppError) {
+
+  if (error instanceof AppError) {
     statusCode = reply.statusCode >= 400 ? reply.statusCode : 400
     type = getAppErrorType(error)
     code = error.code
@@ -81,6 +72,7 @@ export const errorHandler = (error: Error, request: FastifyRequest, reply: Fasti
 
 const getAppErrorType = (error: AppError): string => {
   if (error instanceof UnauthorizedError || error instanceof AccessDeniedError) return 'SECURITY'
+  if (error instanceof ValidationError) return 'VALIDATION'
   if (error.code === 'INTERNAL_ERROR') return 'SYSTEM'
   return 'BUSINESS'
 }

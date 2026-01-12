@@ -14,8 +14,9 @@ export class Permission {
   ) { }
 
   static create(props: PermissionProps): Permission {
+    if (!props.id) throw new Error('ID is required')
     return new Permission(
-      props.id ?? Id.generate(),
+      props.id!,
       props.slug,
       props.description ?? ''
     )

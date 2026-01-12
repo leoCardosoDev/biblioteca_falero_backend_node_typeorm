@@ -1,4 +1,4 @@
-import { LoadStateByUfRepository } from '@/application/protocols/db/state/load-state-by-uf-repository'
+import { LoadStateByUfRepository } from '@/domain/gateways/state-gateway'
 import { LoadStateByIdRepository } from '@/application/protocols/db/state/load-state-by-id-repository'
 import { StateModel } from '@/domain/models/state'
 import { State } from './entities/state'
