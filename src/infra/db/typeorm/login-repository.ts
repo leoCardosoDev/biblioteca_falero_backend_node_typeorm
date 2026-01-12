@@ -13,8 +13,10 @@ import { UserStatusEnum } from '@/domain/value-objects/user-status'
 
 import { LoadLoginByUserIdRepository } from '@/application/protocols/db/load-login-by-user-id-repository'
 import { UpdateLoginRoleRepository } from '@/application/protocols/db/update-login-role-repository'
+import { UpdateLoginPasswordRepository } from '@/application/protocols/db/update-login-password-repository'
+import { UpdateLoginStatusRepository } from '@/application/protocols/db/update-login-status-repository'
 
-export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadLoginByUserIdRepository, UpdateLoginRoleRepository {
+export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadLoginByUserIdRepository, UpdateLoginRoleRepository, UpdateLoginPasswordRepository, UpdateLoginStatusRepository {
 
   async add(data: Omit<AddUserLoginParams, 'role' | 'actorId'> & { passwordHash: string, roleId: Id }): Promise<LoginModel> {
     const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
@@ -27,7 +29,7 @@ export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountBy
       updatedAt: new Date()
     })
     const saved = await repository.save(loginEntity)
-    
+
     const result = this.toDomain(saved, data.email)
     if (!result) {
       throw new Error('Failed to create login: data corruption detected after save')
@@ -76,8 +78,18 @@ export class LoginTypeOrmRepository implements AddLoginRepository, LoadAccountBy
 
   async updateRole(userId: string, roleId: string): Promise<void> {
     const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
-    
+
     await repository.update({ userId }, { roleId })
+  }
+
+  async updatePassword(id: Id, passwordHash: string): Promise<void> {
+    const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+    await repository.update({ id: id.value }, { password: passwordHash })
+  }
+
+  async updateStatus(id: Id, isActive: boolean): Promise<void> {
+    const repository = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+    await repository.update({ id: id.value }, { status: isActive ? 'ACTIVE' : 'INACTIVE' })
   }
 
   private toDomain(entity: LoginTypeOrmEntity, email: Email): Login | null {
