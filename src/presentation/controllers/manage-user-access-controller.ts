@@ -1,18 +1,16 @@
 
-import { ManageUserAccess } from '@/domain/usecases/manage-user-access'
-import { UserStatus } from '@/domain/value-objects/user-status'
+import { ManageUserAccess } from '@/domain/usecases'
+import { UserStatus } from '@/domain/value-objects'
 import { Controller } from '@/presentation/protocols/controller'
 import { HttpResponse, HttpRequest } from '@/presentation/protocols/http'
-import { badRequest, forbidden, noContent, notFound, serverError } from '@/presentation/helpers/http-helper'
-import { AccessDeniedError } from '@/domain/errors/access-denied-error'
-import { NotFoundError } from '@/domain/errors/not-found-error'
+import { badRequest, forbidden, noContent, notFound, serverError } from '@/presentation/helpers'
+import { AccessDeniedError, NotFoundError } from '@/domain/errors'
 
 export class ManageUserAccessController implements Controller {
   constructor(private readonly manageUserAccess: ManageUserAccess) { }
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      console.log('ManageUserAccessController payload:', httpRequest.body)
       const { role, status, password } = httpRequest.body as { role?: string, status?: string, password?: string }
       const params = httpRequest.params as { id: string }
       const id = params.id
