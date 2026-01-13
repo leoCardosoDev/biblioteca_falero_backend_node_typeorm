@@ -15,16 +15,11 @@ describe('Address Routes', () => {
 
   describe('GET /addresses/cep/:zipCode', () => {
     test('Should return 200 on success (mocking ZipCode search might be complex, so we check auth first)', async () => {
-      // Note: This test might fail if the ZipCode provider is not mocked, 
-      // but here we focus on verifying that the request passes the Admin filter.
       const response = await app.inject({
         method: 'GET',
-        url: '/api/addresses/cep/12345678',
+        url: '/api/addresses/cep/06463220',
         headers: { authorization: `Bearer ${makeAccessToken()}` }
       })
-
-      // If it passes authentication/authorization, it should proceed to internal logic.
-      // Depending on implementation, it might 400 or 404 if zip is invalid, but NOT 403.
       expect(response.statusCode).not.toBe(403)
     })
 

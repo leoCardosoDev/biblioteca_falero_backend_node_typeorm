@@ -481,4 +481,69 @@ describe('LoginTypeOrmRepository', () => {
     const login = await sut.loadByUserId('invalid_id')
     expect(login).toBeUndefined()
   })
+
+  test('Should update the login password on updatePassword success', async () => {
+    const sut = makeSut()
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = userRepo.create({
+      name: 'any_name',
+      email: 'password_update@mail.com',
+      rg: 'any_rg',
+      cpf: 'any_cpf',
+      gender: 'male',
+      status: 'ACTIVE'
+    })
+    await userRepo.save(user)
+
+    const addLoginParams = {
+      userId: Id.create(user.id),
+      email: Email.create('password_update@mail.com') as Email,
+      password: 'old_password',
+      passwordHash: 'old_hash',
+      roleId: Id.create('550e8400-e29b-41d4-a716-446655440002'),
+      status: UserStatus.create('active') as UserStatus
+    }
+    const login = await sut.add(addLoginParams)
+
+    await sut.updatePassword(login.id, 'new_hash')
+
+    const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+    const dbLogin = await loginRepo.findOneBy({ id: login.id.value })
+    expect(dbLogin?.password).toBe('new_hash')
+  })
+
+  test('Should update the login status on updateStatus success', async () => {
+    const sut = makeSut()
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = userRepo.create({
+      name: 'any_name',
+      email: 'status_update@mail.com',
+      rg: 'any_rg',
+      cpf: 'any_cpf',
+      gender: 'male',
+      status: 'ACTIVE'
+    })
+    await userRepo.save(user)
+
+    const addLoginParams = {
+      userId: Id.create(user.id),
+      email: Email.create('status_update@mail.com') as Email,
+      password: 'any_password',
+      passwordHash: 'any_hash',
+      roleId: Id.create('550e8400-e29b-41d4-a716-446655440002'),
+      status: UserStatus.create('active') as UserStatus
+    }
+    const login = await sut.add(addLoginParams)
+
+    // Deactivate
+    await sut.updateStatus(login.id, false)
+    const loginRepo = TypeOrmHelper.getRepository(LoginTypeOrmEntity)
+    let dbLogin = await loginRepo.findOneBy({ id: login.id.value })
+    expect(dbLogin?.status).toBe('INACTIVE')
+
+    // Activate
+    await sut.updateStatus(login.id, true)
+    dbLogin = await loginRepo.findOneBy({ id: login.id.value })
+    expect(dbLogin?.status).toBe('ACTIVE')
+  })
 })

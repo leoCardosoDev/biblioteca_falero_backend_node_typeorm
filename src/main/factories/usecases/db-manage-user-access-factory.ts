@@ -19,6 +19,8 @@ export const makeDbManageUserAccess = (): DbManageUserAccess => {
     userRepository,
     loginRepository,
     loginRepository,
+    loginRepository,
+    userRepository,
     bcryptAdapter
   )
 }
