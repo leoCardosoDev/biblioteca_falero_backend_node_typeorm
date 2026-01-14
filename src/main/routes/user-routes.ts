@@ -51,6 +51,7 @@ const userSchema = {
     status: { type: 'string', enum: ['ACTIVE', 'INACTIVE', 'BLOCKED'] },
     version: { type: 'integer' },
     createdAt: { type: 'string', format: 'date-time' },
+    deletedAt: { type: 'string', format: 'date-time', nullable: true },
     login: {
       type: 'object',
       properties: {
