@@ -8,7 +8,7 @@ import { swaggerConfig } from './swagger'
 import { errorHandler } from './error-handler'
 import { citySchema, stateSchema } from './schemas'
 
-const app = fastify()
+const app = fastify({ logger: process.env.NODE_ENV !== 'test' })
 app.setErrorHandler(errorHandler)
 app.addSchema(citySchema)
 app.addSchema(stateSchema)

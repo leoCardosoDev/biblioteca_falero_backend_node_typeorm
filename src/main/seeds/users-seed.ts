@@ -79,7 +79,7 @@ const run = async (): Promise<void> => {
     password: env.mysqlPassword,
     database: env.mysqlDb,
     entities: [path.join(__dirname, '../../infra/db/typeorm/entities/*.{ts,js}')],
-    synchronize: true
+    synchronize: false
   }
 
   await TypeOrmHelper.connect(config)
