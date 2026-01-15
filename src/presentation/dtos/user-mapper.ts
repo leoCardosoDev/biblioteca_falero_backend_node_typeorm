@@ -11,6 +11,7 @@ export interface UserDTO {
   status: string
   version: number
   createdAt: string
+  deletedAt?: string
   address?: {
     street: string
     number: string
@@ -42,6 +43,7 @@ export class UserMapper {
       status: user.status.value,
       version: user.version,
       createdAt: user.createdAt?.toISOString() ?? new Date().toISOString(),
+      deletedAt: user.deletedAt?.toISOString(),
       address: user.address ? {
         street: user.address.street,
         number: user.address.number,

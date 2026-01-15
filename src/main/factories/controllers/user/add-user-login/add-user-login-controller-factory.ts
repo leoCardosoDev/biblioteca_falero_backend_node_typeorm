@@ -3,7 +3,7 @@ import { Controller } from '@/presentation/protocols/controller'
 import { makeAddUserLoginValidation } from './add-user-login-validation-factory'
 import { DbAddUserLogin } from '@/application/usecases/db-add-user-login'
 import { LoginTypeOrmRepository } from '@/infra/db/typeorm/login-repository'
-import { RoleTypeOrmRepository } from '@/infra/db/typeorm/role-repository'
+import { RoleRepository } from '@/infra/db/typeorm/role-repository'
 import { UserTypeOrmRepository } from '@/infra/db/typeorm/user-repository'
 import { BcryptAdapter } from '@/infra/cryptography/bcrypt-adapter'
 
@@ -11,8 +11,8 @@ export const makeAddUserLoginController = (): Controller => {
   const salt = 12
   const bcryptAdapter = new BcryptAdapter(salt)
   const loginRepository = new LoginTypeOrmRepository()
-  const roleTypeOrmRepository = new RoleTypeOrmRepository()
+  const roleRepository = new RoleRepository()
   const userTypeOrmRepository = new UserTypeOrmRepository()
-  const dbAddUserLogin = new DbAddUserLogin(bcryptAdapter, loginRepository, roleTypeOrmRepository, userTypeOrmRepository)
+  const dbAddUserLogin = new DbAddUserLogin(bcryptAdapter, loginRepository, roleRepository, userTypeOrmRepository)
   return new AddUserLoginController(dbAddUserLogin, makeAddUserLoginValidation())
 }

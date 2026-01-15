@@ -166,4 +166,17 @@ describe('LoadUsers Controller', () => {
       status: 'ACTIVE'
     })
   })
+
+  test('Should serialize deletedAt when present', async () => {
+    const { sut, loadUsersStub } = makeSut()
+    const deletedDate = new Date('2025-01-01')
+    const userWithDeletedAt = {
+      ...makeFakeUsers()[0],
+      deletedAt: deletedDate
+    } as unknown as UserWithLogin
+    jest.spyOn(loadUsersStub, 'load').mockResolvedValueOnce([userWithDeletedAt])
+    const httpResponse = await sut.handle({})
+    expect(httpResponse.statusCode).toBe(200)
+    expect((httpResponse.body as Array<{ deletedAt: string }>)[0].deletedAt).toBe(deletedDate.toISOString())
+  })
 })

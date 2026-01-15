@@ -1,12 +1,11 @@
-import { LoadRoleBySlugRepository } from '@/application/protocols/db/load-role-by-slug-repository'
-import { LoadRoleByIdRepository } from '@/application/protocols/db/load-role-by-id-repository'
-import { Role } from '@/domain/models/role'
-import { RoleTypeOrmEntity } from './entities/role-entity'
-import { TypeOrmHelper } from './typeorm-helper'
-import { Id } from '@/domain/value-objects/id'
-import { Permission } from '@/domain/models/permission'
 
-export class RoleTypeOrmRepository implements LoadRoleBySlugRepository, LoadRoleByIdRepository {
+import { LoadRoleBySlugRepository, LoadRoleByIdRepository } from '@/application/protocols/db'
+import { Role, Permission } from '@/domain/models'
+import { RoleTypeOrmEntity } from './entities'
+import { TypeOrmHelper } from './typeorm-helper'
+import { Id } from '@/domain/value-objects'
+
+export class RoleRepository implements LoadRoleBySlugRepository, LoadRoleByIdRepository {
   async loadBySlug(slug: string): Promise<Role | null> {
     const repository = TypeOrmHelper.getRepository(RoleTypeOrmEntity)
     const roleEntity = await repository.findOne({
@@ -37,7 +36,7 @@ export class RoleTypeOrmRepository implements LoadRoleBySlugRepository, LoadRole
     }))
 
     return Role.create({
-      id: Id.create(entity.id), 
+      id: Id.create(entity.id),
       slug: entity.slug,
       description: entity.description,
       permissions,

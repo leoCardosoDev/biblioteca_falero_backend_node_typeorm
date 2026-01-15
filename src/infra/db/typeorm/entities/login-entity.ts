@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index, ManyToOne, JoinColumn } from 'typeorm'
-import { UserTypeOrmEntity } from './user-entity'
+import type { UserTypeOrmEntity } from './user-entity'
 import { RoleTypeOrmEntity } from './role-entity'
 
 @Entity('logins')
@@ -27,7 +27,7 @@ export class LoginTypeOrmEntity {
   @Column({ name: 'user_id' })
   userId!: string
 
-  @ManyToOne(() => UserTypeOrmEntity)
+  @ManyToOne('UserTypeOrmEntity')
   @JoinColumn({ name: 'user_id' })
   user?: UserTypeOrmEntity
 

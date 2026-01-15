@@ -1,12 +1,12 @@
 
 import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
-import { RoleTypeOrmRepository } from '@/infra/db/typeorm/role-repository'
+import { RoleRepository } from '@/infra/db/typeorm/role-repository'
 import { RoleTypeOrmEntity } from '@/infra/db/typeorm/entities/role-entity'
 import { PermissionTypeOrmEntity } from '@/infra/db/typeorm/entities/permission-entity'
 import { DataSource } from 'typeorm'
 import { Id } from '@/domain/value-objects/id'
 
-describe('RoleTypeOrmRepository', () => {
+describe('RoleRepository', () => {
   let dataSource: DataSource
 
   beforeAll(async () => {
@@ -27,8 +27,8 @@ describe('RoleTypeOrmRepository', () => {
     await dataSource.synchronize(true)
   })
 
-  const makeSut = (): RoleTypeOrmRepository => {
-    return new RoleTypeOrmRepository()
+  const makeSut = (): RoleRepository => {
+    return new RoleRepository()
   }
 
   const makeFakeRole = async (): Promise<RoleTypeOrmEntity> => {

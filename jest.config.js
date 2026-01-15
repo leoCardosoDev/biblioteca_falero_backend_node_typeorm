@@ -13,8 +13,17 @@ module.exports = {
   coverageReporters: ['text', 'lcov', 'json-summary'],
   testEnvironment: 'node',
   transform: {
-    '.+\\.ts$': ['ts-jest', {
-      tsconfig: 'tsconfig.node.json'
+    '.+\\.ts$': ['@swc/jest', {
+      jsc: {
+        parser: {
+          syntax: 'typescript',
+          decorators: true,
+        },
+        transform: {
+          legacyDecorator: true,
+          decoratorMetadata: true,
+        },
+      },
     }]
   },
   moduleNameMapper: {

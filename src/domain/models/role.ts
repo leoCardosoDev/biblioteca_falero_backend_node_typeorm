@@ -51,3 +51,5 @@ export class Role {
     return this._permissions.some(p => p.slug === permission.slug)
   }
 }
+
+export const getPowerLevel = (role: Role): number => role.powerLevel

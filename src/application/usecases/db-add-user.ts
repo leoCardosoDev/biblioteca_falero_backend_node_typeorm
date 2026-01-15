@@ -52,7 +52,7 @@ export class DbAddUser implements AddUser {
       return error as Error
     }
 
-    const statusOrError = UserStatus.create(userData.status || 'ACTIVE')
+    const statusOrError = UserStatus.create(userData.status || 'INACTIVE')
     if (statusOrError instanceof Error) {
       return statusOrError
     }
