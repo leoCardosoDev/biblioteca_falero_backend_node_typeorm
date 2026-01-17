@@ -335,6 +335,32 @@ describe('LoginTypeOrmRepository', () => {
     expect(login.roleId.value).toBe('550e8400-e29b-41d4-a716-446655440002')
   })
 
+  test('Should use INACTIVE as default status when status is undefined', async () => {
+    const sut = makeSut()
+    const userRepo = TypeOrmHelper.getRepository(UserTypeOrmEntity)
+    const user = userRepo.create({
+      name: 'status_undefined_user',
+      email: 'status_undefined@mail.com',
+      rg: 'any_rg',
+      cpf: 'any_cpf',
+      gender: 'male',
+      status: 'ACTIVE'
+    })
+    await userRepo.save(user)
+
+    const addLoginParams = {
+      userId: Id.create(user.id),
+      email: Email.create(user.email) as Email,
+      password: 'any_password',
+      passwordHash: 'any_password_hash',
+      roleId: Id.create('550e8400-e29b-41d4-a716-446655440002'),
+      status: undefined // explicitly undefined to trigger the ?? 'INACTIVE' fallback
+    }
+    const login = await sut.add(addLoginParams)
+    expect(login).toBeTruthy()
+    expect(login.isActive).toBe(false) // INACTIVE = not active
+  })
+
   test('Should return undefined if roleId is missing in DB', async () => {
     const sut = makeSut()
     const userId = '550e8400-e29b-41d4-a716-446655440002'

@@ -1,4 +1,4 @@
-import { Role, Permission, RoleProps } from '@/modules/identity/domain/entities'
+import { Role, Permission, RoleProps, getPowerLevel } from '@/modules/identity/domain/entities'
 import { Id } from '@/shared/domain/value-objects/id'
 
 describe('Role Entity', () => {
@@ -58,5 +58,16 @@ describe('Role Entity', () => {
         slug: 'admin'
       } as unknown as RoleProps)
     }).toThrow('ID is required')
+  })
+
+  test('getPowerLevel should return role power level', () => {
+    // I will delay this edit until I verify role.ts
+    const sut = Role.create({
+      id: Id.create('550e8400-e29b-41d4-a716-446655440000'),
+      slug: 'admin',
+      powerLevel: 75
+    })
+    expect(getPowerLevel(sut)).toBe(75)
+
   })
 })

@@ -99,6 +99,24 @@ const makeLoadRoleByIdRepository = (): LoadRoleByIdRepository => {
   return new LoadRoleByIdRepositoryStub()
 }
 
+const makeMockUserWithLogin = (): UserWithLogin => {
+  const adminRole = UserRole.create('ADMIN') as UserRole
+  return User.create({
+    id: Id.create(actorId),
+    name: Name.create('Actor Name') as Name,
+    email: Email.create('any_email@mail.com'),
+    rg: Rg.create('123456789') as Rg,
+    cpf: Cpf.create('529.982.247-25'),
+    gender: 'male',
+    version: 1,
+    status: UserStatus.create('ACTIVE') as UserStatus,
+    login: {
+      role: adminRole,
+      status: UserStatus.create('ACTIVE') as UserStatus
+    }
+  })
+}
+
 interface SutTypes {
   sut: DbCreateUserLogin
   hasherStub: Hasher
@@ -252,4 +270,22 @@ describe('DbCreateUserLogin UseCase', () => {
     expect(login).toBeTruthy()
     expect(login.roleId.value).toBe(validRoleId)
   })
+
+  test('Should throw Error if target user is not found', async () => {
+    const { sut, loadUserByIdRepositoryStub } = makeSut()
+    jest.spyOn(loadUserByIdRepositoryStub, 'loadById')
+      .mockResolvedValueOnce(makeMockUserWithLogin()) // actor found
+      .mockResolvedValueOnce(null) // target user not found
+    const promise = sut.add(fakeLoginData)
+    await expect(promise).rejects.toThrow(`User ${validUserId} not found`)
+  })
+
+  test('Should throw Error if default role (STUDENT) is not found when no role specified', async () => {
+    const { sut, loadRoleBySlugRepositoryStub } = makeSut()
+    jest.spyOn(loadRoleBySlugRepositoryStub, 'loadBySlug').mockResolvedValue(null)
+    const dataWithoutRole = { ...fakeLoginData, role: undefined }
+    const promise = sut.add(dataWithoutRole)
+    await expect(promise).rejects.toThrow('Default role not found')
+  })
 })
+

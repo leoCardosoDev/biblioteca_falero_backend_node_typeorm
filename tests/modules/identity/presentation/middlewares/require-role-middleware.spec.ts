@@ -54,4 +54,17 @@ describe('RequireRoleMiddleware', () => {
     const httpResponse = await sut.handle(makeFakeRequest('STUDENT'))
     expect(httpResponse).toEqual(ok({ userId: 'any_user_id', role: 'STUDENT' }))
   })
+
+  test('Should return 500 if middleware throws', async () => {
+    const sut = new RequireRoleMiddleware(['ADMIN'])
+    const httpRequest = makeFakeRequest('LIBRARIAN')
+    Object.defineProperty(httpRequest, 'role', {
+      get() {
+        throw new Error('unexpected_error')
+      }
+    })
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+  })
 })
+

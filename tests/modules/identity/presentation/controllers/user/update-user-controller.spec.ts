@@ -275,10 +275,11 @@ describe('UpdateUser Controller', () => {
       body: {
         address: {
           street: '',
-          number: '',
-          neighborhoodId: '',
-          cityId: '',
-          zipCode: ''
+          number: '123',
+          neighborhoodId: '550e8400-e29b-41d4-a716-446655440001',
+          cityId: '550e8400-e29b-41d4-a716-446655440002',
+          stateId: '550e8400-e29b-41d4-a716-446655440003',
+          zipCode: '12345678'
         }
       }
     })
@@ -320,4 +321,27 @@ describe('UpdateUser Controller', () => {
       zipCode: '87654321'
     })
   })
+
+  test('Should return 403 if UpdateUser returns NotFoundError', async () => {
+    const { sut, updateUserStub } = makeSut()
+    jest.spyOn(updateUserStub, 'update').mockResolvedValueOnce(new NotFoundError('User not found') as unknown as UserModel)
+    const httpRequest = {
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { name: 'updated_name' }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(403)
+  })
+
+  test('Should return 400 if UpdateUser returns generic error', async () => {
+    const { sut, updateUserStub } = makeSut()
+    jest.spyOn(updateUserStub, 'update').mockResolvedValueOnce(new Error('generic_error') as unknown as UserModel)
+    const httpRequest = {
+      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      body: { name: 'updated_name' }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+  })
 })
+

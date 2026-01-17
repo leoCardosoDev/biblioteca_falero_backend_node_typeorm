@@ -181,4 +181,13 @@ describe('LoadUsers Controller', () => {
     expect(httpResponse.statusCode).toBe(200)
     expect((httpResponse.body as Array<{ deletedAt: string }>)[0].deletedAt).toBe(deletedDate.toISOString())
   })
+
+  test('Should return 204 if LoadUsers returns empty array', async () => {
+    const { sut, loadUsersStub } = makeSut()
+    jest.spyOn(loadUsersStub, 'load').mockResolvedValueOnce([])
+    const httpResponse = await sut.handle({})
+    expect(httpResponse.statusCode).toBe(204)
+    expect(httpResponse.body).toBeNull()
+  })
 })
+

@@ -56,10 +56,8 @@ export class AddUserController implements Controller {
         return badRequest(rgOrError)
       }
 
-      const statusOrError = UserStatus.create('ACTIVE')
-      if (statusOrError instanceof Error) {
-        return badRequest(statusOrError)
-      }
+      // 'ACTIVE' is always a valid status, use restore to avoid dead code branch
+      const status = UserStatus.restore('ACTIVE')
 
       const result = await this.addUser.add({
         name: nameOrError,
@@ -70,7 +68,7 @@ export class AddUserController implements Controller {
         gender,
         phone,
         address,
-        status: statusOrError
+        status
       })
 
       if (result instanceof Error) {

@@ -220,5 +220,22 @@ describe('UserGovernance Controllers', () => {
       const httpResponse = await sut.handle(makeFakeRequestRole())
       expect(httpResponse).toEqual(noContent())
     })
+
+    test('Should return 403 if actorId is missing', async () => {
+      const { sut } = makeSutRole()
+      const httpRequest = { ...makeFakeRequestRole(), userId: undefined }
+      const httpResponse = await sut.handle(httpRequest)
+      expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
+    })
+  })
+
+  describe('UpdateUserStatusController - missing actorId', () => {
+    test('Should return 403 if actorId is missing', async () => {
+      const { sut } = makeSutStatus()
+      const httpRequest = { ...makeFakeRequestStatus(), userId: undefined }
+      const httpResponse = await sut.handle(httpRequest)
+      expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
+    })
   })
 })
+

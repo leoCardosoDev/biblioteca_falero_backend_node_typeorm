@@ -190,4 +190,31 @@ describe('AddUser Controller', () => {
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidAddressError('any_error'))
   })
+
+  test('Should return 400 if Email.create throws (invalid email format)', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+      ; (httpRequest.body as Record<string, unknown>).email = 'invalid_email'
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect((httpResponse.body as Error).message).toContain('email')
+  })
+
+  test('Should return 400 if Cpf.create throws (invalid cpf)', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+      ; (httpRequest.body as Record<string, unknown>).cpf = 'invalid_cpf'
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if Rg.create returns error (invalid rg)', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+      ; (httpRequest.body as Record<string, unknown>).rg = ''
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toBeInstanceOf(InvalidRgError)
+  })
 })
+

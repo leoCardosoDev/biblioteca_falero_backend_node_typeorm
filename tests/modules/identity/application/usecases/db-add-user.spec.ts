@@ -14,16 +14,11 @@ import { Name } from '@/modules/identity/domain/value-objects/name'
 import { Rg } from '@/modules/identity/domain/value-objects/rg'
 import { UserStatus } from '@/modules/identity/domain/value-objects/user-status'
 import { Address } from '@/modules/identity/domain/value-objects/address'
-import { IdGenerator } from '@/shared/domain/gateways/id-generator'
+import { IdGenerator } from '@/shared/application/gateways'
 import { DomainEvents, SaveDomainEventRepository } from '@/shared/domain/events/domain-events'
 import {
   EmailInUseError,
-  CpfInUseError,
-  InvalidNameError,
-  InvalidEmailError,
-  InvalidRgError,
-  InvalidUserStatusError,
-  InvalidCpfError
+  CpfInUseError
 } from '@/modules/identity/domain/errors'
 import { InvalidAddressError } from '@/shared/domain/errors/invalid-address-error'
 

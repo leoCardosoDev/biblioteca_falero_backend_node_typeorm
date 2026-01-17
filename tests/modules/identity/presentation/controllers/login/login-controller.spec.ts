@@ -111,4 +111,13 @@ describe('Login Controller', () => {
       role: 'any_role'
     }))
   })
+
+  test('Should return 400 if Email.create throws (invalid email format)', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+      ; (httpRequest.body as Record<string, unknown>).email = 'invalid_email'
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(badRequest(new Error('Invalid email format')))
+  })
 })
+

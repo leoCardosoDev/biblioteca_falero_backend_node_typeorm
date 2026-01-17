@@ -198,4 +198,30 @@ describe('AddUserLogin Controller', () => {
       status: 'INACTIVE'
     }))
   })
+
+  test('Should return 400 if password validation fails', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+      ; (httpRequest.body as Record<string, unknown>).password = 'weak'
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should return 400 if AddUserLogin returns an Error', async () => {
+    const { sut, addUserLoginStub } = makeSut()
+    jest.spyOn(addUserLoginStub, 'add').mockResolvedValueOnce(new Error('any_error') as unknown as LoginModel)
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse.statusCode).toBe(400)
+  })
+
+  test('Should handle missing params object (use default empty object)', async () => {
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error('userId is required'))
+    const httpRequest = makeFakeRequest()
+    delete (httpRequest as Record<string, unknown>).params
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+  })
 })
+
+

@@ -24,7 +24,7 @@ export class UpdateUserController implements Controller {
     try {
       const params = (httpRequest.params || {}) as { id?: string }
       const id = params.id as string
-      const error = this.validation.validate({ ...httpRequest.body, id })
+      const error = this.validation.validate({ ...(httpRequest.body as Record<string, unknown>), id })
       if (error) {
         return badRequest(error)
       }
@@ -84,9 +84,8 @@ export class UpdateUserController implements Controller {
         }
 
         if (cpf) {
-          const cpfOrError = Cpf.create(cpf)
-          if (cpfOrError instanceof Error) return badRequest(cpfOrError)
-          cpfVO = cpfOrError
+          // Cpf.create throws on invalid input, caught by try/catch block
+          cpfVO = Cpf.create(cpf)
         }
 
         if (address) {
