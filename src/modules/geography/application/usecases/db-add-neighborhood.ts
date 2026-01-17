@@ -1,4 +1,4 @@
-import { AddNeighborhood, AddNeighborhoodParams } from '@/modules/geography/domain/usecases/add-neighborhood'
+import { AddNeighborhood, AddNeighborhoodParams } from '@/modules/geography/application/usecases/add-neighborhood'
 import { AddNeighborhoodRepository } from '@/modules/geography/application/protocols/db/neighborhood/load-neighborhood-by-id-repository'
 import { NeighborhoodModel } from '@/modules/geography/domain/models/neighborhood'
 import { Neighborhood } from '@/modules/geography/domain/entities/neighborhood'

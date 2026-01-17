@@ -1,5 +1,5 @@
 import { DbLoadAddressByZipCode } from '@/modules/geography/application/usecases/db-load-address-by-zip-code'
-import { ResolvedAddress } from '@/modules/geography/domain/usecases/load-address-by-zip-code'
+import { ResolvedAddress } from '@/modules/geography/application/usecases/load-address-by-zip-code'
 import { randomUUID } from 'crypto'
 import { GetOrCreateGeoEntityService } from '@/modules/geography/domain/services/geo/get-or-create-geo-entity-service'
 import { AddressGateway } from '@/shared/domain/gateways/address-gateway'

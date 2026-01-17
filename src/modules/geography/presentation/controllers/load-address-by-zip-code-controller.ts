@@ -1,7 +1,7 @@
 import { Controller, HttpRequest, HttpResponse } from '@/shared/presentation/protocols'
 import { ok, serverError, notFound, badRequest } from '@/shared/presentation/helpers/http-helper'
 import { Validation } from '@/shared/presentation/protocols'
-import { LoadAddressByZipCode } from '@/modules/geography/domain/usecases/load-address-by-zip-code'
+import { LoadAddressByZipCode } from '@/modules/geography/application/usecases/load-address-by-zip-code'
 
 export class LoadAddressByZipCodeController implements Controller {
   constructor(

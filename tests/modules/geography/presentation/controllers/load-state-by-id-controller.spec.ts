@@ -1,5 +1,5 @@
 import { LoadStateByIdController } from '@/modules/geography/presentation/controllers/load-state-by-id-controller'
-import { LoadStateById } from '@/modules/geography/domain/usecases/load-state-by-id'
+import { LoadStateById } from '@/modules/geography/application/usecases/load-state-by-id'
 import { StateModel } from '@/modules/geography/domain/models/state'
 import { Id } from '@/shared/domain/value-objects/id'
 import { ok, serverError } from '@/shared/presentation/helpers/http-helper'

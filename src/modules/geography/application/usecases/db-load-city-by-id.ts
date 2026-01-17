@@ -1,4 +1,4 @@
-import { LoadCityById } from '@/modules/geography/domain/usecases/load-city-by-id'
+import { LoadCityById } from '@/modules/geography/application/usecases/load-city-by-id'
 import { LoadCityByIdRepository } from '@/modules/geography/application/protocols/db/city/load-city-by-id-repository'
 import { CityModel } from '@/modules/geography/domain/models/city'
 

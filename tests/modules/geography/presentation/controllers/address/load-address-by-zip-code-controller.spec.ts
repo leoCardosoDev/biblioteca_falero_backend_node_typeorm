@@ -1,5 +1,5 @@
 import { LoadAddressByZipCodeController } from '@/modules/geography/presentation/controllers/load-address-by-zip-code-controller'
-import { LoadAddressByZipCode, ResolvedAddress } from '@/modules/geography/domain/usecases/load-address-by-zip-code'
+import { LoadAddressByZipCode, ResolvedAddress } from '@/modules/geography/application/usecases/load-address-by-zip-code'
 import { ok, notFound, serverError } from '@/shared/presentation/helpers/http-helper'
 import { HttpRequest } from '@/shared/presentation/protocols'
 import { Either, right, left, Right } from '@/shared/application/either'

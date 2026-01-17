@@ -1,6 +1,6 @@
 import { Either } from '@/shared/application/either'
 import { InvalidAddressError } from '@/shared/domain/errors/invalid-address-error'
-import { Address } from '@/modules/identity/domain/value-objects/address'
+import { Address } from '@/modules/geography/domain'
 
 export type ResolveAddressInput = {
   street?: string

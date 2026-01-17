@@ -1,6 +1,6 @@
 import { Controller, HttpRequest, HttpResponse } from '@/shared/presentation/protocols'
 import { ok, serverError, badRequest } from '@/shared/presentation/helpers/http-helper'
-import { LoadNeighborhoodById } from '@/modules/geography/domain/usecases/load-neighborhood-by-id'
+import { LoadNeighborhoodById } from '@/modules/geography/application/usecases/load-neighborhood-by-id'
 
 export class LoadNeighborhoodByIdController implements Controller {
   constructor(private readonly loadNeighborhoodById: LoadNeighborhoodById) { }

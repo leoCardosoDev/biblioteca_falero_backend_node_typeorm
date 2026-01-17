@@ -6,7 +6,7 @@ import { LoadUserByCpfRepository } from '@/modules/identity/application/protocol
 import { User, UserModel } from '@/modules/identity/domain/models/user'
 import { AddUserParams, AddUserRepoParams } from '@/modules/identity/application/usecases/add-user'
 import { AddUserOutput } from '@/modules/identity/application/usecases/add-user-output'
-import { ResolveAddress, ResolveAddressInput } from '@/modules/geography/domain/usecases/resolve-address'
+import { ResolveAddress, ResolveAddressInput } from '@/modules/geography/application/usecases/resolve-address'
 import { Id } from '@/shared/domain/value-objects/id'
 import { Email } from '@/modules/identity/domain/value-objects/email'
 import { Cpf } from '@/modules/identity/domain/value-objects/cpf'

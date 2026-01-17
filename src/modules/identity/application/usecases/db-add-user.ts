@@ -7,7 +7,7 @@ import { LoadUserByCpfRepository } from '@/modules/identity/application/protocol
 import { EmailInUseError } from '@/modules/identity/domain/errors/email-in-use-error'
 import { CpfInUseError } from '@/modules/identity/domain/errors/cpf-in-use-error'
 import { DomainEvents, SaveDomainEventRepository } from '@/shared/domain/events/domain-events'
-import { ResolveAddress } from '@/modules/geography/domain/usecases/resolve-address'
+import { ResolveAddress } from '@/modules/geography/application/usecases/resolve-address'
 import { Email } from '@/modules/identity/domain/value-objects/email'
 import { Cpf } from '@/modules/identity/domain/value-objects/cpf'
 import { Name } from '@/modules/identity/domain/value-objects/name'

@@ -1,5 +1,5 @@
 import { LoadCityByIdController } from '@/modules/geography/presentation/controllers/load-city-by-id-controller'
-import { LoadCityById } from '@/modules/geography/domain/usecases/load-city-by-id'
+import { LoadCityById } from '@/modules/geography/application/usecases/load-city-by-id'
 import { CityModel } from '@/modules/geography/domain/models/city'
 import { Id } from '@/shared/domain/value-objects/id'
 import { ok, serverError } from '@/shared/presentation/helpers/http-helper'

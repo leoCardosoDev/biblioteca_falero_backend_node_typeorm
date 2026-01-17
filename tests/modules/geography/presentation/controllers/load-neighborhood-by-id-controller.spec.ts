@@ -1,5 +1,5 @@
 import { LoadNeighborhoodByIdController } from '@/modules/geography/presentation/controllers/load-neighborhood-by-id-controller'
-import { LoadNeighborhoodById } from '@/modules/geography/domain/usecases/load-neighborhood-by-id'
+import { LoadNeighborhoodById } from '@/modules/geography/application/usecases/load-neighborhood-by-id'
 import { NeighborhoodModel } from '@/modules/geography/domain/models/neighborhood'
 import { Id } from '@/shared/domain/value-objects/id'
 import { ok, serverError } from '@/shared/presentation'

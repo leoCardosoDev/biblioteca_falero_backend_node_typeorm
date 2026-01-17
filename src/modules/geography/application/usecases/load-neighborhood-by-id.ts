@@ -1,4 +1,4 @@
-import { NeighborhoodModel } from '../models/neighborhood'
+import { NeighborhoodModel } from '@/modules/geography/domain'
 
 export interface LoadNeighborhoodById {
   load: (id: string) => Promise<NeighborhoodModel | null>

@@ -1,7 +1,7 @@
 import { Controller, HttpRequest, HttpResponse } from '@/shared/presentation/protocols'
 import { ok, serverError, badRequest } from '@/shared/presentation/helpers/http-helper'
 import { Validation } from '@/shared/presentation/protocols/validation'
-import { AddNeighborhood } from '@/modules/geography/domain/usecases/add-neighborhood'
+import { AddNeighborhood } from '@/modules/geography/application/usecases/add-neighborhood'
 
 export class AddNeighborhoodController implements Controller {
   constructor(

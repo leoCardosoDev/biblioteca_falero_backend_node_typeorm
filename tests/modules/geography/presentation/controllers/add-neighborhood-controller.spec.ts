@@ -1,4 +1,4 @@
-import { AddNeighborhood, AddNeighborhoodParams } from '@/modules/geography/domain/usecases/add-neighborhood'
+import { AddNeighborhood, AddNeighborhoodParams } from '@/modules/geography/application/usecases/add-neighborhood'
 import { AddNeighborhoodController } from '@/modules/geography/presentation/controllers/add-neighborhood-controller'
 import { randomUUID } from 'crypto'
 import { HttpRequest } from '@/modules/geography/presentation/protocols'

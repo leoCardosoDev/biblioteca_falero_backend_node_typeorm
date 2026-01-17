@@ -1,6 +1,6 @@
 import { Controller, HttpRequest, HttpResponse } from '@/shared/presentation/protocols'
 import { ok, serverError, badRequest } from '@/shared/presentation/helpers/http-helper'
-import { LoadStateById } from '@/modules/geography/domain/usecases/load-state-by-id'
+import { LoadStateById } from '@/modules/geography/application/usecases/load-state-by-id'
 
 export class LoadStateByIdController implements Controller {
   constructor(private readonly loadStateById: LoadStateById) { }

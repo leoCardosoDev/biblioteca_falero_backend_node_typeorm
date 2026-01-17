@@ -1,4 +1,4 @@
-import { LoadNeighborhoodById } from '@/modules/geography/domain/usecases/load-neighborhood-by-id'
+import { LoadNeighborhoodById } from '@/modules/geography/application/usecases/load-neighborhood-by-id'
 import { LoadNeighborhoodByIdRepository } from '@/modules/geography/application/protocols/db/neighborhood/load-neighborhood-by-id-repository'
 import { NeighborhoodModel } from '@/modules/geography/domain/models/neighborhood'
 
