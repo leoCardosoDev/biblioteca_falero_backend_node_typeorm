@@ -1,9 +1,9 @@
-import { CityModel } from '../models/city'
+import { City } from '../entities/city'
 
 export interface LoadCityByNameAndStateRepository {
-  loadByNameAndState(name: string, stateId: string): Promise<CityModel | undefined>
+  loadByNameAndState(name: string, stateId: string): Promise<City | undefined>
 }
 
 export interface AddCityRepository {
-  add(name: string, stateId: string): Promise<CityModel>
+  add(name: string, stateId: string): Promise<City>
 }

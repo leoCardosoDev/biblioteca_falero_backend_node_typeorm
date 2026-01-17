@@ -1,5 +1,5 @@
 import { LoadAddressByZipCode, ResolvedAddress } from '@/modules/geography/application/usecases/load-address-by-zip-code'
-import { AddressGateway } from '@/shared/domain/gateways/address-gateway'
+import { AddressGateway } from '@/shared/application/gateways'
 import { GetOrCreateGeoEntityService } from '@/modules/geography/domain/services/get-or-create-geo-entity-service'
 import { Either, left, right } from '@/shared/application/either'
 import { NotFoundError } from '@/shared/domain/errors/not-found-error'

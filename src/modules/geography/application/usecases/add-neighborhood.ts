@@ -1,4 +1,4 @@
-import { NeighborhoodModel } from '@/modules/geography/domain'
+import { Neighborhood } from '@/modules/geography/domain'
 
 export interface AddNeighborhoodParams {
   name: string
@@ -6,5 +6,5 @@ export interface AddNeighborhoodParams {
 }
 
 export interface AddNeighborhood {
-  add(params: AddNeighborhoodParams): Promise<NeighborhoodModel>
+  add(params: AddNeighborhoodParams): Promise<Neighborhood>
 }

@@ -1,5 +1,5 @@
-import { StateModel } from '@/modules/geography/domain/models/state'
+import { State } from '@/modules/geography/domain'
 
 export interface LoadStateByIdRepository {
-  loadById: (id: string) => Promise<StateModel | undefined>
+  loadById: (id: string) => Promise<State | undefined>
 }

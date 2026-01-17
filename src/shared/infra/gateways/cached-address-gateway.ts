@@ -1,4 +1,4 @@
-import { AddressDTO, AddressGateway } from '@/shared/domain/gateways/address-gateway'
+import { AddressDTO, AddressGateway } from '@/shared/application/gateways'
 import { CacheRepository } from '@/shared/application/protocols/cache/cache-repository'
 
 export class CachedAddressGateway implements AddressGateway {

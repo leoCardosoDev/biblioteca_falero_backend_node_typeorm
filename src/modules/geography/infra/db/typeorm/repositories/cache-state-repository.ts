@@ -1,6 +1,6 @@
 import { LoadStateByIdRepository } from '@/modules/geography/application/protocols/db/state/load-state-by-id-repository'
 import { CacheRepository } from '@/shared/application/protocols/cache/cache-repository'
-import { StateModel } from '@/modules/geography/domain/models/state'
+import { State } from '@/modules/geography/domain'
 
 export class CacheStateRepository implements LoadStateByIdRepository {
   constructor(
@@ -8,11 +8,11 @@ export class CacheStateRepository implements LoadStateByIdRepository {
     private readonly cacheRepository: CacheRepository
   ) { }
 
-  async loadById(id: string): Promise<StateModel | undefined> {
+  async loadById(id: string): Promise<State | undefined> {
     const cacheKey = `state:${id}`
     const cached = await this.cacheRepository.get(cacheKey)
     if (cached) {
-      return cached as StateModel
+      return cached as State
     }
 
     const state = await this.decoratee.loadById(id)

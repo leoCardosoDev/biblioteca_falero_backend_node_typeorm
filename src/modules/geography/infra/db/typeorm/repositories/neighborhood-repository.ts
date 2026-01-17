@@ -1,28 +1,28 @@
 import { AddNeighborhoodRepository, LoadNeighborhoodByNameAndCityRepository } from '@/modules/geography/domain/gateways/neighborhood-gateway'
 import { LoadNeighborhoodByIdRepository } from '@/modules/geography/application/protocols/db/neighborhood/load-neighborhood-by-id-repository'
-import { NeighborhoodModel } from '@/modules/geography/domain/models/neighborhood'
+import { Neighborhood } from '@/modules/geography/domain'
 import { NeighborhoodTypeOrmEntity } from '../entities/neighborhood'
 import { TypeOrmHelper } from '@/shared/infra/db/typeorm/typeorm-helper'
 import { Id } from '@/shared/domain/value-objects/id'
 
 export class NeighborhoodTypeOrmRepository implements AddNeighborhoodRepository, LoadNeighborhoodByNameAndCityRepository, LoadNeighborhoodByIdRepository {
-  async findByNameAndCity(name: string, cityId: string): Promise<NeighborhoodModel | undefined> {
+  async findByNameAndCity(name: string, cityId: string): Promise<Neighborhood | undefined> {
     const repo = await TypeOrmHelper.getRepository(NeighborhoodTypeOrmEntity)
     const neighborhood = await repo.findOne({ where: { name, city_id: cityId } })
     return neighborhood ? this.toDomain(neighborhood) : undefined
   }
 
-  async loadByNameAndCity(name: string, cityId: string): Promise<NeighborhoodModel | undefined> {
+  async loadByNameAndCity(name: string, cityId: string): Promise<Neighborhood | undefined> {
     return this.findByNameAndCity(name, cityId)
   }
 
-  async loadById(id: string): Promise<NeighborhoodModel | undefined> {
+  async loadById(id: string): Promise<Neighborhood | undefined> {
     const repo = await TypeOrmHelper.getRepository(NeighborhoodTypeOrmEntity)
     const neighborhood = await repo.findOne({ where: { id } })
     return neighborhood ? this.toDomain(neighborhood) : undefined
   }
 
-  async add(name: string, cityId: string): Promise<NeighborhoodModel> {
+  async add(name: string, cityId: string): Promise<Neighborhood> {
     const repo = await TypeOrmHelper.getRepository(NeighborhoodTypeOrmEntity)
     const neighborhood = repo.create({
       name,
@@ -33,11 +33,11 @@ export class NeighborhoodTypeOrmRepository implements AddNeighborhoodRepository,
     return this.toDomain(saved)
   }
 
-  private toDomain(entity: NeighborhoodTypeOrmEntity): NeighborhoodModel {
-    return {
-      id: Id.create(entity.id) as Id,
+  private toDomain(entity: NeighborhoodTypeOrmEntity): Neighborhood {
+    return Neighborhood.restore({
+      id: Id.restore(entity.id),
       name: entity.name,
-      cityId: Id.create(entity.city_id) as Id
-    }
+      cityId: Id.restore(entity.city_id)
+    })
   }
 }

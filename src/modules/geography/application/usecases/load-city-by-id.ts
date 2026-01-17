@@ -1,5 +1,5 @@
-import { CityModel } from '@/modules/geography/domain'
+import { City } from '@/modules/geography/domain'
 
 export interface LoadCityById {
-  load: (id: string) => Promise<CityModel | undefined>
+  load: (id: string) => Promise<City | undefined>
 }

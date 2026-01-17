@@ -1,13 +1,23 @@
-import { InvalidParamError } from '@/shared/domain/errors/invalid-param-error'
+import { Id } from '@/shared/domain/value-objects/id'
+
+export interface StateProps {
+  id: Id
+  name: string
+  uf: string
+}
 
 export class State {
-  private constructor(public readonly value: string) { }
+  private constructor(
+    public readonly id: Id,
+    public readonly name: string,
+    public readonly uf: string
+  ) { }
 
-  static create(name: string): State | Error {
-    if (!name || !name.trim()) {
-      return new InvalidParamError('name')
-    }
-    const normalized = name.trim().toUpperCase()
-    return new State(normalized)
+  static create(props: StateProps): State {
+    return new State(props.id, props.name, props.uf)
+  }
+
+  static restore(props: StateProps): State {
+    return new State(props.id, props.name, props.uf)
   }
 }

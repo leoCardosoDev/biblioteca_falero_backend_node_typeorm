@@ -1,13 +1,23 @@
-import { InvalidParamError } from '@/shared/domain/errors/invalid-param-error'
+import { Id } from '@/shared/domain/value-objects/id'
+
+export interface NeighborhoodProps {
+  id: Id
+  name: string
+  cityId: Id
+}
 
 export class Neighborhood {
-  private constructor(public readonly value: string) { }
+  private constructor(
+    public readonly id: Id,
+    public readonly name: string,
+    public readonly cityId: Id
+  ) { }
 
-  static create(name: string): Neighborhood | Error {
-    if (!name || !name.trim()) {
-      return new InvalidParamError('name')
-    }
-    const normalized = name.trim().toUpperCase()
-    return new Neighborhood(normalized)
+  static create(props: NeighborhoodProps): Neighborhood {
+    return new Neighborhood(props.id, props.name, props.cityId)
+  }
+
+  static restore(props: NeighborhoodProps): Neighborhood {
+    return new Neighborhood(props.id, props.name, props.cityId)
   }
 }

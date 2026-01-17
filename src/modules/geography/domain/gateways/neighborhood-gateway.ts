@@ -1,10 +1,10 @@
-import { NeighborhoodModel } from '../models/neighborhood'
+import { Neighborhood } from '../entities/neighborhood'
 
 export interface LoadNeighborhoodByNameAndCityRepository {
-  loadByNameAndCity(name: string, cityId: string): Promise<NeighborhoodModel | undefined>
+  loadByNameAndCity(name: string, cityId: string): Promise<Neighborhood | undefined>
 }
 
 export interface AddNeighborhoodRepository {
-  findByNameAndCity(name: string, cityId: string): Promise<NeighborhoodModel | undefined>
-  add(name: string, cityId: string): Promise<NeighborhoodModel>
+  findByNameAndCity(name: string, cityId: string): Promise<Neighborhood | undefined>
+  add(name: string, cityId: string): Promise<Neighborhood>
 }

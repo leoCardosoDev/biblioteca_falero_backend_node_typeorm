@@ -1,6 +1,6 @@
 import { LoadCityByIdRepository } from '@/modules/geography/application/protocols/db/city/load-city-by-id-repository'
 import { CacheRepository } from '@/shared/application/protocols/cache/cache-repository'
-import { CityModel } from '@/modules/geography/domain/models/city'
+import { City } from '@/modules/geography/domain'
 
 export class CacheCityRepository implements LoadCityByIdRepository {
   constructor(
@@ -8,11 +8,11 @@ export class CacheCityRepository implements LoadCityByIdRepository {
     private readonly cacheRepository: CacheRepository
   ) { }
 
-  async loadById(id: string): Promise<CityModel | undefined> {
+  async loadById(id: string): Promise<City | undefined> {
     const cacheKey = `city:${id}`
     const cached = await this.cacheRepository.get(cacheKey)
     if (cached) {
-      return cached as CityModel
+      return cached as City
     }
 
     const city = await this.decoratee.loadById(id)

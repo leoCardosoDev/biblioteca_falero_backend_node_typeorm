@@ -14,7 +14,7 @@ import { Name } from '@/modules/identity/domain/value-objects/name'
 import { Rg } from '@/modules/identity/domain/value-objects/rg'
 import { UserStatus } from '@/modules/identity/domain/value-objects/user-status'
 import { Address } from '@/modules/identity/domain/value-objects/address'
-import { IdGenerator } from '@/shared/domain/gateways/id-generator'
+import { IdGenerator } from '@/shared/application/gateways'
 import { Id } from '@/shared/domain/value-objects/id'
 
 export class DbAddUser implements AddUser {

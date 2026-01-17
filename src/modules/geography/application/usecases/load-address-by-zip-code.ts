@@ -1,4 +1,4 @@
-import { AddressDTO } from '@/shared/domain/gateways/address-gateway'
+import { AddressDTO } from '@/shared/application/gateways'
 import { Either } from '@/shared/application/either'
 
 export type ResolvedAddress = AddressDTO & {
