@@ -3,13 +3,11 @@
 
 // Domain exports
 export * from './domain/entities'
-export * from './domain/models'
 export * from './domain/value-objects'
 export * from './domain/gateways'
 export type { AddressResolutionPolicy, AddressPolicyParams, GeoIdsDTO } from './domain/services'
 export type { GeoServiceInput as GeoAddressDTO } from './domain/services'
 export { ResolutionStrategy, DefaultAddressResolutionPolicy, GetOrCreateGeoEntityService } from './domain/services'
-export * from './domain/usecases'
 
 // Application exports
 export * from './application/usecases'
