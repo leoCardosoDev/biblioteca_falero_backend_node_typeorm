@@ -29,7 +29,7 @@ const makeAddUser = (): AddUser => {
 
 const makeValidation = (): Validation => {
   class ValidationStub implements Validation {
-    validate(_input: Record<string, unknown>): Error | undefined {
+    validate(_input: unknown): Error | undefined {
       return undefined
     }
   }
