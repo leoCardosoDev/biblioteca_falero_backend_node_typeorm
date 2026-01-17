@@ -13,9 +13,7 @@ export class ZodAddNeighborhoodValidator implements Validation {
     console.log('Zod Result:', JSON.stringify(result, null, 2))
 
     if (!result.success) {
-      const error = result.error as z.ZodError
-      const firstError = error.errors?.[0] || error.issues?.[0]
-      return new ValidationError(firstError?.message ?? 'Validation failed')
+      return new ValidationError(result.error.issues[0].message)
     }
 
     return undefined
