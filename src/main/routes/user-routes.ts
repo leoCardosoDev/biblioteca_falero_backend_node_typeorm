@@ -9,34 +9,7 @@ import { makeLoadUsersController } from '@/main/factories/load-users-controller-
 import { makeLoadUserByIdController } from '@/main/factories/load-user-by-id-controller-factory'
 import { makeUpdateUserController } from '@/main/factories/update-user-controller-factory'
 import { makeDeleteUserController } from '@/main/factories/delete-user-controller-factory'
-import { makeManageUserAccessController } from '@/main/factories/controllers/manage-user-access-controller-factory'
-
-const manageUserAccessSchema = {
-  tags: ['Users'],
-  summary: 'Manage User Access',
-  description: 'Manage user credentials (role, status, password). Requires Admin or higher privilege than target.',
-  security: [{ bearerAuth: [] }],
-  params: {
-    type: 'object',
-    properties: {
-      id: { type: 'string', description: 'Target User ID (UUID)' }
-    }
-  },
-  body: {
-    type: 'object',
-    properties: {
-      roleId: { type: 'string' },
-      status: { type: 'string', enum: ['ACTIVE', 'INACTIVE', 'BLOCKED'] },
-      password: { type: 'string', minLength: 6 }
-    }
-  },
-  response: {
-    204: { type: 'null' },
-    400: errorSchema,
-    403: errorSchema,
-    404: errorSchema
-  }
-}
+// import { makeManageUserAccessController } from '@/main/factories/controllers/manage-user-access-controller-factory' // Removed
 
 const userSchema = {
   type: 'object',
@@ -275,16 +248,5 @@ export default (router: FastifyInstance): void => {
     ]
   }, adaptRoute(makeDeleteUserController()))
 
-  router.post('/users/:id/access', {
-    schema: manageUserAccessSchema,
-    preHandler: [
-      adaptMiddleware(makeAuthMiddleware()),
-      // Any generic Role check? Or just relying on UseCase 'actor privileges'? 
-      // UseCase guarantees Actor level > Target level.
-      // But we probably want only Admins or Librarians accessing this at all?
-      // Let's restrict to 'LibrarianOrAdmin' at least, 
-      // so Students cannot hit this endpoint even if UseCase blocks them.
-      adaptMiddleware(makeLibrarianOrAdmin())
-    ]
-  }, adaptRoute(makeManageUserAccessController()))
+  // ManageUserAccess route removed
 }

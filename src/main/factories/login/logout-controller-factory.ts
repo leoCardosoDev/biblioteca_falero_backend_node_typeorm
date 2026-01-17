@@ -1,5 +1,5 @@
-import { LogoutController } from '@/presentation/controllers/login/logout-controller'
-import { Controller } from '@/presentation/protocols/controller'
+import { LogoutController } from '@/modules/identity/presentation/controllers/logout-controller'
+import { Controller } from '@/shared/presentation/protocols/controller'
 import { makeLogoutValidation } from './logout-validation-factory'
 import { makeDbLogout } from '@/main/factories/usecases/db-logout-factory'
 

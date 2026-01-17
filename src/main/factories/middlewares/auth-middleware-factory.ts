@@ -1,5 +1,5 @@
-import { AuthMiddleware } from '@/presentation/middlewares/auth-middleware'
-import { Middleware } from '@/presentation/protocols'
+import { AuthMiddleware } from '@/modules/identity/presentation/middlewares/auth-middleware'
+import { Middleware } from '@/shared/presentation/protocols'
 import { makeJwtAdapter } from './../../factories/usecases/jwt-adapter-factory'
 
 export const makeAuthMiddleware = (): Middleware => {

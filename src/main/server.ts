@@ -5,7 +5,7 @@ const baseDir = __dirname.includes('dist') ? 'dist' : 'src';
 moduleAlias.addAlias('@', path.resolve(baseDir));
 
 import 'reflect-metadata';
-import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
+import { TypeOrmHelper } from '@/shared/infra/db/typeorm/typeorm-helper'
 import env from '@/main/config/env'
 
 TypeOrmHelper.connect({
@@ -15,7 +15,7 @@ TypeOrmHelper.connect({
   username: env.mysqlUser,
   password: env.mysqlPassword,
   database: env.mysqlDb,
-  entities: [path.join(__dirname, '../infra/db/typeorm/entities/*.{ts,js}')],
+  entities: [path.join(__dirname, '../modules/**/infra/db/typeorm/entities/*.{ts,js}')],
   synchronize: false
 })
   .then(async () => {

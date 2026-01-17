@@ -1,8 +1,8 @@
-import { DbRefreshToken } from '@/application/usecases/db-refresh-token'
-import { SessionTypeOrmRepository } from '@/infra/db/typeorm/session-repository'
-import { JwtAdapter } from '@/infra/cryptography/jwt-adapter'
-import { Sha256Adapter } from '@/infra/cryptography/sha256-adapter'
-import { RefreshToken } from '@/domain/usecases/refresh-token'
+import { DbRefreshToken } from '@/modules/identity/application/usecases/db-refresh-token'
+import { SessionTypeOrmRepository } from '@/modules/identity/infra/db/typeorm/repositories/session-repository'
+import { JwtAdapter } from '@/shared/infra/cryptography/jwt-adapter'
+import { Sha256Adapter } from '@/shared/infra/cryptography/sha256-adapter'
+import { RefreshToken } from '@/modules/identity/domain/usecases/refresh-token'
 
 export const makeDbRefreshToken = (): RefreshToken => {
   const sha256Adapter = new Sha256Adapter()

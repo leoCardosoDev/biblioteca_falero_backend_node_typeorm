@@ -1,7 +1,7 @@
-import { Controller } from '@/presentation/protocols'
-import { DeleteUserController } from '@/presentation/controllers/user/delete-user-controller'
-import { DbDeleteUser } from '@/application/usecases/db-delete-user'
-import { UserTypeOrmRepository } from '@/infra/db/typeorm/user-repository'
+import { Controller } from '@/shared/presentation/protocols'
+import { DeleteUserController } from '@/modules/identity/presentation/controllers/delete-user-controller'
+import { DbDeleteUser } from '@/modules/identity/application/usecases/db-delete-user'
+import { UserTypeOrmRepository } from '@/modules/identity/infra/db/typeorm/repositories/user-repository'
 
 export const makeDeleteUserController = (): Controller => {
   const userTypeOrmRepository = new UserTypeOrmRepository()

@@ -1,5 +1,5 @@
 import { adaptRoute } from '@/main/adapters/fastify-route-adapter'
-import { Controller, HttpRequest, HttpResponse } from '@/presentation/protocols'
+import { Controller, HttpRequest, HttpResponse } from '@/shared/presentation/protocols'
 import { FastifyReply, FastifyRequest } from 'fastify'
 
 const makeController = (): Controller => {

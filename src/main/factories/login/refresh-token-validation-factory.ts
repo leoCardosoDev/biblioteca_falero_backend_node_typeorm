@@ -1,6 +1,6 @@
-import { Validation } from '@/presentation/protocols/validation'
-import { ValidationComposite } from '@/validation/validators/validation-composite'
-import { RequiredFieldValidation } from '@/validation/validators/required-field-validation'
+import { Validation } from '@/shared/presentation/protocols/validation'
+import { ValidationComposite } from '@/shared/validation/validators/validation-composite'
+import { RequiredFieldValidation } from '@/shared/validation/validators/required-field-validation'
 
 export const makeRefreshTokenValidation = (): Validation => {
   const validations: Validation[] = []

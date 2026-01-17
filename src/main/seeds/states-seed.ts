@@ -2,8 +2,8 @@ import 'module-alias/register'
 import { DataSourceOptions } from 'typeorm'
 import crypto from 'node:crypto'
 
-import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
-import { State } from '@/infra/db/typeorm/entities/state'
+import { TypeOrmHelper } from '@/shared/infra/db/typeorm/typeorm-helper'
+import { StateTypeOrmEntity as State } from '@/modules/geography/infra/db/typeorm/entities/state'
 import env from '@/main/config/env'
 
 const statesData = [

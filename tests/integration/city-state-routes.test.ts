@@ -1,15 +1,15 @@
 import { setupApp } from '@/main/config/app'
-import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
-import { State } from '@/infra/db/typeorm/entities/state'
-import { City } from '@/infra/db/typeorm/entities/city'
-import { Neighborhood } from '@/infra/db/typeorm/entities/neighborhood'
-import { Id } from '@/domain/value-objects/id'
+import { TypeOrmHelper } from '@/shared/infra/db/typeorm/typeorm-helper'
+import { StateTypeOrmEntity as State } from '@/modules/geography/infra/db/typeorm/entities/state'
+import { CityTypeOrmEntity as City } from '@/modules/geography/infra/db/typeorm/entities/city'
+import { NeighborhoodTypeOrmEntity as Neighborhood } from '@/modules/geography/infra/db/typeorm/entities/neighborhood'
+import { Id } from '@/shared/domain/value-objects/id'
 import { FastifyInstance } from 'fastify'
 import Redis from 'ioredis'
 import crypto from 'crypto'
 
 import jwt from 'jsonwebtoken'
-import { RedisCacheAdapter } from '@/infra/cache/redis-cache-adapter'
+import { RedisCacheAdapter } from '@/shared/infra/cache/redis-cache-adapter'
 
 
 const makeAccessToken = (role: string = 'ADMIN'): string => {
@@ -84,7 +84,7 @@ describe('City/State Routes Integration', () => {
     const cachedCity = await redisClient.get(`city:${cityId.value}`)
     expect(cachedCity).toBeTruthy()
     const parsedCity = JSON.parse(cachedCity!)
-    expect(parsedCity.id.id).toBe(cityId.value)
+    expect(parsedCity.id).toBe(cityId.value)
   })
 
   test('GET /states/:id should return 200 and cache the state', async () => {
@@ -114,7 +114,7 @@ describe('City/State Routes Integration', () => {
     const cachedState = await redisClient.get(`state:${stateId.value}`)
     expect(cachedState).toBeTruthy()
     const parsedState = JSON.parse(cachedState!)
-    expect(parsedState.id.id).toBe(stateId.value)
+    expect(parsedState.id).toBe(stateId.value)
   })
 
   test('Should return 403 if no access token is provided', async () => {

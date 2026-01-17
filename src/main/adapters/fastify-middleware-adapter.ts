@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 
-import { Middleware } from '@/presentation/protocols'
+import { Middleware } from '@/shared/presentation/protocols'
 
 export const adaptMiddleware = (middleware: Middleware) => {
   return async (req: FastifyRequest, reply: FastifyReply) => {

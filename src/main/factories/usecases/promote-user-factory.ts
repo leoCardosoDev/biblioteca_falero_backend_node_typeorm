@@ -1,8 +1,8 @@
 
-import { DbPromoteUser } from '@/application/usecases/db-promote-user'
-import { PromoteUser } from '@/domain/usecases/promote-user'
-import { LoginTypeOrmRepository } from '@/infra/db/typeorm/login-repository'
-import { RoleRepository } from '@/infra/db/typeorm/role-repository'
+import { DbPromoteUser } from '@/modules/identity/application/usecases/db-promote-user'
+import { PromoteUser } from '@/modules/identity/domain/usecases/promote-user'
+import { LoginTypeOrmRepository } from '@/modules/identity/infra/db/typeorm/repositories/login-repository'
+import { RoleRepository } from '@/modules/identity/infra/db/typeorm/repositories/role-repository'
 
 export const makePromoteUser = (): PromoteUser => {
   const loginRepository = new LoginTypeOrmRepository()

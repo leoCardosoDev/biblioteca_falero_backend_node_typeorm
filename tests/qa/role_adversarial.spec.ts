@@ -1,6 +1,6 @@
 
-import { Role } from '@/domain/models/role'
-import { Id } from '@/domain/value-objects/id'
+import { Role } from '@/modules/identity/domain/models/role'
+import { Id } from '@/shared/domain/value-objects/id'
 import { randomUUID } from 'crypto'
 
 describe('QA Adversarial Scenarios - Role PowerLevel', () => {

@@ -1,7 +1,7 @@
 import app, { setupApp } from '@/main/config/app'
 import { sign } from 'jsonwebtoken'
 import env from '@/main/config/env'
-import { UserRole } from '@/domain/value-objects/user-role'
+import { UserRole } from '@/modules/identity/domain/value-objects/user-role'
 
 describe('Address Routes', () => {
   beforeAll(async () => {

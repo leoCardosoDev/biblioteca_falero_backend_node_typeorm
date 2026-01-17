@@ -1,19 +1,14 @@
-
 import jwt from 'jsonwebtoken'
 import app, { setupApp } from '@/main/config/app'
-import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
-import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
-import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
-import { RoleTypeOrmEntity } from '@/infra/db/typeorm/entities/role-entity'
-import { PermissionTypeOrmEntity } from '@/infra/db/typeorm/entities/permission-entity'
-import { DomainEventTypeOrmEntity } from '@/infra/db/typeorm/entities/domain-event-entity'
-import { State } from '@/infra/db/typeorm/entities/state'
-import { City } from '@/infra/db/typeorm/entities/city'
-import { Neighborhood } from '@/infra/db/typeorm/entities/neighborhood'
+import { TypeOrmHelper } from '@/shared/infra/db/typeorm/typeorm-helper'
+import { UserTypeOrmEntity } from '@/modules/identity/infra/db/typeorm/entities/user-entity'
+import { LoginTypeOrmEntity } from '@/modules/identity/infra/db/typeorm/entities/login-entity'
+import { RoleTypeOrmEntity } from '@/modules/identity/infra/db/typeorm/entities/role-entity'
+import { PermissionTypeOrmEntity } from '@/modules/identity/infra/db/typeorm/entities/permission-entity'
+import { StateTypeOrmEntity as State } from '@/modules/geography/infra/db/typeorm/entities/state'
+import { CityTypeOrmEntity as City } from '@/modules/geography/infra/db/typeorm/entities/city'
+import { NeighborhoodTypeOrmEntity as Neighborhood } from '@/modules/geography/infra/db/typeorm/entities/neighborhood'
 import { DataSource } from 'typeorm'
-
-
-
 
 describe('User Governance Routes', () => {
   let dataSource: DataSource
@@ -24,7 +19,7 @@ describe('User Governance Routes', () => {
       database: ':memory:',
       dropSchema: true,
       synchronize: true,
-      entities: [UserTypeOrmEntity, LoginTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity, DomainEventTypeOrmEntity, State, City, Neighborhood]
+      entities: [UserTypeOrmEntity, LoginTypeOrmEntity, RoleTypeOrmEntity, PermissionTypeOrmEntity, State, City, Neighborhood]
     })
     await setupApp()
     await app.ready()

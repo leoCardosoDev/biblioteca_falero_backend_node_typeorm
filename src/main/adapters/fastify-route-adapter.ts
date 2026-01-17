@@ -1,7 +1,7 @@
-import { Controller } from '@/presentation/protocols'
+import { Controller } from '@/shared/presentation/protocols'
 import { FastifyReply, FastifyRequest } from 'fastify'
 
-import { HttpHeaders } from '@/presentation/protocols/http'
+import { HttpHeaders } from '@/shared/presentation/protocols/http'
 
 export const adaptRoute = (controller: Controller) => {
   return async (req: FastifyRequest, reply: FastifyReply) => {

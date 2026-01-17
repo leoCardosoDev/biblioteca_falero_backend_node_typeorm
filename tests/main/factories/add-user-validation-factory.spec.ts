@@ -1,8 +1,8 @@
 import { makeAddUserValidation } from '@/main/factories/add-user-validation-factory'
-import { ValidationComposite, RequiredFieldValidation } from '@/validation/validators'
-import { Validation } from '@/presentation/protocols/validation'
+import { ValidationComposite, RequiredFieldValidation } from '@/shared/validation/validators'
+import { Validation } from '@/shared/presentation/protocols/validation'
 
-jest.mock('@/validation/validators', () => ({
+jest.mock('@/shared/validation/validators', () => ({
   ValidationComposite: jest.fn(),
   RequiredFieldValidation: jest.fn()
 }))

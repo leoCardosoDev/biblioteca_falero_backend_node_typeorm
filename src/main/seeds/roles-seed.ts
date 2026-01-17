@@ -2,8 +2,8 @@ import 'module-alias/register'
 import { DataSourceOptions } from 'typeorm'
 import path from 'path'
 
-import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
-import { RoleTypeOrmEntity } from '@/infra/db/typeorm/entities/role-entity'
+import { TypeOrmHelper } from '@/shared/infra/db/typeorm/typeorm-helper'
+import { RoleTypeOrmEntity } from '@/modules/identity/infra/db/typeorm/entities/role-entity'
 import env from '@/main/config/env'
 
 const roles = [

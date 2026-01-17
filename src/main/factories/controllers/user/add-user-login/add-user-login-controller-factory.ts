@@ -1,11 +1,11 @@
-import { AddUserLoginController } from '@/presentation/controllers/user/add-user-login-controller'
-import { Controller } from '@/presentation/protocols/controller'
+import { AddUserLoginController } from '@/modules/identity/presentation/controllers/add-user-login-controller'
+import { Controller } from '@/shared/presentation/protocols/controller'
 import { makeAddUserLoginValidation } from './add-user-login-validation-factory'
-import { DbAddUserLogin } from '@/application/usecases/db-add-user-login'
-import { LoginTypeOrmRepository } from '@/infra/db/typeorm/login-repository'
-import { RoleRepository } from '@/infra/db/typeorm/role-repository'
-import { UserTypeOrmRepository } from '@/infra/db/typeorm/user-repository'
-import { BcryptAdapter } from '@/infra/cryptography/bcrypt-adapter'
+import { DbCreateUserLogin } from '@/modules/identity/application/usecases/db-create-user-login'
+import { LoginTypeOrmRepository } from '@/modules/identity/infra/db/typeorm/repositories/login-repository'
+import { RoleRepository } from '@/modules/identity/infra/db/typeorm/repositories/role-repository'
+import { UserTypeOrmRepository } from '@/modules/identity/infra/db/typeorm/repositories/user-repository'
+import { BcryptAdapter } from '@/shared/infra/cryptography/bcrypt-adapter'
 
 export const makeAddUserLoginController = (): Controller => {
   const salt = 12
@@ -13,6 +13,6 @@ export const makeAddUserLoginController = (): Controller => {
   const loginRepository = new LoginTypeOrmRepository()
   const roleRepository = new RoleRepository()
   const userTypeOrmRepository = new UserTypeOrmRepository()
-  const dbAddUserLogin = new DbAddUserLogin(bcryptAdapter, loginRepository, roleRepository, userTypeOrmRepository)
-  return new AddUserLoginController(dbAddUserLogin, makeAddUserLoginValidation())
+  const dbCreateUserLogin = new DbCreateUserLogin(bcryptAdapter, loginRepository, roleRepository, userTypeOrmRepository, roleRepository)
+  return new AddUserLoginController(dbCreateUserLogin, makeAddUserLoginValidation())
 }

@@ -1,9 +1,9 @@
-import { LoadStateByIdController } from '@/presentation/controllers/load-state-by-id-controller'
-import { Controller } from '@/presentation/protocols/controller'
-import { DbLoadStateById } from '@/application/usecases/db-load-state-by-id'
-import { StateTypeOrmRepository } from '@/infra/db/typeorm/state-repository'
-import { CacheStateRepository } from '@/infra/db/typeorm/cache-state-repository'
-import { RedisCacheAdapter } from '@/infra/cache/redis-cache-adapter'
+import { LoadStateByIdController } from '@/modules/geography/presentation/controllers/load-state-by-id-controller'
+import { Controller } from '@/shared/presentation/protocols'
+import { DbLoadStateById } from '@/modules/geography/application/usecases/db-load-state-by-id'
+import { StateTypeOrmRepository } from '@/modules/geography/infra/db/typeorm/repositories/state-repository'
+import { CacheStateRepository } from '@/modules/geography/infra/db/typeorm/repositories/cache-state-repository'
+import { RedisCacheAdapter } from '@/shared/infra/cache/redis-cache-adapter'
 
 export const makeLoadStateByIdController = (): Controller => {
   const stateRepository = new StateTypeOrmRepository()
