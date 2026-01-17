@@ -1,5 +1,5 @@
 import { LogoutController } from '@/modules/identity/presentation/controllers/logout-controller'
-import { Logout } from '@/modules/identity/domain/usecases/logout'
+import { Logout } from '@/modules/identity/application/usecases/logout'
 import { Validation } from '@/shared/presentation/protocols/validation'
 import { HttpRequest } from '@/shared/presentation/protocols/http'
 import { badRequest, serverError, noContent } from '@/shared/presentation/helpers/http-helper'

@@ -1,6 +1,6 @@
 import { AddUserLoginController } from '@/modules/identity/presentation/controllers/add-user-login-controller'
 import { HttpRequest } from '@/shared/presentation/protocols/http'
-import { AddUserLogin, AddUserLoginParams } from '@/modules/identity/domain/usecases/add-user-login'
+import { AddUserLogin, AddUserLoginParams } from '@/modules/identity/application/usecases/add-user-login'
 import { LoginModel } from '@/modules/identity/domain/models/login'
 import { Validation } from '@/shared/presentation/protocols/validation'
 import { ok } from '@/shared/presentation/helpers/http-helper'

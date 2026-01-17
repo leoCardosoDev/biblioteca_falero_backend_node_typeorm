@@ -1,5 +1,5 @@
 import { Controller, HttpRequest, HttpResponse } from '@/shared/presentation/protocols'
-import { LoadUserById } from '@/modules/identity/domain/usecases/load-user-by-id'
+import { LoadUserById } from '@/modules/identity/application/usecases/load-user-by-id'
 import { NotFoundError } from '@/shared/domain/errors/not-found-error'
 import { ok, notFound, serverError } from '@/shared/presentation/helpers/http-helper'
 import { UserViewModel } from '@/modules/identity/presentation/view-models/user-view-model'

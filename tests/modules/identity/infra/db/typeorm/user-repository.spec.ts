@@ -10,7 +10,7 @@ import { StateTypeOrmEntity as State } from '@/modules/geography/infra/db/typeor
 import { CityTypeOrmEntity as City } from '@/modules/geography/infra/db/typeorm/entities/city'
 import { NeighborhoodTypeOrmEntity as Neighborhood } from '@/modules/geography/infra/db/typeorm/entities/neighborhood'
 import { DataSource } from 'typeorm'
-import { AddUserRepoParams } from '@/modules/identity/domain/usecases/add-user'
+import { AddUserRepoParams } from '@/modules/identity/application/usecases/add-user'
 import { Id, Email, Cpf, Name, Rg, Address, UserStatus, UserStatusEnum } from '@/modules/identity/domain/value-objects'
 import { UserMapper } from '@/modules/identity/infra/db/typeorm/mappers/user-mapper'
 

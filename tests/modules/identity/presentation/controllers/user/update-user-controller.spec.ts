@@ -1,5 +1,5 @@
 import { UpdateUserController } from '@/modules/identity/presentation/controllers/update-user-controller'
-import { UpdateUser, UpdateUserParams } from '@/modules/identity/domain/usecases/update-user'
+import { UpdateUser, UpdateUserParams } from '@/modules/identity/application/usecases/update-user'
 import { UserModel } from '@/modules/identity/domain/models/user'
 import { Id } from '@/shared/domain/value-objects/id'
 import { Email } from '@/modules/identity/domain/value-objects/email'

@@ -1,4 +1,4 @@
-import { Authentication, AuthenticationParams, AuthenticationModel } from '@/modules/identity/domain/usecases/authentication'
+import { Authentication, AuthenticationParams, AuthenticationModel } from '@/modules/identity/application/usecases/authentication'
 import { LoadRoleByIdRepository } from '@/modules/identity/application/protocols/db/load-role-by-id-repository'
 import { ExpirationDate } from '@/modules/identity/domain/value-objects/expiration-date'
 import { LoadAccountByEmailRepository } from '@/modules/identity/application/protocols/db/load-account-by-email-repository'

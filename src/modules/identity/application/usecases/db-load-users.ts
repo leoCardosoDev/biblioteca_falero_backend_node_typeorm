@@ -1,4 +1,4 @@
-import { LoadUsers, UserWithLogin } from '@/modules/identity/domain/usecases/load-users'
+import { LoadUsers, UserWithLogin } from '@/modules/identity/application/usecases/load-users'
 import { LoadUsersRepository } from '@/modules/identity/application/protocols/db/load-users-repository'
 
 export class DbLoadUsers implements LoadUsers {

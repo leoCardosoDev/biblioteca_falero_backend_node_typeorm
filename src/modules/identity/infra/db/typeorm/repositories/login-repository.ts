@@ -1,7 +1,7 @@
 import { AddLoginRepository } from '@/modules/identity/application/protocols/db/add-login-repository'
 import { LoadAccountByEmailRepository } from '@/modules/identity/application/protocols/db/load-account-by-email-repository'
 import { UpdateAccessTokenRepository } from '@/modules/identity/application/protocols/db/update-access-token-repository'
-import { AddUserLoginParams } from '@/modules/identity/domain/usecases/add-user-login'
+import { AddUserLoginParams } from '@/modules/identity/application/usecases/add-user-login'
 import { Login, LoginModel } from '@/modules/identity/domain/models/login'
 import { LoginTypeOrmEntity } from '../entities/login-entity'
 import { UserTypeOrmEntity } from '../entities/user-entity'

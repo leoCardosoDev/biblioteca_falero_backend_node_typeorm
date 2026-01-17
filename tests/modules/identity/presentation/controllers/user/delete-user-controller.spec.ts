@@ -1,5 +1,5 @@
 import { DeleteUserController } from '@/modules/identity/presentation/controllers/delete-user-controller'
-import { DeleteUser } from '@/modules/identity/domain/usecases/delete-user'
+import { DeleteUser } from '@/modules/identity/application/usecases/delete-user'
 import { MissingParamError } from '@/shared/presentation/errors/missing-param-error'
 import { ServerError } from '@/shared/presentation/errors/server-error'
 

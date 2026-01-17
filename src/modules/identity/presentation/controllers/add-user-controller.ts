@@ -1,7 +1,7 @@
 import { Controller, HttpRequest, HttpResponse } from '@/shared/presentation/protocols'
 import { badRequest, ok, serverError } from '@/shared/presentation/helpers/http-helper'
 import { Validation } from '@/shared/presentation/protocols/validation'
-import { AddUser, AddUserAddressInput } from '@/modules/identity/domain/usecases/add-user'
+import { AddUser, AddUserAddressInput } from '@/modules/identity/application/usecases/add-user'
 
 export class AddUserController implements Controller {
   constructor(

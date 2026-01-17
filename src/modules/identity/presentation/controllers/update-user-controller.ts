@@ -1,7 +1,7 @@
 import { Controller, HttpRequest, HttpResponse } from '@/shared/presentation/protocols'
 import { badRequest, ok, serverError, notFound } from '@/shared/presentation/helpers/http-helper'
 import { Validation } from '@/shared/presentation/protocols/validation'
-import { UpdateUser } from '@/modules/identity/domain/usecases/update-user'
+import { UpdateUser } from '@/modules/identity/application/usecases/update-user'
 import { NotFoundError } from '@/shared/domain/errors/not-found-error'
 import { UserViewModel } from '@/modules/identity/presentation/view-models/user-view-model'
 import { AccessDeniedError } from '@/shared/domain/errors/access-denied-error'

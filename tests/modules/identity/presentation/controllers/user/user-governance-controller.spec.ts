@@ -1,6 +1,6 @@
 import { UpdateUserStatusController, UpdateUserRoleController } from '@/modules/identity/presentation/controllers/user-governance-controller'
-import { BlockUser, BlockUserResult } from '@/modules/identity/domain/usecases/block-user'
-import { PromoteUser, PromoteUserResult } from '@/modules/identity/domain/usecases/promote-user'
+import { BlockUser, BlockUserResult } from '@/modules/identity/application/usecases/block-user'
+import { PromoteUser, PromoteUserResult } from '@/modules/identity/application/usecases/promote-user'
 import { Validation } from '@/shared/presentation/protocols/validation'
 import { HttpRequest } from '@/shared/presentation/protocols'
 import { badRequest, noContent, serverError, forbidden } from '@/shared/presentation/helpers/http-helper'

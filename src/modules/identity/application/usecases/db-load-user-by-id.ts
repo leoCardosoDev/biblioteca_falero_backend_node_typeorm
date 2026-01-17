@@ -1,5 +1,5 @@
-import { LoadUserById } from '@/modules/identity/domain/usecases/load-user-by-id'
-import { UserWithLogin } from '@/modules/identity/domain/usecases/load-users'
+import { LoadUserById } from '@/modules/identity/application/usecases/load-user-by-id'
+import { UserWithLogin } from '@/modules/identity/application/usecases/load-users'
 import { LoadUserByIdRepository } from '@/modules/identity/application/protocols/db/load-user-by-id-repository'
 
 export class DbLoadUserById implements LoadUserById {

@@ -1,4 +1,4 @@
-import { Logout } from '@/modules/identity/domain/usecases/logout'
+import { Logout } from '@/modules/identity/application/usecases/logout'
 import { DbLogout } from '@/modules/identity/application/usecases/db-logout'
 import { SessionTypeOrmRepository } from '@/modules/identity/infra/db/typeorm/repositories/session-repository'
 import { Sha256Adapter } from '@/shared/infra/cryptography/sha256-adapter'

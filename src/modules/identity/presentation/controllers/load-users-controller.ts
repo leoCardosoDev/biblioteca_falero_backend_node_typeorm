@@ -1,6 +1,6 @@
 import { Controller, HttpRequest, HttpResponse } from '@/shared/presentation/protocols'
 import { ok, serverError, noContent } from '@/shared/presentation/helpers/http-helper'
-import { LoadUsers } from '@/modules/identity/domain/usecases/load-users'
+import { LoadUsers } from '@/modules/identity/application/usecases/load-users'
 import { UserViewModel } from '@/modules/identity/presentation/view-models/user-view-model'
 
 export class LoadUsersController implements Controller {

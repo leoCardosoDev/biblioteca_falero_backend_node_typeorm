@@ -1,4 +1,4 @@
-import { RefreshToken, RefreshTokenParams } from '@/modules/identity/domain/usecases/refresh-token'
+import { RefreshToken, RefreshTokenParams } from '@/modules/identity/application/usecases/refresh-token'
 import { UserSessionModel, TokenPayload } from '@/modules/identity/domain/models'
 import {
   LoadSessionByTokenRepository,

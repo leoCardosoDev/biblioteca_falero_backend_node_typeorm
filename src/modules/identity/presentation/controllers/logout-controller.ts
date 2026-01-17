@@ -1,7 +1,7 @@
 import { Controller, HttpRequest, HttpResponse } from '@/shared/presentation/protocols'
 import { badRequest, noContent, serverError } from '@/shared/presentation/helpers/http-helper'
 import { Validation } from '@/shared/presentation/protocols/validation'
-import { Logout } from '@/modules/identity/domain/usecases/logout'
+import { Logout } from '@/modules/identity/application/usecases/logout'
 
 export class LogoutController implements Controller {
   constructor(

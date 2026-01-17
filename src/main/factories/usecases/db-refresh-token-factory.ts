@@ -2,7 +2,7 @@ import { DbRefreshToken } from '@/modules/identity/application/usecases/db-refre
 import { SessionTypeOrmRepository } from '@/modules/identity/infra/db/typeorm/repositories/session-repository'
 import { JwtAdapter } from '@/shared/infra/cryptography/jwt-adapter'
 import { Sha256Adapter } from '@/shared/infra/cryptography/sha256-adapter'
-import { RefreshToken } from '@/modules/identity/domain/usecases/refresh-token'
+import { RefreshToken } from '@/modules/identity/application/usecases/refresh-token'
 
 export const makeDbRefreshToken = (): RefreshToken => {
   const sha256Adapter = new Sha256Adapter()

@@ -11,8 +11,8 @@ import { UpdateUserRepository } from '@/modules/identity/application/protocols/d
 import { UpdateUserStatusRepository } from '@/modules/identity/application/protocols/db/update-user-status-repository'
 import { DeleteUserRepository } from '@/modules/identity/application/protocols/db/delete-user-repository'
 
-import { AddUserRepoParams } from '@/modules/identity/domain/usecases/add-user'
-import { UpdateUserParams } from '@/modules/identity/domain/usecases/update-user'
+import { AddUserRepoParams } from '@/modules/identity/application/usecases/add-user'
+import { UpdateUserParams } from '@/modules/identity/application/usecases/update-user'
 import { UserModel } from '@/modules/identity/domain/models/user'
 import { UserStatus } from '@/modules/identity/domain/value-objects/user-status'
 import { UserStatusEnum } from '@/modules/identity/domain/value-objects/user-status'

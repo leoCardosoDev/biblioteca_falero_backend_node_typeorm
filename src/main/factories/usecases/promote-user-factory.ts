@@ -1,6 +1,6 @@
 
 import { DbPromoteUser } from '@/modules/identity/application/usecases/db-promote-user'
-import { PromoteUser } from '@/modules/identity/domain/usecases/promote-user'
+import { PromoteUser } from '@/modules/identity/application/usecases/promote-user'
 import { LoginTypeOrmRepository } from '@/modules/identity/infra/db/typeorm/repositories/login-repository'
 import { RoleRepository } from '@/modules/identity/infra/db/typeorm/repositories/role-repository'
 

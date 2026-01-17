@@ -1,4 +1,4 @@
-import { RefreshToken, RefreshTokenParams, RefreshTokenResult } from '@/modules/identity/domain/usecases/refresh-token'
+import { RefreshToken, RefreshTokenParams, RefreshTokenResult } from '@/modules/identity/application/usecases/refresh-token'
 
 import { ExpirationDate } from '@/modules/identity/domain/value-objects/expiration-date'
 import {

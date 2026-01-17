@@ -1,5 +1,5 @@
 import { LoadUsersController } from '@/modules/identity/presentation/controllers/load-users-controller'
-import { LoadUsers, UserWithLogin } from '@/modules/identity/domain/usecases/load-users'
+import { LoadUsers, UserWithLogin } from '@/modules/identity/application/usecases/load-users'
 import { serverError } from '@/shared/presentation/helpers/http-helper'
 import { Id } from '@/shared/domain/value-objects/id'
 import { Email } from '@/modules/identity/domain/value-objects/email'

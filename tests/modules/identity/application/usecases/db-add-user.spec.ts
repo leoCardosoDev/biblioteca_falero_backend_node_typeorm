@@ -4,8 +4,8 @@ import { LoadUserByEmailRepository } from '@/modules/identity/application/protoc
 import { LoadUserByCpfRepository } from '@/modules/identity/application/protocols/db/load-user-by-cpf-repository'
 
 import { User, UserModel } from '@/modules/identity/domain/models/user'
-import { AddUserParams, AddUserRepoParams } from '@/modules/identity/domain/usecases/add-user'
-import { AddUserOutput } from '@/modules/identity/domain/usecases/add-user-output'
+import { AddUserParams, AddUserRepoParams } from '@/modules/identity/application/usecases/add-user'
+import { AddUserOutput } from '@/modules/identity/application/usecases/add-user-output'
 import { ResolveAddress, ResolveAddressInput } from '@/modules/geography/domain/usecases/resolve-address'
 import { Id } from '@/shared/domain/value-objects/id'
 import { Email } from '@/modules/identity/domain/value-objects/email'

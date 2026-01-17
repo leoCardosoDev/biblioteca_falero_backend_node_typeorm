@@ -1,7 +1,7 @@
 import { Controller, HttpRequest, HttpResponse } from '@/shared/presentation/protocols'
 import { badRequest, ok, serverError, unauthorized } from '@/shared/presentation/helpers/http-helper'
 import { Validation } from '@/shared/presentation/protocols/validation'
-import { RefreshToken } from '@/modules/identity/domain/usecases/refresh-token'
+import { RefreshToken } from '@/modules/identity/application/usecases/refresh-token'
 
 export class RefreshTokenController implements Controller {
   constructor(

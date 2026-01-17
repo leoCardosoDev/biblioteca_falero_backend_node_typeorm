@@ -1,6 +1,6 @@
 import { AddUserController } from '@/modules/identity/presentation/controllers/add-user-controller'
-import { AddUser, AddUserParams } from '@/modules/identity/domain/usecases/add-user'
-import { AddUserOutput } from '@/modules/identity/domain/usecases/add-user-output'
+import { AddUser, AddUserParams } from '@/modules/identity/application/usecases/add-user'
+import { AddUserOutput } from '@/modules/identity/application/usecases/add-user-output'
 import { Validation } from '@/shared/presentation/protocols/validation'
 import { HttpRequest } from '@/shared/presentation/protocols/http'
 import { ok } from '@/shared/presentation/helpers/http-helper'

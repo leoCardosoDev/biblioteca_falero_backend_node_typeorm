@@ -1,7 +1,7 @@
 import { Controller, HttpRequest, HttpResponse } from '@/shared/presentation/protocols'
 import { badRequest, ok, serverError, forbidden } from '@/shared/presentation/helpers/http-helper'
 import { Validation } from '@/shared/presentation/protocols/validation'
-import { AddUserLogin } from '@/modules/identity/domain/usecases/add-user-login'
+import { AddUserLogin } from '@/modules/identity/application/usecases/add-user-login'
 import { LoginViewModel } from '@/modules/identity/presentation/view-models/login-view-model'
 
 import { Id } from '@/shared/domain/value-objects/id'

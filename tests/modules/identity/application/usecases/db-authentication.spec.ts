@@ -1,4 +1,4 @@
-import { Authentication, AuthenticationParams } from '@/modules/identity/domain/usecases/authentication'
+import { Authentication, AuthenticationParams } from '@/modules/identity/application/usecases/authentication'
 import { LoadRoleByIdRepository } from '@/modules/identity/application/protocols/db/load-role-by-id-repository'
 import { HashComparer } from '@/modules/identity/application/protocols/cryptography/hash-comparer'
 import { Hasher } from '@/modules/identity/application/protocols/cryptography/hasher'

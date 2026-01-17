@@ -1,7 +1,7 @@
 import { LoginController } from '@/modules/identity/presentation/controllers/login-controller'
 import { HttpRequest } from '@/shared/presentation/protocols/http'
 import { Validation } from '@/shared/presentation/protocols/validation'
-import { Authentication, AuthenticationParams, AuthenticationModel } from '@/modules/identity/domain/usecases/authentication'
+import { Authentication, AuthenticationParams, AuthenticationModel } from '@/modules/identity/application/usecases/authentication'
 import { MissingParamError } from '@/shared/presentation/errors/missing-param-error'
 import { badRequest, serverError, unauthorized, ok } from '@/shared/presentation/helpers/http-helper'
 

@@ -1,6 +1,6 @@
 import { Controller, HttpRequest, HttpResponse } from '@/shared/presentation/protocols'
 import { noContent, serverError, badRequest } from '@/shared/presentation/helpers/http-helper'
-import { DeleteUser } from '@/modules/identity/domain/usecases/delete-user'
+import { DeleteUser } from '@/modules/identity/application/usecases/delete-user'
 import { MissingParamError } from '@/shared/presentation/errors/missing-param-error'
 
 export class DeleteUserController implements Controller {

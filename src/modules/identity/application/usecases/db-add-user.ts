@@ -1,5 +1,5 @@
-import { AddUser, AddUserParams } from '@/modules/identity/domain/usecases/add-user'
-import { AddUserOutput } from '@/modules/identity/domain/usecases/add-user-output'
+import { AddUser, AddUserParams } from '@/modules/identity/application/usecases/add-user'
+import { AddUserOutput } from '@/modules/identity/application/usecases/add-user-output'
 import { User } from '@/modules/identity/domain/models/user'
 import { AddUserRepository } from '@/modules/identity/application/protocols/add-user-repository'
 import { LoadUserByEmailRepository } from '@/modules/identity/application/protocols/db/load-user-by-email-repository'

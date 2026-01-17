@@ -1,5 +1,5 @@
 import { DbUpdateUser } from '@/modules/identity/application/usecases/db-update-user'
-import { UpdateUserParams } from '@/modules/identity/domain/usecases/update-user'
+import { UpdateUserParams } from '@/modules/identity/application/usecases/update-user'
 import { UserModel } from '@/modules/identity/domain/models/user'
 import { UpdateUserRepository } from '@/modules/identity/application/protocols/db/update-user-repository'
 import { Id } from '@/shared/domain/value-objects/id'

@@ -1,5 +1,5 @@
 
-import { PromoteUser, PromoteUserResult } from '@/modules/identity/domain/usecases/promote-user'
+import { PromoteUser, PromoteUserResult } from '@/modules/identity/application/usecases/promote-user'
 import { LoadLoginByUserIdRepository } from '@/modules/identity/application/protocols/db/load-login-by-user-id-repository'
 import { LoadRoleByIdRepository } from '@/modules/identity/application/protocols/db/load-role-by-id-repository'
 import { UpdateLoginRoleRepository } from '@/modules/identity/application/protocols/db/update-login-role-repository'

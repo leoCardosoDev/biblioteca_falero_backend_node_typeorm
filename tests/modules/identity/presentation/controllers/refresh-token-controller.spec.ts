@@ -1,5 +1,5 @@
 import { RefreshTokenController } from '@/modules/identity/presentation/controllers/refresh-token-controller'
-import { RefreshToken, RefreshTokenParams, RefreshTokenResult } from '@/modules/identity/domain/usecases/refresh-token'
+import { RefreshToken, RefreshTokenParams, RefreshTokenResult } from '@/modules/identity/application/usecases/refresh-token'
 import { Validation } from '@/shared/presentation/protocols/validation'
 import { HttpRequest } from '@/shared/presentation/protocols/http'
 import { MissingParamError } from '@/shared/presentation/errors/missing-param-error'

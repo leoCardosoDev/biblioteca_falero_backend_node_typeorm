@@ -1,5 +1,5 @@
 import { LoadUserByIdController } from '@/modules/identity/presentation/controllers/load-user-by-id-controller'
-import { LoadUserById } from '@/modules/identity/domain/usecases/load-user-by-id'
+import { LoadUserById } from '@/modules/identity/application/usecases/load-user-by-id'
 import { UserModel } from '@/modules/identity/domain/models/user'
 import { HttpRequest } from '@/shared/presentation/protocols/http'
 import { Id } from '@/shared/domain/value-objects/id'
@@ -10,7 +10,7 @@ import { Cpf } from '@/modules/identity/domain/value-objects/cpf'
 // removed BirthDate import
 import { UserRole } from '@/modules/identity/domain/value-objects/user-role'
 import { UserStatus } from '@/modules/identity/domain/value-objects/user-status'
-import { UserWithLogin } from '@/modules/identity/domain/usecases/load-users'
+import { UserWithLogin } from '@/modules/identity/application/usecases/load-users'
 import { NotFoundError } from '@/shared/domain/errors/not-found-error'
 
 const makeFakeUser = (): UserModel => ({

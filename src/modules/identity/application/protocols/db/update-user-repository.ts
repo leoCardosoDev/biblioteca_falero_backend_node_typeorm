@@ -1,4 +1,4 @@
-import { UpdateUserParams } from '@/modules/identity/domain/usecases/update-user'
+import { UpdateUserParams } from '@/modules/identity/application/usecases/update-user'
 import { UserModel } from '@/modules/identity/domain/models/user'
 
 export interface UpdateUserRepository {

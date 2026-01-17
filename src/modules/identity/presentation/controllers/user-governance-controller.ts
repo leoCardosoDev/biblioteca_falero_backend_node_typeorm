@@ -1,8 +1,8 @@
 import { Controller, HttpRequest, HttpResponse } from '@/shared/presentation/protocols'
 import { badRequest, noContent, serverError, forbidden } from '@/shared/presentation/helpers/http-helper'
 import { Validation } from '@/shared/presentation/protocols/validation'
-import { BlockUser } from '@/modules/identity/domain/usecases/block-user'
-import { PromoteUser } from '@/modules/identity/domain/usecases/promote-user'
+import { BlockUser } from '@/modules/identity/application/usecases/block-user'
+import { PromoteUser } from '@/modules/identity/application/usecases/promote-user'
 import { AccessDeniedError } from '@/shared/domain/errors/access-denied-error'
 
 export class UpdateUserStatusController implements Controller {

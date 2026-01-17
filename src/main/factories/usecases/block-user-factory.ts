@@ -1,6 +1,6 @@
 
 import { DbBlockUser } from '@/modules/identity/application/usecases/db-block-user'
-import { BlockUser } from '@/modules/identity/domain/usecases/block-user'
+import { BlockUser } from '@/modules/identity/application/usecases/block-user'
 import { LoginTypeOrmRepository } from '@/modules/identity/infra/db/typeorm/repositories/login-repository'
 import { RoleRepository } from '@/modules/identity/infra/db/typeorm/repositories/role-repository'
 import { UserTypeOrmRepository } from '@/modules/identity/infra/db/typeorm/repositories/user-repository'

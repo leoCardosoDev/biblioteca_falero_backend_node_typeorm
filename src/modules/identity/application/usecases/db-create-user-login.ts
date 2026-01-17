@@ -1,6 +1,6 @@
 import { Hasher } from '@/shared/application/protocols/cryptography/hasher'
 import { AddLoginRepository, LoadRoleByIdRepository, LoadUserByIdRepository } from '@/modules/identity/application/protocols/db'
-import { AddUserLogin, AddUserLoginParams } from '@/modules/identity/domain/usecases/add-user-login'
+import { AddUserLogin, AddUserLoginParams } from '@/modules/identity/application/usecases/add-user-login'
 import { LoginModel } from '@/modules/identity/domain/models/login'
 
 import { UserStatus } from '@/modules/identity/domain/value-objects/user-status'

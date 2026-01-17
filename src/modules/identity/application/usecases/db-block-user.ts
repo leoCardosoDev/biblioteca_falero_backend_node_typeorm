@@ -1,5 +1,5 @@
 
-import { BlockUser, BlockUserResult } from '@/modules/identity/domain/usecases/block-user'
+import { BlockUser, BlockUserResult } from '@/modules/identity/application/usecases/block-user'
 import { LoadLoginByUserIdRepository } from '@/modules/identity/application/protocols/db/load-login-by-user-id-repository'
 import { LoadRoleByIdRepository } from '@/modules/identity/application/protocols/db/load-role-by-id-repository'
 import { UpdateUserStatusRepository } from '@/modules/identity/application/protocols/db/update-user-status-repository'

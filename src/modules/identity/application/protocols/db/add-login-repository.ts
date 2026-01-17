@@ -1,4 +1,4 @@
-import { AddUserLoginParams } from '@/modules/identity/domain/usecases/add-user-login'
+import { AddUserLoginParams } from '@/modules/identity/application/usecases/add-user-login'
 import { LoginModel } from '@/modules/identity/domain/models/login'
 import { Id } from '@/shared/domain/value-objects/id'
 
