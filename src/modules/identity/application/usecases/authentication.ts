@@ -1,5 +1,7 @@
+import { Email } from '@/modules/identity/domain/value-objects/email'
+
 export type AuthenticationParams = {
-  email: string
+  email: Email
   password: string
 }
 
@@ -13,3 +15,4 @@ export type AuthenticationModel = {
 export interface Authentication {
   auth: (params: AuthenticationParams) => Promise<AuthenticationModel | undefined>
 }
+

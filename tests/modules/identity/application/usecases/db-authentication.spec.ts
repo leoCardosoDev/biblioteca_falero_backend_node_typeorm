@@ -39,7 +39,7 @@ const makeFakeAccount = (): Login => Login.create({
 })
 
 const makeFakeAuthentication = (): AuthenticationParams => ({
-  email: 'any_email@mail.com',
+  email: Email.create('any_email@mail.com'),
   password: 'any_password'
 })
 

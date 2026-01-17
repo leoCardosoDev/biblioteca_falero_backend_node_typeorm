@@ -22,7 +22,7 @@ export class DbAuthentication implements Authentication {
   ) { }
 
   async auth(params: AuthenticationParams): Promise<AuthenticationModel | undefined> {
-    const account = await this.loadAccountByEmailRepository.loadByEmail(params.email)
+    const account = await this.loadAccountByEmailRepository.loadByEmail(params.email.value)
     if (!account) {
       return undefined
     }

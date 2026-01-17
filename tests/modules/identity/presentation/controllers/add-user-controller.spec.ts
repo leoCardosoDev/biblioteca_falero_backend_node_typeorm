@@ -95,13 +95,14 @@ describe('AddUser Controller', () => {
     const addSpy = jest.spyOn(addUserStub, 'add')
     await sut.handle(makeFakeRequest())
     expect(addSpy).toHaveBeenCalledWith({
-      name: 'Any Name',
-      email: 'any_email@mail.com',
-      cpf: '00000000191',
-      rg: '123456789',
+      name: expect.objectContaining({ value: 'Any Name' }),
+      email: expect.objectContaining({ value: 'any_email@mail.com' }),
+      cpf: expect.objectContaining({ value: '00000000191' }),
+      rg: expect.objectContaining({ value: '123456789' }),
       gender: 'any_gender',
       phone: '123456789',
-      status: 'ACTIVE',
+      password: undefined,
+      status: expect.objectContaining({ value: 'ACTIVE' }),
       address: {
         street: 'Any Street',
         number: '123',

@@ -21,15 +21,15 @@ export type AddUserAddressInput = {
 }
 
 export interface AddUserParams {
-  name: string
-  email: string
+  name: Name
+  email: Email
   password?: string
-  rg: string
-  cpf: string
+  rg: Rg
+  cpf: Cpf
   gender: string
   phone?: string
   address?: AddUserAddressInput
-  status: string
+  status: UserStatus
 }
 
 export interface AddUserRepoParams {
@@ -47,3 +47,4 @@ export interface AddUserRepoParams {
 export interface AddUser {
   add: (user: AddUserParams) => Promise<AddUserOutput | Error>
 }
+

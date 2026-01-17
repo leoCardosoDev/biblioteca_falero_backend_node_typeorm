@@ -81,7 +81,7 @@ describe('Login Controller', () => {
     const authSpy = jest.spyOn(authenticationStub, 'auth')
     await sut.handle(makeFakeRequest())
     expect(authSpy).toHaveBeenCalledWith({
-      email: 'any_email@mail.com',
+      email: expect.objectContaining({ value: 'any_email@mail.com' }),
       password: 'any_password'
     })
   })

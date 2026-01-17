@@ -142,56 +142,16 @@ const makeSut = (): SutTypes => {
 }
 
 const makeFakeUserData = (): AddUserParams => ({
-  name: 'valid_name',
-  email: 'valid_email@mail.com',
-  rg: '123456789',
-  cpf: '529.982.247-25',
+  name: Name.create('valid_name') as Name,
+  email: Email.create('valid_email@mail.com'),
+  rg: Rg.create('123456789') as Rg,
+  cpf: Cpf.create('529.982.247-25'),
   gender: 'any_gender',
-  status: 'ACTIVE'
+  status: UserStatus.create('ACTIVE') as UserStatus
 })
 
 describe('DbAddUser UseCase', () => {
-  describe('Input Validation', () => {
-    test('Should return InvalidParamError if name is invalid', async () => {
-      const { sut } = makeSut()
-      const userData = makeFakeUserData()
-      userData.name = 'a'
-      const response = await sut.add(userData)
-      expect(response).toEqual(new InvalidNameError('a'))
-    })
 
-    test('Should return InvalidParamError if email is invalid', async () => {
-      const { sut } = makeSut()
-      const userData = makeFakeUserData()
-      userData.email = 'invalid_email'
-      const response = await sut.add(userData)
-      expect(response).toEqual(new InvalidEmailError())
-    })
-
-    test('Should return InvalidParamError if rg is invalid', async () => {
-      const { sut } = makeSut()
-      const userData = makeFakeUserData()
-      userData.rg = 'invalid_rg'
-      const response = await sut.add(userData)
-      expect(response).toEqual(new InvalidRgError('invalid_rg'))
-    })
-
-    test('Should return InvalidParamError if cpf is invalid', async () => {
-      const { sut } = makeSut()
-      const userData = makeFakeUserData()
-      userData.cpf = 'invalid_cpf'
-      const response = await sut.add(userData)
-      expect(response).toEqual(new InvalidCpfError())
-    })
-
-    test('Should return InvalidParamError if status is invalid', async () => {
-      const { sut } = makeSut()
-      const userData = makeFakeUserData()
-      userData.status = 'invalid_status'
-      const response = await sut.add(userData)
-      expect(response).toEqual(new InvalidUserStatusError())
-    })
-  })
 
   describe('Business Rules', () => {
     test('Should return EmailInUseError if LoadUserByEmailRepository returns an account', async () => {
@@ -230,8 +190,8 @@ describe('DbAddUser UseCase', () => {
       const userData = makeFakeUserData()
       await sut.add(userData)
       expect(addSpy).toHaveBeenCalledWith(expect.objectContaining({
-        email: expect.objectContaining({ value: userData.email }),
-        name: expect.objectContaining({ value: userData.name })
+        email: expect.objectContaining({ value: 'valid_email@mail.com' }),
+        name: expect.objectContaining({ value: 'valid_name' })
       }))
     })
 

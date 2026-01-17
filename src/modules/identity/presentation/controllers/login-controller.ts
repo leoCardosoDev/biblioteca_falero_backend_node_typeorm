@@ -2,6 +2,7 @@ import { Controller, HttpRequest, HttpResponse } from '@/shared/presentation/pro
 import { badRequest, ok, serverError, unauthorized } from '@/shared/presentation/helpers/http-helper'
 import { Validation } from '@/shared/presentation/protocols/validation'
 import { Authentication } from '@/modules/identity/application/usecases/authentication'
+import { Email } from '@/modules/identity/domain/value-objects/email'
 
 export class LoginController implements Controller {
   constructor(
@@ -18,8 +19,15 @@ export class LoginController implements Controller {
 
       const { email, password } = httpRequest.body as { email: string; password: string }
 
+      let emailVO: Email
+      try {
+        emailVO = Email.create(email)
+      } catch (emailError) {
+        return badRequest(emailError as Error)
+      }
+
       const authenticationModel = await this.authentication.auth({
-        email,
+        email: emailVO,
         password
       })
 

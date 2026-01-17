@@ -2,6 +2,11 @@ import { Controller, HttpRequest, HttpResponse } from '@/shared/presentation/pro
 import { badRequest, ok, serverError } from '@/shared/presentation/helpers/http-helper'
 import { Validation } from '@/shared/presentation/protocols/validation'
 import { AddUser, AddUserAddressInput } from '@/modules/identity/application/usecases/add-user'
+import { Email } from '@/modules/identity/domain/value-objects/email'
+import { Name } from '@/modules/identity/domain/value-objects/name'
+import { Cpf } from '@/modules/identity/domain/value-objects/cpf'
+import { Rg } from '@/modules/identity/domain/value-objects/rg'
+import { UserStatus } from '@/modules/identity/domain/value-objects/user-status'
 
 export class AddUserController implements Controller {
   constructor(
@@ -27,16 +32,45 @@ export class AddUserController implements Controller {
         address?: AddUserAddressInput
       }
 
+      let emailVO: Email
+      try {
+        emailVO = Email.create(email)
+      } catch (emailError) {
+        return badRequest(emailError as Error)
+      }
+
+      const nameOrError = Name.create(name)
+      if (nameOrError instanceof Error) {
+        return badRequest(nameOrError)
+      }
+
+      let cpfVO: Cpf
+      try {
+        cpfVO = Cpf.create(cpf)
+      } catch (cpfError) {
+        return badRequest(cpfError as Error)
+      }
+
+      const rgOrError = Rg.create(rg)
+      if (rgOrError instanceof Error) {
+        return badRequest(rgOrError)
+      }
+
+      const statusOrError = UserStatus.create('ACTIVE')
+      if (statusOrError instanceof Error) {
+        return badRequest(statusOrError)
+      }
+
       const result = await this.addUser.add({
-        name,
-        email,
+        name: nameOrError,
+        email: emailVO,
         password,
-        cpf,
-        rg,
+        cpf: cpfVO,
+        rg: rgOrError,
         gender,
         phone,
         address,
-        status: 'ACTIVE'
+        status: statusOrError
       })
 
       if (result instanceof Error) {

@@ -28,40 +28,11 @@ export class DbAddUser implements AddUser {
   ) { }
 
   async add(userData: AddUserParams): Promise<AddUserOutput | Error> {
-    const nameOrError = Name.create(userData.name)
-    if (nameOrError instanceof Error) {
-      return nameOrError
-    }
-
-    let emailOrError: Email | Error
-    try {
-      emailOrError = Email.create(userData.email)
-    } catch (error) {
-      return error as Error
-    }
-
-    const rgOrError = Rg.create(userData.rg)
-    if (rgOrError instanceof Error) {
-      return rgOrError
-    }
-
-    let cpfOrError: Cpf | Error
-    try {
-      cpfOrError = Cpf.create(userData.cpf)
-    } catch (error) {
-      return error as Error
-    }
-
-    const statusOrError = UserStatus.create(userData.status || 'INACTIVE')
-    if (statusOrError instanceof Error) {
-      return statusOrError
-    }
-
-    const userByEmail = await this.loadUserByEmailRepository.loadByEmail((emailOrError as Email).value)
+    const userByEmail = await this.loadUserByEmailRepository.loadByEmail(userData.email.value)
     if (userByEmail) {
       return new EmailInUseError()
     }
-    const userByCpf = await this.loadUserByCpfRepository.loadByCpf((cpfOrError as Cpf).value)
+    const userByCpf = await this.loadUserByCpfRepository.loadByCpf(userData.cpf.value)
     if (userByCpf) {
       return new CpfInUseError()
     }
@@ -80,14 +51,14 @@ export class DbAddUser implements AddUser {
 
     const user = User.create({
       id: idVO,
-      name: nameOrError,
-      email: emailOrError,
-      rg: rgOrError,
-      cpf: cpfOrError,
+      name: userData.name,
+      email: userData.email,
+      rg: userData.rg,
+      cpf: userData.cpf,
       gender: userData.gender,
       phone: userData.phone,
       address: addressVO,
-      status: statusOrError
+      status: userData.status
     })
 
     await this.addUserRepository.add(user)
