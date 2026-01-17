@@ -1,5 +1,7 @@
 import { InvalidIdError } from '@/shared/domain/errors/invalid-id-error'
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 export class Id {
   private readonly id: string
 
@@ -19,8 +21,7 @@ export class Id {
   }
 
   private static isValid(id: string): boolean {
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-    return uuidRegex.test(id)
+    return UUID_REGEX.test(id)
   }
   static restore(id: string): Id {
     return new Id(id)

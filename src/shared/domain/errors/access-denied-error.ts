@@ -1,7 +1,6 @@
 import { AppError } from './app-error'
-import { DomainError } from './domain-error'
 
-export class AccessDeniedError extends AppError implements DomainError {
+export class AccessDeniedError extends AppError {
   public readonly type = 'SECURITY'
 
   constructor() {
