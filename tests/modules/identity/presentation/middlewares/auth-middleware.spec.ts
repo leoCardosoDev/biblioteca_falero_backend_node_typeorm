@@ -2,7 +2,7 @@ import { HttpRequest } from '@/shared/presentation/protocols'
 import { forbidden, ok, serverError } from '@/shared/presentation/helpers/http-helper'
 import { AccessDeniedError } from '@/shared/domain/errors/access-denied-error'
 import { Decrypter } from '@/shared/application/protocols/cryptography/decrypter'
-import { TokenPayload } from '@/modules/identity/domain/models'
+import { TokenPayload } from '@/modules/identity/domain/entities'
 import { AuthMiddleware } from '@/modules/identity/presentation/middlewares/auth-middleware'
 
 type SutTypes = {

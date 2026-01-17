@@ -1,4 +1,4 @@
-import { User } from '@/modules/identity/domain/models/user'
+import { User } from '@/modules/identity/domain/entities/user'
 import { Address } from '@/modules/identity/domain/value-objects/address'
 import { UserLogin } from '@/modules/identity/domain/value-objects/user-login'
 

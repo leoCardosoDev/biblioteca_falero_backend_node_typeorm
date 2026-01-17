@@ -1,3 +1,3 @@
-export * from './models'
+export * from './entities'
 export * from './value-objects'
 export * from './errors'

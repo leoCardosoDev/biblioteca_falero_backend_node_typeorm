@@ -1,6 +1,6 @@
 import { DbLoadUserById } from '@/modules/identity/application/usecases/db-load-user-by-id'
 import { LoadUserByIdRepository } from '@/modules/identity/application/protocols/db/load-user-by-id-repository'
-import { UserModel } from '@/modules/identity/domain/models/user'
+import { UserModel } from '@/modules/identity/domain/entities/user'
 import { Id } from '@/shared/domain/value-objects/id'
 import { Name } from '@/modules/identity/domain/value-objects/name'
 import { Email } from '@/modules/identity/domain/value-objects/email'

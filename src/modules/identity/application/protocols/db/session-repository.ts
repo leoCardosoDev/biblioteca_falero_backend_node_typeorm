@@ -1,4 +1,4 @@
-import { UserSessionModel } from '@/modules/identity/domain/models'
+import { UserSessionModel } from '@/modules/identity/domain/entities'
 import { Id } from '@/shared/domain/value-objects/id'
 
 export interface LoadSessionByTokenRepository {

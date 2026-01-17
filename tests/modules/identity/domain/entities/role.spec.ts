@@ -1,4 +1,4 @@
-import { Role, Permission, RoleProps } from '@/modules/identity/domain/models'
+import { Role, Permission, RoleProps } from '@/modules/identity/domain/entities'
 import { Id } from '@/shared/domain/value-objects/id'
 
 describe('Role Entity', () => {

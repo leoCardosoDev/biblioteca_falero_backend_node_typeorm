@@ -1,4 +1,4 @@
-import { User, UserModel } from '@/modules/identity/domain/models/user'
+import { User, UserModel } from '@/modules/identity/domain/entities/user'
 import { UserTypeOrmEntity } from '../entities/user-entity'
 import { Address } from '@/modules/identity/domain/value-objects/address'
 import { Id } from '@/shared/domain/value-objects/id'

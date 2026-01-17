@@ -1,5 +1,5 @@
 import { AddUserLoginParams } from '@/modules/identity/application/usecases/add-user-login'
-import { LoginModel } from '@/modules/identity/domain/models/login'
+import { LoginModel } from '@/modules/identity/domain/entities/login'
 import { Id } from '@/shared/domain/value-objects/id'
 
 export interface AddLoginRepository {

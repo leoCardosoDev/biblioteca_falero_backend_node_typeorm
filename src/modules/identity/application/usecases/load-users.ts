@@ -1,4 +1,4 @@
-import { UserModel } from '@/modules/identity/domain/models/user'
+import { UserModel } from '@/modules/identity/domain/entities/user'
 
 
 export type UserWithLogin = UserModel

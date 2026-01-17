@@ -6,11 +6,11 @@ import { Encrypter } from '@/modules/identity/application/protocols/cryptography
 import { LoadAccountByEmailRepository } from '@/modules/identity/application/protocols/db/load-account-by-email-repository'
 import { UpdateAccessTokenRepository } from '@/modules/identity/application/protocols/db/update-access-token-repository'
 import { SaveSessionRepository } from '@/modules/identity/application/protocols/db/session-repository'
-import { Login } from '@/modules/identity/domain/models/login'
-import { TokenPayload, UserSessionModel } from '@/modules/identity/domain/models'
+import { Login } from '@/modules/identity/domain/entities/login'
+import { TokenPayload, UserSessionModel } from '@/modules/identity/domain/entities'
 import { DbAuthentication } from '@/modules/identity/application/usecases/db-authentication'
 import { Id } from '@/shared/domain/value-objects/id'
-import { Role } from '@/modules/identity/domain/models/role'
+import { Role } from '@/modules/identity/domain/entities/role'
 import { Email } from '@/modules/identity/domain/value-objects/email'
 
 type SutTypes = {

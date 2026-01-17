@@ -2,7 +2,7 @@ import { DbLogout } from '@/modules/identity/application/usecases/db-logout'
 import { Logout } from '@/modules/identity/application/usecases/logout'
 import { Hasher } from '@/shared/application/protocols/cryptography/hasher'
 import { LoadSessionByTokenRepository, InvalidateSessionRepository } from '@/modules/identity/application/protocols/db/session-repository'
-import { UserSessionModel } from '@/modules/identity/domain/models'
+import { UserSessionModel } from '@/modules/identity/domain/entities'
 import { Id } from '@/shared/domain/value-objects/id'
 
 const mockSession = (): UserSessionModel => ({

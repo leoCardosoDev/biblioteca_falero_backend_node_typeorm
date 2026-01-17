@@ -1,4 +1,4 @@
-import { User, UserProps } from '@/modules/identity/domain/models/user'
+import { User, UserProps } from '@/modules/identity/domain/entities/user'
 
 import { Id } from '@/shared/domain/value-objects/id'
 import { Name } from '@/modules/identity/domain/value-objects/name'

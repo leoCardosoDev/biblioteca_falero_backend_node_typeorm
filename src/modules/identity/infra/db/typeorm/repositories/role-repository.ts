@@ -1,6 +1,6 @@
 
 import { LoadRoleBySlugRepository, LoadRoleByIdRepository } from '@/modules/identity/application/protocols/db'
-import { Role, Permission } from '@/modules/identity/domain/models'
+import { Role, Permission } from '@/modules/identity/domain/entities'
 import { RoleTypeOrmEntity } from '../entities/role-entity'
 import { TypeOrmHelper } from '@/shared/infra/db/typeorm/typeorm-helper'
 import { Id } from '@/modules/identity/domain/value-objects'

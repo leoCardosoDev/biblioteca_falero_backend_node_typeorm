@@ -3,7 +3,7 @@ import { AddUserRepository } from '@/modules/identity/application/protocols/add-
 import { LoadUserByEmailRepository } from '@/modules/identity/application/protocols/db/load-user-by-email-repository'
 import { LoadUserByCpfRepository } from '@/modules/identity/application/protocols/db/load-user-by-cpf-repository'
 
-import { User, UserModel } from '@/modules/identity/domain/models/user'
+import { User, UserModel } from '@/modules/identity/domain/entities/user'
 import { AddUserParams, AddUserRepoParams } from '@/modules/identity/application/usecases/add-user'
 import { AddUserOutput } from '@/modules/identity/application/usecases/add-user-output'
 import { ResolveAddress, ResolveAddressInput } from '@/modules/geography/application/usecases/resolve-address'

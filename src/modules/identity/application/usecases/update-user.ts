@@ -1,4 +1,4 @@
-import { UserModel } from '@/modules/identity/domain/models/user'
+import { UserModel } from '@/modules/identity/domain/entities/user'
 import { Id } from '@/shared/domain/value-objects/id'
 import { Email } from '@/modules/identity/domain/value-objects/email'
 import { Cpf } from '@/modules/identity/domain/value-objects/cpf'

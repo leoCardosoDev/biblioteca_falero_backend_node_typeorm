@@ -1,5 +1,5 @@
 import { UserMapper } from '@/modules/identity/infra/db/typeorm/mappers/user-mapper'
-import { UserModel } from '@/modules/identity/domain/models/user'
+import { UserModel } from '@/modules/identity/domain/entities/user'
 import { Id } from '@/shared/domain/value-objects/id'
 import { Name } from '@/modules/identity/domain/value-objects/name'
 import { Email } from '@/modules/identity/domain/value-objects/email'

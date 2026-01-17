@@ -1,4 +1,4 @@
-import { LoginModel } from '@/modules/identity/domain/models/login'
+import { LoginModel } from '@/modules/identity/domain/entities/login'
 import { Id } from '@/shared/domain/value-objects/id'
 import { UserRole } from '@/modules/identity/domain/value-objects/user-role'
 import { UserStatus } from '@/modules/identity/domain/value-objects/user-status'

@@ -1,5 +1,5 @@
 
-import { Role } from '@/modules/identity/domain/models/role'
+import { Role } from '@/modules/identity/domain/entities/role'
 import { Id } from '@/shared/domain/value-objects/id'
 import { randomUUID } from 'crypto'
 

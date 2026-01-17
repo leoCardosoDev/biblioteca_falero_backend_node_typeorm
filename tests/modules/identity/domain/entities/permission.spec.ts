@@ -1,4 +1,4 @@
-import { Permission, PermissionProps } from '@/modules/identity/domain/models/permission'
+import { Permission, PermissionProps } from '@/modules/identity/domain/entities/permission'
 import { Id } from '@/shared/domain/value-objects/id'
 
 describe('Permission Entity', () => {

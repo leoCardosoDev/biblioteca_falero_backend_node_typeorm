@@ -4,7 +4,7 @@ import {
   InvalidateSessionRepository,
   LoadSessionByTokenRepository
 } from '@/modules/identity/application/protocols/db/session-repository'
-import { UserSessionModel } from '@/modules/identity/domain/models'
+import { UserSessionModel } from '@/modules/identity/domain/entities'
 import { SessionTypeOrmEntity } from '../entities/session-entity'
 import { UserTypeOrmEntity } from '../entities/user-entity'
 import { LoginTypeOrmEntity } from '../entities/login-entity'

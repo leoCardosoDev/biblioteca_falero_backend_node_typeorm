@@ -1,6 +1,6 @@
 import { LoadUserByIdController } from '@/modules/identity/presentation/controllers/load-user-by-id-controller'
 import { LoadUserById } from '@/modules/identity/application/usecases/load-user-by-id'
-import { UserModel } from '@/modules/identity/domain/models/user'
+import { UserModel } from '@/modules/identity/domain/entities/user'
 import { HttpRequest } from '@/shared/presentation/protocols/http'
 import { Id } from '@/shared/domain/value-objects/id'
 import { Name } from '@/modules/identity/domain/value-objects/name'

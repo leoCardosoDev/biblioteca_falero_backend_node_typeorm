@@ -1,4 +1,4 @@
-import { Login, LoginProps } from '@/modules/identity/domain/models/login'
+import { Login, LoginProps } from '@/modules/identity/domain/entities/login'
 import { Id } from '@/shared/domain/value-objects/id'
 import { Email } from '@/modules/identity/domain/value-objects/email'
 

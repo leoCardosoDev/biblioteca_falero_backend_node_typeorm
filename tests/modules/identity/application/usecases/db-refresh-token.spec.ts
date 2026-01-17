@@ -1,5 +1,5 @@
 import { RefreshToken, RefreshTokenParams } from '@/modules/identity/application/usecases/refresh-token'
-import { UserSessionModel, TokenPayload } from '@/modules/identity/domain/models'
+import { UserSessionModel, TokenPayload } from '@/modules/identity/domain/entities'
 import {
   LoadSessionByTokenRepository,
   InvalidateSessionRepository,

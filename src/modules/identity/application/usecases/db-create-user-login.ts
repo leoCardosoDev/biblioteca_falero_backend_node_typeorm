@@ -1,12 +1,12 @@
 import { Hasher } from '@/shared/application/protocols/cryptography/hasher'
 import { AddLoginRepository, LoadRoleByIdRepository, LoadUserByIdRepository } from '@/modules/identity/application/protocols/db'
 import { AddUserLogin, AddUserLoginParams } from '@/modules/identity/application/usecases/add-user-login'
-import { LoginModel } from '@/modules/identity/domain/models/login'
+import { LoginModel } from '@/modules/identity/domain/entities/login'
 
 import { UserStatus } from '@/modules/identity/domain/value-objects/user-status'
 import { LoadRoleBySlugRepository } from '@/modules/identity/application/protocols/db/load-role-by-slug-repository'
 import { AccessDeniedError } from '@/shared/domain/errors/access-denied-error'
-import { Role } from '@/modules/identity/domain/models/role'
+import { Role } from '@/modules/identity/domain/entities/role'
 
 export class DbCreateUserLogin implements AddUserLogin {
   constructor(
