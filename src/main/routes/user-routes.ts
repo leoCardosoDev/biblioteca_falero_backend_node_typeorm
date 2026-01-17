@@ -9,7 +9,7 @@ import { makeLoadUsersController } from '@/main/factories/load-users-controller-
 import { makeLoadUserByIdController } from '@/main/factories/load-user-by-id-controller-factory'
 import { makeUpdateUserController } from '@/main/factories/update-user-controller-factory'
 import { makeDeleteUserController } from '@/main/factories/delete-user-controller-factory'
-// import { makeManageUserAccessController } from '@/main/factories/controllers/manage-user-access-controller-factory' // Removed
+import { makeManageUserAccessController } from '@/main/factories/manage-user-access-controller-factory'
 
 const userSchema = {
   type: 'object',
@@ -248,5 +248,36 @@ export default (router: FastifyInstance): void => {
     ]
   }, adaptRoute(makeDeleteUserController()))
 
-  // ManageUserAccess route removed
+  router.post('/users/:id/access', {
+    schema: {
+      tags: ['Users'],
+      summary: 'Manage user access',
+      description: 'Update user role, status, and/or password. Requires admin role.',
+      security: [{ bearerAuth: [] }],
+      params: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', description: 'Target User ID (UUID)' }
+        }
+      },
+      body: {
+        type: 'object',
+        properties: {
+          roleSlug: { type: 'string', description: 'Role slug to assign' },
+          status: { type: 'string', enum: ['ACTIVE', 'INACTIVE', 'BLOCKED'], description: 'User status' },
+          password: { type: 'string', description: 'New password' }
+        }
+      },
+      response: {
+        204: { type: 'null', description: 'Access updated successfully' },
+        400: errorSchema,
+        403: errorSchema,
+        404: errorSchema
+      }
+    },
+    preHandler: [
+      adaptMiddleware(makeAuthMiddleware()),
+      adaptMiddleware(makeAdminOnly())
+    ]
+  }, adaptRoute(makeManageUserAccessController()))
 }
