@@ -8,6 +8,12 @@
       "@/tests/*": [
         "tests/*"
       ],
+      "@/modules/*": [
+        "src/modules/*"
+      ],
+      "@/shared/*": [
+        "src/shared/*"
+      ],
       "@/*": [
         "src/*"
       ]

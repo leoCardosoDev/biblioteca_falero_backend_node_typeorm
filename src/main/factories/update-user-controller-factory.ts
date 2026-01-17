@@ -1,7 +1,7 @@
-import { Controller } from '@/presentation/protocols'
-import { UpdateUserController } from '@/presentation/controllers/user/update-user-controller'
-import { DbUpdateUser } from '@/application/usecases/db-update-user'
-import { UserTypeOrmRepository } from '@/infra/db/typeorm/user-repository'
+import { Controller } from '@/shared/presentation/protocols'
+import { UpdateUserController } from '@/modules/identity/presentation/controllers/update-user-controller'
+import { DbUpdateUser } from '@/modules/identity/application/usecases/db-update-user'
+import { UserTypeOrmRepository } from '@/modules/identity/infra/db/typeorm/repositories/user-repository'
 
 import { makeUpdateUserValidation } from '@/main/factories/update-user-validation-factory'
 

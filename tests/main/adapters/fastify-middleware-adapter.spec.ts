@@ -1,5 +1,5 @@
 import { adaptMiddleware } from '@/main/adapters/fastify-middleware-adapter'
-import { Middleware, HttpRequest, HttpResponse } from '@/presentation/protocols'
+import { Middleware, HttpRequest, HttpResponse } from '@/shared/presentation/protocols'
 import { FastifyReply, FastifyRequest } from 'fastify'
 
 const makeMiddleware = (): Middleware => {

@@ -32,6 +32,8 @@
   "author": "",
   "license": "ISC",
   "_moduleAliases": {
+    "@/modules": "dist/modules",
+    "@/shared": "dist/shared",
     "@": "dist"
   },
   "type": "commonjs",

@@ -1,0 +1,11 @@
+export * from './user-status'
+export * from './user-login'
+export * from './user-role'
+export * from './email'
+export * from './cpf'
+export * from './rg'
+export * from './name'
+export * from './password'
+export * from './address'
+// Id is now in Shared Kernel
+export * from '@/shared/domain/value-objects/id'

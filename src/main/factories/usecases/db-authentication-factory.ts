@@ -1,12 +1,12 @@
-import { DbAuthentication } from '@/application/usecases/db-authentication'
-import { LoginTypeOrmRepository } from '@/infra/db/typeorm/login-repository'
-import { SessionTypeOrmRepository } from '@/infra/db/typeorm/session-repository'
-import { BcryptAdapter } from '@/infra/cryptography/bcrypt-adapter'
-import { JwtAdapter } from '@/infra/cryptography/jwt-adapter'
-import { Sha256Adapter } from '@/infra/cryptography/sha256-adapter'
-import { Authentication } from '@/domain/usecases/authentication'
+import { DbAuthentication } from '@/modules/identity/application/usecases/db-authentication'
+import { LoginTypeOrmRepository } from '@/modules/identity/infra/db/typeorm/repositories/login-repository'
+import { SessionTypeOrmRepository } from '@/modules/identity/infra/db/typeorm/repositories/session-repository'
+import { BcryptAdapter } from '@/shared/infra/cryptography/bcrypt-adapter'
+import { JwtAdapter } from '@/shared/infra/cryptography/jwt-adapter'
+import { Sha256Adapter } from '@/shared/infra/cryptography/sha256-adapter'
+import { Authentication } from '@/modules/identity/application/usecases/authentication'
 
-import { RoleRepository } from '@/infra/db/typeorm/role-repository'
+import { RoleRepository } from '@/modules/identity/infra/db/typeorm/repositories/role-repository'
 
 export const makeDbAuthentication = (): Authentication => {
   const salt = 12

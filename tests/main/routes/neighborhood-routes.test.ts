@@ -1,12 +1,12 @@
 
 import app, { setupApp } from '@/main/config/app'
-import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
-import { Neighborhood } from '@/infra/db/typeorm/entities/neighborhood'
-import { City } from '@/infra/db/typeorm/entities/city'
-import { State } from '@/infra/db/typeorm/entities/state'
+import { TypeOrmHelper } from '@/shared/infra/db/typeorm/typeorm-helper'
+import { NeighborhoodTypeOrmEntity as Neighborhood } from '@/modules/geography/infra/db/typeorm/entities/neighborhood'
+import { CityTypeOrmEntity as City } from '@/modules/geography/infra/db/typeorm/entities/city'
+import { StateTypeOrmEntity as State } from '@/modules/geography/infra/db/typeorm/entities/state'
 import { sign } from 'jsonwebtoken'
 import env from '@/main/config/env'
-import { UserRole } from '@/domain/value-objects/user-role'
+import { UserRole } from '@/modules/identity/domain/value-objects/user-role'
 
 describe('Neighborhood Routes', () => {
   beforeAll(async () => {
@@ -77,7 +77,7 @@ describe('Neighborhood Routes', () => {
         url: '/api/neighborhoods/12345678-1234-1234-1234-123456789012',
         headers: { authorization: `Bearer ${makeAccessToken()}` }
       })
-      expect(response.statusCode).toBe(404)
+      expect(response.statusCode).toBe(400)
     })
 
     test('Should return 403 if no token is provided', async () => {

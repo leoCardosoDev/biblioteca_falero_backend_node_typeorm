@@ -1,12 +1,12 @@
 import 'reflect-metadata'
-import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
-import { GetOrCreateGeoEntityService } from '@/domain/services/geo/get-or-create-geo-entity-service'
-import { StateTypeOrmRepository } from '@/infra/db/typeorm/state-repository'
-import { CityTypeOrmRepository } from '@/infra/db/typeorm/city-repository'
-import { NeighborhoodTypeOrmRepository } from '@/infra/db/typeorm/neighborhood-repository'
-import { State } from '@/infra/db/typeorm/entities/state'
-import { City } from '@/infra/db/typeorm/entities/city'
-import { Neighborhood } from '@/infra/db/typeorm/entities/neighborhood'
+import { TypeOrmHelper } from '@/shared/infra/db/typeorm/typeorm-helper'
+import { GetOrCreateGeoEntityService } from '@/modules/geography/domain/services/get-or-create-geo-entity-service'
+import { StateTypeOrmRepository } from '@/modules/geography/infra/db/typeorm/repositories/state-repository'
+import { CityTypeOrmRepository } from '@/modules/geography/infra/db/typeorm/repositories/city-repository'
+import { NeighborhoodTypeOrmRepository } from '@/modules/geography/infra/db/typeorm/repositories/neighborhood-repository'
+import { StateTypeOrmEntity as State } from '@/modules/geography/infra/db/typeorm/entities/state'
+import { CityTypeOrmEntity as City } from '@/modules/geography/infra/db/typeorm/entities/city'
+import { NeighborhoodTypeOrmEntity as Neighborhood } from '@/modules/geography/infra/db/typeorm/entities/neighborhood'
 
 describe('Geography Integration Flow', () => {
   let sut: GetOrCreateGeoEntityService

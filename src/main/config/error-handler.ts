@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 
-import { AppError, UnauthorizedError, AccessDeniedError, ValidationError } from '@/presentation/errors'
-import { DomainError } from '@/domain/errors'
+import { AppError, UnauthorizedError, AccessDeniedError, ValidationError } from '@/shared/presentation/errors'
+import { DomainError } from '@/shared/domain/errors'
 
 interface FastifyValidationError extends Error {
   code: string

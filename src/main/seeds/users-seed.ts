@@ -2,12 +2,12 @@ import 'module-alias/register'
 import { DataSourceOptions } from 'typeorm'
 import path from 'path'
 
-import { TypeOrmHelper } from '@/infra/db/typeorm/typeorm-helper'
-import { UserTypeOrmEntity } from '@/infra/db/typeorm/entities/user-entity'
-import { LoginTypeOrmEntity } from '@/infra/db/typeorm/entities/login-entity'
+import { TypeOrmHelper } from '@/shared/infra/db/typeorm/typeorm-helper'
+import { UserTypeOrmEntity } from '@/modules/identity/infra/db/typeorm/entities/user-entity'
+import { LoginTypeOrmEntity } from '@/modules/identity/infra/db/typeorm/entities/login-entity'
 
-import { RoleTypeOrmEntity } from '@/infra/db/typeorm/entities/role-entity'
-import { BcryptAdapter } from '@/infra/cryptography/bcrypt-adapter'
+import { RoleTypeOrmEntity } from '@/modules/identity/infra/db/typeorm/entities/role-entity'
+import { BcryptAdapter } from '@/shared/infra/cryptography/bcrypt-adapter'
 import env from '@/main/config/env'
 
 const users = [

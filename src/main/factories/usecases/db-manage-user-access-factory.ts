@@ -1,26 +1,28 @@
-import { DbManageUserAccess } from '@/application/usecases/db-manage-user-access'
-import { LoginTypeOrmRepository } from '@/infra/db/typeorm/login-repository'
-import { RoleRepository } from '@/infra/db/typeorm/role-repository'
-import { UserTypeOrmRepository } from '@/infra/db/typeorm/user-repository'
-import { BcryptAdapter } from '@/infra/cryptography/bcrypt-adapter'
 
-export const makeDbManageUserAccess = (): DbManageUserAccess => {
+import { DbManageUserAccess } from '@/modules/identity/application/usecases/db-manage-user-access'
+import { ManageUserAccess } from '@/modules/identity/application/usecases/manage-user-access'
+import { LoginTypeOrmRepository } from '@/modules/identity/infra/db/typeorm/repositories/login-repository'
+import { RoleRepository } from '@/modules/identity/infra/db/typeorm/repositories/role-repository'
+import { UserTypeOrmRepository } from '@/modules/identity/infra/db/typeorm/repositories/user-repository'
+import { BcryptAdapter } from '@/shared/infra/cryptography/bcrypt-adapter'
+
+export const makeManageUserAccess = (): ManageUserAccess => {
+  const salt = 12
+  const bcryptAdapter = new BcryptAdapter(salt)
   const loginRepository = new LoginTypeOrmRepository()
   const roleRepository = new RoleRepository()
   const userRepository = new UserTypeOrmRepository()
-  const salt = 12
-  const bcryptAdapter = new BcryptAdapter(salt)
-
   return new DbManageUserAccess(
-    loginRepository,
-    roleRepository,
-    roleRepository,
-    loginRepository,
-    userRepository,
-    loginRepository,
-    loginRepository,
-    loginRepository,
-    userRepository,
-    bcryptAdapter
+    loginRepository,       // loadLoginByUserId
+    roleRepository,        // loadRoleById
+    roleRepository,        // loadRoleBySlug
+    userRepository,        // loadUserById
+    loginRepository,       // updateLoginPassword
+    loginRepository,       // updateLoginRole
+    userRepository,        // updateUserStatus
+    loginRepository,       // updateLoginStatus
+    loginRepository,       // addLoginRepository
+    bcryptAdapter,         // hasher
+    bcryptAdapter          // hashComparer
   )
 }

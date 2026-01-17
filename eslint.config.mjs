@@ -17,6 +17,8 @@ export default [
         },
       },
       "boundaries/elements": [
+        { type: "shared", pattern: "src/shared/**" },
+        { type: "module", pattern: "src/modules/*", capture: ["moduleName"] },
         { type: "domain", pattern: "src/domain/**" },
         { type: "application", pattern: "src/application/**" },
         { type: "presentation", pattern: "src/presentation/**" },
@@ -29,10 +31,17 @@ export default [
         {
           default: "disallow",
           rules: [
-            { from: "domain", allow: ["domain"] },
-            { from: "application", allow: ["domain", "application"] },
-            { from: "presentation", allow: ["domain", "application", "presentation"] },
-            { from: "infrastructure", allow: ["domain", "application", "infrastructure"] }
+            // Modular Monolith Rules - modules can access shared, other modules, and legacy layers during migration
+            { from: "module", allow: ["shared", "module", "domain", "application", "infrastructure"] },
+            {
+              from: [["module", { moduleName: "identity" }]],
+              allow: [["module", { moduleName: "geography" }], "shared", "domain", "application"]
+            },
+            // Legacy Horizontal Layer Rules (to be removed after migration)
+            { from: "domain", allow: ["domain", "shared"] },
+            { from: "application", allow: ["domain", "application", "shared"] },
+            { from: "presentation", allow: ["domain", "application", "presentation", "shared", "module"] },
+            { from: "infrastructure", allow: ["domain", "application", "infrastructure", "shared", "module"] }
           ]
         }
       ],

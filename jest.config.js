@@ -28,6 +28,8 @@ module.exports = {
   },
   moduleNameMapper: {
     '@/tests/(.*)': '<rootDir>/tests/$1',
+    '@/modules/(.*)': '<rootDir>/src/modules/$1',
+    '@/shared/(.*)': '<rootDir>/src/shared/$1',
     '@/(.*)': '<rootDir>/src/$1'
   },
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts']

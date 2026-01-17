@@ -1,5 +1,5 @@
-import { RequireRoleMiddleware } from '@/presentation/middlewares/require-role-middleware'
-import { Middleware } from '@/presentation/protocols'
+import { RequireRoleMiddleware } from '@/modules/identity/presentation/middlewares/require-role-middleware'
+import { Middleware } from '@/shared/presentation/protocols'
 
 export const makeRequireRoleMiddleware = (allowedRoles: string[]): Middleware => {
   return new RequireRoleMiddleware(allowedRoles)

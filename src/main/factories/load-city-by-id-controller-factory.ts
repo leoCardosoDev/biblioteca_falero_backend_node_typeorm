@@ -1,9 +1,9 @@
-import { LoadCityByIdController } from '@/presentation/controllers/load-city-by-id-controller'
-import { Controller } from '@/presentation/protocols/controller'
-import { DbLoadCityById } from '@/application/usecases/db-load-city-by-id'
-import { CityTypeOrmRepository } from '@/infra/db/typeorm/city-repository'
-import { CacheCityRepository } from '@/infra/db/typeorm/cache-city-repository'
-import { RedisCacheAdapter } from '@/infra/cache/redis-cache-adapter'
+import { LoadCityByIdController } from '@/modules/geography/presentation/controllers/load-city-by-id-controller'
+import { Controller } from '@/shared/presentation/protocols'
+import { DbLoadCityById } from '@/modules/geography/application/usecases/db-load-city-by-id'
+import { CityTypeOrmRepository } from '@/modules/geography/infra/db/typeorm/repositories/city-repository'
+import { CacheCityRepository } from '@/modules/geography/infra/db/typeorm/repositories/cache-city-repository'
+import { RedisCacheAdapter } from '@/shared/infra/cache/redis-cache-adapter'
 
 export const makeLoadCityByIdController = (): Controller => {
   const cityRepository = new CityTypeOrmRepository()
